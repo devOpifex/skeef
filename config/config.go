@@ -9,7 +9,8 @@ import (
 type Config struct {
 	TwitterConsumerKey    string `json:"twitterConsumerKey"`
 	TwitterConsumerSecret string `json:"twitterConsumerSecret"`
-	TwitterCallbackURL    string `json:"twitterCallbackURL"`
+	TwitterCallbackPath   string `json:"twitterCallbackPath"`
+	Port                  string `json:"port"`
 }
 
 // ReadConfig Reads the configguration file
