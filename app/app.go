@@ -12,13 +12,18 @@ import (
 	"github.com/dghubble/sessions"
 )
 
-// Constants for token
+// Constants for session
 const (
 	sessionName     = "opiflex"
 	sessionSecret   = "opifex.org"
 	sessionUserKey  = "twitterID"
 	sessionUsername = "twitterUsername"
+	accessToken     = "<accessToken>"
+	accessSecret    = "<accessSecret>"
 )
+
+// Session
+var sessionStore = sessions.NewCookieStore([]byte(sessionSecret), nil)
 
 // Application Application object
 type Application struct {
@@ -42,34 +47,35 @@ func (app *Application) Handlers() *http.ServeMux {
 	mux.HandleFunc("/", app.home)
 	mux.HandleFunc("/profile", app.profile)
 	mux.Handle("/login", gologin.LoginHandler(&app.Oauth, nil))
-	mux.Handle("/"+app.Config.TwitterCallbackPath, gologin.CallbackHandler(&app.Oauth, issueSession(), nil))
+	mux.Handle("/"+app.Config.TwitterCallbackPath, gologin.CallbackHandler(&app.Oauth, app.authenticate(), nil))
 	return mux
 }
 
-var sessionStore = sessions.NewCookieStore([]byte(sessionSecret), nil)
-
-func issueSession() http.Handler {
-	fn := func(w http.ResponseWriter, req *http.Request) {
-		ctx := req.Context()
+func (app *Application) authenticate() http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		twitterUser, err := gologin.UserFromContext(ctx)
 		if err != nil {
+			app.ErrorLog.Println("Failed to get user details")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		accessToken, accessSecret, err := oauth1Login.AccessTokenFromContext(ctx)
 
-		fmt.Println(accessToken)
-		fmt.Println(accessSecret)
 		if err != nil {
-			log.Print(err)
+			app.ErrorLog.Println("Failed to get access creds")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		session := sessionStore.New(sessionName)
+		session.Values[accessToken] = accessToken
+		session.Values[accessSecret] = accessSecret
 		session.Values[sessionUserKey] = twitterUser.ID
 		session.Values[sessionUsername] = twitterUser.ScreenName
 		session.Save(w)
-		http.Redirect(w, req, "/profile", http.StatusFound)
+		http.Redirect(w, r, "/profile", http.StatusFound)
 	}
 	return http.HandlerFunc(fn)
 }
