@@ -14,12 +14,12 @@ import (
 
 // Constants for session
 const (
-	sessionName     = "opiflex"
-	sessionSecret   = "opifex.org"
-	sessionUserKey  = "twitterID"
-	sessionUsername = "twitterUsername"
-	accessToken     = "<accessToken>"
-	accessSecret    = "<accessSecret>"
+	sessionName         = "opiflex"
+	sessionSecret       = "opifex.org"
+	sessionUserKey      = "twitterID"
+	sessionUsername     = "twitterUsername"
+	twitterAccessToken  = "accessToken"
+	twitterAccessSecret = "accessSecret"
 )
 
 // Session
@@ -38,6 +38,13 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Application) profile(w http.ResponseWriter, r *http.Request) {
+	session, err := sessionStore.Get(r, sessionName)
+
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	fmt.Println(session.Values)
 	fmt.Fprintf(w, "You are logged in")
 }
 
@@ -70,11 +77,11 @@ func (app *Application) authenticate() http.Handler {
 		}
 
 		session := sessionStore.New(sessionName)
-		session.Values[accessToken] = accessToken
-		session.Values[accessSecret] = accessSecret
+		session.Values[twitterAccessToken] = accessToken
+		session.Values[twitterAccessSecret] = accessSecret
 		session.Values[sessionUserKey] = twitterUser.ID
 		session.Values[sessionUsername] = twitterUser.ScreenName
-		session.Save(w)
+		sessionStore.Save(w, session)
 		http.Redirect(w, r, "/profile", http.StatusFound)
 	}
 	return http.HandlerFunc(fn)
