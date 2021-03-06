@@ -6,14 +6,16 @@ import (
 	"net/http"
 
 	"github.com/devOpifex/opiflex/config"
-	"github.com/dghubble/gologin/twitter"
+	oauth1Login "github.com/dghubble/gologin/v2/oauth1"
+	gologin "github.com/dghubble/gologin/v2/twitter"
 	"github.com/dghubble/oauth1"
 	"github.com/dghubble/sessions"
 )
 
+// Constants for token
 const (
-	sessionName     = "example-twtter-app"
-	sessionSecret   = "example cookie signing secret"
+	sessionName     = "opiflex"
+	sessionSecret   = "opifex.org"
 	sessionUserKey  = "twitterID"
 	sessionUsername = "twitterUsername"
 )
@@ -39,23 +41,30 @@ func (app *Application) Handlers() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", app.home)
 	mux.HandleFunc("/profile", app.profile)
-	mux.Handle("/login", twitter.LoginHandler(&app.Oauth, nil))
-	mux.Handle("/"+app.Config.TwitterCallbackPath, twitter.CallbackHandler(&app.Oauth, issueSession(), nil))
+	mux.Handle("/login", gologin.LoginHandler(&app.Oauth, nil))
+	mux.Handle("/"+app.Config.TwitterCallbackPath, gologin.CallbackHandler(&app.Oauth, issueSession(), nil))
 	return mux
 }
 
-// sessionStore encodes and decodes session data stored in signed cookies
 var sessionStore = sessions.NewCookieStore([]byte(sessionSecret), nil)
 
 func issueSession() http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
-		twitterUser, err := twitter.UserFromContext(ctx)
+		twitterUser, err := gologin.UserFromContext(ctx)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// 2. Implement a success handler to issue some form of session
+
+		accessToken, accessSecret, err := oauth1Login.AccessTokenFromContext(ctx)
+
+		fmt.Println(accessToken)
+		fmt.Println(accessSecret)
+		if err != nil {
+			log.Print(err)
+		}
+
 		session := sessionStore.New(sessionName)
 		session.Values[sessionUserKey] = twitterUser.ID
 		session.Values[sessionUsername] = twitterUser.ScreenName
