@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/devOpifex/opiflex/config"
+	"github.com/devOpifex/skeef/config"
 	gologin "github.com/dghubble/gologin/v2/twitter"
 	"github.com/dghubble/oauth1"
 )

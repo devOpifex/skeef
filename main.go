@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/devOpifex/opiflex/app"
-	"github.com/devOpifex/opiflex/config"
+	"github.com/devOpifex/skeef/app"
+	"github.com/devOpifex/skeef/config"
 	"github.com/dghubble/oauth1"
 	tw "github.com/dghubble/oauth1/twitter"
 )

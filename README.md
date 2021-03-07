@@ -1,4 +1,4 @@
-# opiflex
+# skeef
 
 Copy configuration file.
 

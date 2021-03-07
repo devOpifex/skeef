@@ -10,8 +10,8 @@ import (
 
 // Constants for session
 const (
-	sessionName         = "opiflex"
-	sessionSecret       = "opifex.org"
+	sessionName         = "skeef"
+	sessionSecret       = "skeef.io"
 	sessionUserKey      = "twitterID"
 	sessionUsername     = "twitterUsername"
 	twitterAccessToken  = "accessToken"

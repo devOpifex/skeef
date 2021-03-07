@@ -1,5 +1,5 @@
 {
-  "name": "opiflex",
+  "name": "skeef",
   "version": "1.0.0",
   "description": "Copy configuration file.",
   "main": "index.js",
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/devOpifex/opiflex.git"
+    "url": "git+https://github.com/devOpifex/skeef.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/devOpifex/opiflex/issues"
+    "url": "https://github.com/devOpifex/skeef/issues"
   },
-  "homepage": "https://github.com/devOpifex/opiflex#readme",
+  "homepage": "https://github.com/devOpifex/skeef#readme",
   "dependencies": {
     "esbuild": "^0.8.56"
   }
