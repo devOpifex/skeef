@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 
@@ -34,7 +35,32 @@ type Application struct {
 }
 
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, world")
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+
+	files := []string{
+		"./ui/html/home.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
+
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.ErrorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// We then use the Execute() method on the template set to write the template
+	// content as the response body. The last parameter to Execute() represents any
+	// dynamic data that we want to pass in, which for now we'll leave as nil.
+	err = ts.Execute(w, nil)
+	if err != nil {
+		app.ErrorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 }
 
 func (app *Application) profile(w http.ResponseWriter, r *http.Request) {
@@ -44,6 +70,7 @@ func (app *Application) profile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
+
 	fmt.Println(session.Values)
 	fmt.Fprintf(w, "You are logged in")
 }
