@@ -1,0 +1,23 @@
+{
+  "name": "opiflex",
+  "version": "1.0.0",
+  "description": "Copy configuration file.",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild js/app.js --bundle --minify --outfile=ui/static/app.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devOpifex/opiflex.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devOpifex/opiflex/issues"
+  },
+  "homepage": "https://github.com/devOpifex/opiflex#readme",
+  "dependencies": {
+    "esbuild": "^0.8.56"
+  }
+}
