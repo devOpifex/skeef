@@ -4,7 +4,9 @@
   "description": "Copy configuration file.",
   "main": "index.js",
   "scripts": {
+    "dev-css": "postcss build ui/tailwind.css -o ui/static/compiled.min.css",
     "build-css": "NODE_ENV=production postcss build ui/tailwind.css -o ui/static/compiled.min.css",
+    "watch-css": "postcss -w build ui/tailwind.css -o ui/static/compiled.min.css",
     "build": "esbuild js/app.js --bundle --minify --outfile=ui/static/app.min.js"
   },
   "repository": {
