@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/devOpifex/skeef/config"
-	gologin "github.com/dghubble/gologin/v2/twitter"
 	"github.com/dghubble/oauth1"
 )
 
@@ -46,14 +45,6 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Application) profile(w http.ResponseWriter, r *http.Request) {
-	session, err := sessionStore.Get(r, sessionName)
-
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
-	fmt.Println(session.Values)
 	fmt.Fprintf(w, "You are logged in")
 }
 
@@ -63,7 +54,5 @@ func (app *Application) Handlers() *http.ServeMux {
 	mux.HandleFunc("/", app.home)
 	mux.Handle("/static/", app.static())
 	mux.HandleFunc("/profile", app.profile)
-	mux.Handle("/login", gologin.LoginHandler(&app.Oauth, nil))
-	mux.Handle("/"+app.Config.TwitterCallbackPath, gologin.CallbackHandler(&app.Oauth, app.authenticate(), nil))
 	return mux
 }
