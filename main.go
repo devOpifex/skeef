@@ -27,12 +27,12 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:     ":" + config.Port,
+		Addr:     config.Port,
 		ErrorLog: errorLog,
 		Handler:  app.Handlers(),
 	}
 
-	infoLog.Printf("Listening on http://localhost:%s", config.Port)
+	infoLog.Printf("Listening on http://localhost%s", config.Port)
 	err = srv.ListenAndServe()
 	log.Fatal(err)
 }

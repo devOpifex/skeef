@@ -39,6 +39,8 @@ func Read() (Config, error) {
 		return conf, err
 	}
 
+	conf.Port = ":" + conf.Port
+
 	return conf, nil
 }
 
