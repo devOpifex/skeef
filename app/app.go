@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/devOpifex/skeef/config"
-	"github.com/dghubble/oauth1"
 )
 
 // Application Application object
@@ -15,7 +14,6 @@ type Application struct {
 	InfoLog  *log.Logger
 	ErrorLog *log.Logger
 	Config   config.Config
-	Oauth    oauth1.Config
 }
 
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {

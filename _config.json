@@ -1,6 +1,7 @@
 {
   "twitterConsumerKey": "",
   "twitterConsumerSecret": "",
-  "twitterCallbackPath": "",
+  "TwitterAccessToken": "",
+  "TwitterAccessSecret": "",
   "port": "8080"
 }
