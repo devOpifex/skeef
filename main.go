@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/devOpifex/skeef/app"
 	"github.com/devOpifex/skeef/config"
@@ -31,6 +32,16 @@ func main() {
 		ErrorLog: errorLog,
 		Handler:  app.Handlers(),
 	}
+
+	// first check
+	app.LicenseCheck()
+
+	// check again every 30 minutes
+	go func() {
+		for range time.Tick(time.Minute * 30) {
+			app.LicenseCheck()
+		}
+	}()
 
 	infoLog.Printf("Listening on http://localhost%s", config.Port)
 	err = srv.ListenAndServe()

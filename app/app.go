@@ -48,7 +48,6 @@ func (app *Application) profile(w http.ResponseWriter, r *http.Request) {
 
 // Handlers Returns all routes
 func (app *Application) Handlers() *http.ServeMux {
-	go app.licenseCheck()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", app.home)
 	mux.Handle("/static/", app.static())
