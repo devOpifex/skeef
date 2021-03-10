@@ -17,14 +17,14 @@ func (app *Application) LicenseCheck() {
 	payloadJSON, err := json.Marshal(payload)
 
 	if err != nil {
-		app.ErrorLog.Fatal("Could not check license")
+		app.ErrorLog.Panic("Internal: Could not check license")
 	}
 
 	req, err := http.NewRequest(
 		"POST", "http://localhost:3000/check", bytes.NewBuffer(payloadJSON))
 
 	if err != nil {
-		app.ErrorLog.Fatal("Could not verify license")
+		app.ErrorLog.Fatal("Could not ping license endpoint")
 	}
 
 	req.Header.Set("skeef-token", "9a525de4769cca6398d0019b909bba84e26a2b80")
@@ -32,7 +32,7 @@ func (app *Application) LicenseCheck() {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		app.ErrorLog.Fatal(err)
+		app.ErrorLog.Fatal("Could not ping license endpoint")
 	}
 	defer resp.Body.Close()
 
@@ -40,5 +40,11 @@ func (app *Application) LicenseCheck() {
 		return
 	}
 
-	app.ErrorLog.Fatal("Could not verify license")
+	app.ErrorLog.Fatal(`
+		Invalid license: 
+			1) It could simply be wrong; double check it is correct.
+			2) It has expired, go to https://skeef.io to renew
+			3) You have deployed the application on more than one machine (wait ~30 minutes to relaunch)
+			If you are sure none of these apply contact: john@opifex.org 
+	`)
 }

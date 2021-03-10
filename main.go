@@ -13,7 +13,7 @@ import (
 func main() {
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime)
 
 	config, err := config.Read()
 
@@ -33,9 +33,6 @@ func main() {
 		Handler:  app.Handlers(),
 	}
 
-	// first check
-	app.LicenseCheck()
-
 	// check again every 30 minutes
 	go func() {
 		for range time.Tick(time.Minute * 30) {
@@ -43,7 +40,7 @@ func main() {
 		}
 	}()
 
-	infoLog.Printf("Listening on http://localhost%s", config.Port)
+	infoLog.Printf("Listening on port%s", config.Port)
 	err = srv.ListenAndServe()
 	log.Fatal(err)
 }
