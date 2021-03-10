@@ -1,7 +1,7 @@
 module.exports = {
   purge: [
-    "ui/html/*.html",
-    "ui/html/*.js"
+    "app/ui/html/*.html",
+    "app/ui/html/*.js"
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {

@@ -1,3 +1,3 @@
 module github.com/devOpifex/skeef
 
-go 1.15
+go 1.16

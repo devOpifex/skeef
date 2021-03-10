@@ -1,9 +1,21 @@
 package app
 
-import "net/http"
+import (
+	"embed"
+	"io/fs"
+	"net/http"
+)
+
+//go:embed ui/static
+var embededFiles embed.FS
 
 func (app *Application) static() http.Handler {
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
+	fsys, err := fs.Sub(embededFiles, "static")
 
-	return http.StripPrefix("/static", fileServer)
+	if err != nil {
+		app.ErrorLog.Panic("Internal error code: e-1")
+		return nil
+	}
+
+	return http.FileServer(http.FS(fsys))
 }
