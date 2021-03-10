@@ -7,15 +7,15 @@ import (
 )
 
 //go:embed ui/static
-var embededFiles embed.FS
+var embededStatic embed.FS
 
 func (app *Application) static() http.Handler {
-	fsys, err := fs.Sub(embededFiles, "static")
+	fsys, err := fs.Sub(embededStatic, "ui/static")
 
 	if err != nil {
 		app.ErrorLog.Panic("Internal error code: e-1")
 		return nil
 	}
 
-	return http.FileServer(http.FS(fsys))
+	return http.StripPrefix("/static", http.FileServer(http.FS(fsys)))
 }
