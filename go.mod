@@ -1,4 +1,4 @@
-module github.com/devOpifex/skeef
+module github.com/devOpifex/skeef-app
 
 go 1.16
 

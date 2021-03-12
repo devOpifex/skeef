@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/devOpifex/skeef/app"
-	"github.com/devOpifex/skeef/config"
+	"github.com/devOpifex/skeef-app/app"
+	"github.com/devOpifex/skeef-app/config"
 )
 
 func main() {

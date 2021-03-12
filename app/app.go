@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/devOpifex/skeef/config"
+	"github.com/devOpifex/skeef-app/config"
 )
 
 // Application Application object
