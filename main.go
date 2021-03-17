@@ -9,7 +9,11 @@ import (
 
 	"github.com/devOpifex/skeef-app/app"
 	"github.com/devOpifex/skeef-app/db"
+	"github.com/golangcollege/sessions"
 )
+
+var session *sessions.Session
+var secret = []byte("u46IpCV8y5Vlur8YvODJEhgOY8m9JVE5")
 
 func main() {
 
@@ -19,10 +23,15 @@ func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime)
 
+	session = sessions.New(secret)
+	session.Lifetime = 12 * time.Hour
+	session.SameSite = http.SameSiteStrictMode
+
 	app := &app.Application{
 		InfoLog:  infoLog,
 		ErrorLog: errorLog,
 		Setup:    db.DBExists(),
+		Session:  session,
 	}
 
 	srv := &http.Server{
