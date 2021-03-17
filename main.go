@@ -1,34 +1,30 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/devOpifex/skeef-app/app"
-	"github.com/devOpifex/skeef-app/config"
 )
 
 func main() {
 
+	addr := flag.String("addr", ":8080", "Address on which to serve the skeef")
+	flag.Parse()
+
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime)
-
-	config, err := config.Read()
-
-	if err != nil {
-		errorLog.Fatal(err)
-	}
 
 	app := &app.Application{
 		InfoLog:  infoLog,
 		ErrorLog: errorLog,
-		Config:   config,
 	}
 
 	srv := &http.Server{
-		Addr:     config.Port,
+		Addr:     *addr,
 		ErrorLog: errorLog,
 		Handler:  app.Handlers(),
 	}
@@ -40,7 +36,7 @@ func main() {
 		}
 	}()
 
-	infoLog.Printf("Listening on port%s", config.Port)
-	err = srv.ListenAndServe()
+	infoLog.Printf("Listening on port%s", *addr)
+	err := srv.ListenAndServe()
 	log.Fatal(err)
 }

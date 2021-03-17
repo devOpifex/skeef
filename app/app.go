@@ -5,15 +5,12 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-
-	"github.com/devOpifex/skeef-app/config"
 )
 
 // Application Application object
 type Application struct {
 	InfoLog  *log.Logger
 	ErrorLog *log.Logger
-	Config   config.Config
 }
 
 //go:embed ui/html
