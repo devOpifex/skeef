@@ -6,17 +6,25 @@ import (
 	"net/http"
 )
 
+type response struct {
+	Success bool   `json:"success"`
+	Reason  string `json:"reason"`
+}
+
+var Valid = true
+
 // LicenseCheck Check the license
 func (app *Application) LicenseCheck() {
 
 	payload := map[string]string{
-		"username": "angela",
-		"license":  "e711ccb8d4f00ae6fd9b26dedf477f4238c28d7e",
+		"email":   "jcoenep@gmail.com",
+		"license": "f36f66f454e44dd02a1f40a9d65ef2f649db21a1",
 	}
 
 	payloadJSON, err := json.Marshal(payload)
 
 	if err != nil {
+		Valid = false
 		app.ErrorLog.Panic("Internal: Could not check license")
 	}
 
@@ -24,6 +32,7 @@ func (app *Application) LicenseCheck() {
 		"POST", "http://localhost:3000/check", bytes.NewBuffer(payloadJSON))
 
 	if err != nil {
+		Valid = false
 		app.ErrorLog.Fatal("Could not ping license endpoint")
 	}
 
@@ -32,19 +41,32 @@ func (app *Application) LicenseCheck() {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		Valid = false
 		app.ErrorLog.Fatal("Could not ping license endpoint")
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode >= 200 && resp.StatusCode <= 299 {
+	if resp.StatusCode == 200 {
+		Valid = true
 		return
 	}
 
-	app.ErrorLog.Fatal(`
-		Invalid license: 
-			1) It could simply be wrong; double check it is correct.
-			2) It has expired, go to https://skeef.io to renew
-			3) You have deployed the application on more than one machine (wait ~30 minutes to relaunch)
-			If you are sure none of these apply contact: john@opifex.org 
-	`)
+	var result response
+
+	err = json.NewDecoder(resp.Body).Decode(&result)
+
+	if err != nil {
+		Valid = true
+		app.ErrorLog.Fatal("Could not check license")
+	}
+
+	if result.Success {
+		Valid = true
+		return
+	}
+
+	Valid = false
+
+	app.ErrorLog.Fatal(result.Reason)
+
 }
