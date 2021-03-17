@@ -2,22 +2,25 @@ package db
 
 import (
 	"database/sql"
+	"log"
 	"os"
 
 	// sqlite3 driver
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func dbExists() bool {
-	_, err := os.Stat("skeef.sqlite")
-	return os.IsExist(err)
+type Database struct {
+	Con *sql.DB
 }
 
-func dbCreate() error {
+// DBExists Whether the database exists
+func DBExists() bool {
+	_, err := os.Stat("skeef.db")
+	return err == nil
+}
 
-	if dbExists() {
-		return nil
-	}
+// DBCreate Create Database
+func DBCreate() error {
 
 	_, err := os.Create("skeef.db")
 
@@ -28,18 +31,27 @@ func dbCreate() error {
 	return nil
 }
 
-func dbCreateUserTable() error {
+// DBRemove Remove Database
+func DBRemove() error {
+	return os.Remove("skeef.db")
+}
 
+// DBConnect Connect to database
+func DBConnect() *sql.DB {
 	db, err := sql.Open("sqlite3", "skeef.db")
 
 	if err != nil {
-		return err
+		log.Fatal("Could not connect to local database")
 	}
 
-	defer db.Close()
+	return db
+}
 
-	_, err = db.Query(`CREATE TABLE users (
-		username VARCHAR(50) NOT NULL PRIMARY KEY,
+// CreateUserTable Create user table
+func (DB *Database) CreateUserTable() error {
+
+	_, err := DB.Con.Query(`CREATE TABLE users (
+		emails VARCHAR(50) NOT NULL PRIMARY KEY,
 		password VARCHAR(60) NOT NULL,
 		admin INTEGER
 	);`)

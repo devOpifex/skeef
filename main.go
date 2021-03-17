@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/devOpifex/skeef-app/app"
+	"github.com/devOpifex/skeef-app/db"
 )
 
 func main() {
@@ -21,6 +22,7 @@ func main() {
 	app := &app.Application{
 		InfoLog:  infoLog,
 		ErrorLog: errorLog,
+		Setup:    db.DBExists(),
 	}
 
 	srv := &http.Server{

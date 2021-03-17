@@ -5,12 +5,16 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/devOpifex/skeef-app/db"
 )
 
 // Application Application object
 type Application struct {
 	InfoLog  *log.Logger
 	ErrorLog *log.Logger
+	Database db.Database
+	Setup    bool
 }
 
 //go:embed ui/html
@@ -19,6 +23,11 @@ var embededTemplates embed.FS
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
+		return
+	}
+
+	if !app.Setup {
+		http.Redirect(w, r, "/setup", http.StatusSeeOther)
 		return
 	}
 
@@ -46,6 +55,7 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 func (app *Application) Handlers() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/setup", app.setup)
 	mux.Handle("/static/", app.static())
 	return mux
 }
