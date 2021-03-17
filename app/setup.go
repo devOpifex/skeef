@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/devOpifex/skeef-app/db"
@@ -26,5 +25,5 @@ func (app *Application) setup(w http.ResponseWriter, r *http.Request) {
 
 	app.Setup = true
 
-	fmt.Fprintf(w, "Setup here")
+	app.render(w, r, []string{"ui/html/setup1.page.tmpl"}, templateData{})
 }

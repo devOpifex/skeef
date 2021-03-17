@@ -1,8 +1,6 @@
 package app
 
 import (
-	"embed"
-	"html/template"
 	"log"
 	"net/http"
 
@@ -17,9 +15,6 @@ type Application struct {
 	Setup    bool
 }
 
-//go:embed ui/html
-var embededTemplates embed.FS
-
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
@@ -31,24 +26,8 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"ui/html/home.page.tmpl",
-		"ui/html/base.layout.tmpl",
-		"ui/html/footer.partial.tmpl",
-	}
+	app.render(w, r, []string{"ui/html/home.page.tmpl"}, templateData{})
 
-	ts, err := template.ParseFS(embededTemplates, files...)
-	if err != nil {
-		app.ErrorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	err = ts.Execute(w, nil)
-	if err != nil {
-		app.ErrorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
 }
 
 // Handlers Returns all routes
