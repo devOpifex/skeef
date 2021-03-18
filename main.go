@@ -55,6 +55,8 @@ func main() {
 	}
 
 	app.Setup.Tables = app.TablesExists()
+	app.Setup.Admin = app.AdminExists()
+	app.Setup.License = app.LicenseExists()
 
 	defer app.Database.Con.Close()
 

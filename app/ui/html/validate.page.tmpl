@@ -5,7 +5,7 @@
 {{define "main"}}
 <form action='/setup/validate' method='POST' novalidate>
     <div>
-        {{with .Errors.exists}}
+        {{with .Errors.email}}
             <span class="text-red-400">{{.}}</span>
             <br/>
         {{end}}

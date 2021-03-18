@@ -12,17 +12,19 @@ var EmailRX = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9
 
 func (app *Application) setupPage(w http.ResponseWriter, r *http.Request) {
 
-	if app.Setup.Tables {
+	if app.Setup.Admin {
 		http.Redirect(w, r, "/setup/validate", http.StatusSeeOther)
 		return
 	}
 
-	errUser := app.Database.CreateTableUser()
-	errLicense := app.Database.CreateTableLicense()
+	if !app.Setup.Tables {
+		errUser := app.Database.CreateTableUser()
+		errLicense := app.Database.CreateTableLicense()
 
-	if errUser != nil || errLicense != nil {
-		http.Error(w, "Failed to create database tables", http.StatusInternalServerError)
-		return
+		if errUser != nil || errLicense != nil {
+			http.Error(w, "Failed to create database tables", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	app.Setup.Tables = true
@@ -93,6 +95,10 @@ func (app *Application) setupForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Application) validatePage(w http.ResponseWriter, r *http.Request) {
+	if app.Setup.License {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 	app.render(w, r, []string{"ui/html/validate.page.tmpl"}, templateData{})
 }
 
@@ -111,7 +117,12 @@ func (app *Application) validateForm(w http.ResponseWriter, r *http.Request) {
 	email := r.PostForm.Get("email")
 	license := r.PostForm.Get("license")
 
-	app.Database.InsertLicense(email, license)
+	err = app.Database.InsertLicense(email, license)
+
+	if err != nil {
+		http.Error(w, "Could not store license", http.StatusInternalServerError)
+		return
+	}
 	app.Setup.License = true
 
 	app.Session.Put(r, "authenticatedUserID", email)
