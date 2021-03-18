@@ -17,8 +17,14 @@ var secret = []byte("u46IpCV8y5Vlur8YvODJEhgOY8m9JVE5")
 
 func main() {
 
-	addr := flag.String("addr", ":8080", "Address on which to serve the skeef")
+	reset := flag.Bool("reset", false, "Reset the application and redo the first time setup.")
+	addr := flag.String("addr", ":8080", "Address on which to serve the skeef.")
 	flag.Parse()
+
+	if *reset {
+		db.DBRemove()
+		return
+	}
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime)
