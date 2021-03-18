@@ -3,7 +3,7 @@
 {{define "title"}}Home{{end}}
 
 {{define "main"}}
-<form action='/signin' method='POST' novalidate>
+<form action='/admin/signin' method='POST' novalidate>
     {{with .Errors.credentials}}
         <span class="text-red-400">{{.}}</span>
         <br/>

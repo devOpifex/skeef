@@ -54,6 +54,8 @@ func main() {
 		Database: db.Database{Con: db.DBConnect()},
 	}
 
+	app.Setup.Tables = app.TablesExists()
+
 	defer app.Database.Con.Close()
 
 	srv := &http.Server{

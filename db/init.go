@@ -23,7 +23,6 @@ func DBExists() bool {
 
 // DBCreate Create Database
 func DBCreate() error {
-
 	_, err := os.Create("skeef.db")
 
 	if err != nil {
@@ -52,11 +51,7 @@ func DBConnect() *sql.DB {
 // CreateUserTable Create user table
 func (DB *Database) CreateTableUser() error {
 
-	_, err := DB.Con.Query(`CREATE TABLE users (
-		email VARCHAR(50) NOT NULL PRIMARY KEY,
-		hashed_password CHAR(60) NOT NULL,
-		admin INTEGER
-	);`)
+	_, err := DB.Con.Exec("CREATE TABLE users (email VARCHAR(50) NOT NULL, hashed_password CHAR(60) NOT NULL, admin INTEGER);")
 
 	if err != nil {
 		return err
@@ -67,10 +62,7 @@ func (DB *Database) CreateTableUser() error {
 
 func (DB *Database) CreateTableLicense() error {
 
-	_, err := DB.Con.Query(`CREATE TABLE license (
-		email VARCHAR(50) NOT NULL PRIMARY KEY,
-		license VARCHAR(255) NOT NULL
-	);`)
+	_, err := DB.Con.Exec("CREATE TABLE license (email VARCHAR(50) NOT NULL PRIMARY KEY, license VARCHAR(255) NOT NULL);")
 
 	if err != nil {
 		return err
@@ -82,7 +74,7 @@ func (DB *Database) CreateTableLicense() error {
 // InsertUser Inserts a new user in the database
 func (DB *Database) InsertUser(email, password string, admin int) error {
 
-	stmt, err := DB.Con.Prepare("INSERT INTO users SET (user, hashed_password, admin) VALUES (?,?,?);")
+	stmt, err := DB.Con.Prepare("INSERT INTO users (email, hashed_password, admin) VALUES (?,?,?);")
 
 	if err != nil {
 		return err
@@ -102,7 +94,7 @@ func (DB *Database) InsertUser(email, password string, admin int) error {
 // InsertLicense Insert the user license
 func (DB *Database) InsertLicense(email, license string) error {
 
-	stmt, err := DB.Con.Prepare("INSERT INTO license SET (user, license) VALUES (?,?);")
+	stmt, err := DB.Con.Prepare("INSERT INTO license (email, license) VALUES (?,?);")
 
 	if err != nil {
 		return err
@@ -120,11 +112,11 @@ func (DB *Database) InsertLicense(email, license string) error {
 }
 
 func (DB *Database) Authenticate(email, password string) (string, error) {
-	var id int
 	var hashedPassword []byte
-	stmt := "SELECT email, hashed_password FROM licenses WHERE email = ?"
+	stmt := "SELECT hashed_password FROM users WHERE email = ?"
 	row := DB.Con.QueryRow(stmt, email)
-	err := row.Scan(&id, &hashedPassword)
+	err := row.Scan(&hashedPassword)
+
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return "", errors.New("invalid credentials")
