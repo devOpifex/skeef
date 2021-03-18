@@ -27,12 +27,28 @@ func main() {
 	session.Lifetime = 12 * time.Hour
 	session.SameSite = http.SameSiteStrictMode
 
+	if !db.DBExists() {
+		err := db.DBCreate()
+
+		if err != nil {
+			errorLog.Fatal("Could not create database")
+			return
+		}
+	}
+
 	app := &app.Application{
 		InfoLog:  infoLog,
 		ErrorLog: errorLog,
-		Setup:    db.DBExists(),
+		Setup: app.Setup{
+			Tables:  false,
+			Admin:   false,
+			License: false,
+		},
 		Session:  session,
+		Database: db.Database{Con: db.DBConnect()},
 	}
+
+	defer app.Database.Con.Close()
 
 	srv := &http.Server{
 		Addr:     *addr,

@@ -1,0 +1,24 @@
+{{template "base" .}}
+
+{{define "title"}}Home{{end}}
+
+{{define "main"}}
+<form action='/signin' method='POST' novalidate>
+    {{with .Errors.credentials}}
+        <span class="text-red-400">{{.}}</span>
+        <br/>
+    {{end}}
+    <div>
+        <label>Email:</label>
+        <input class="text-gray-900" type='email' name='email' placeholder='me@email.com'>
+    </div>
+    <div>
+        <label>Password:</label>
+        <input class="text-gray-900" type='password' name='password'>
+    </div>
+    <div>
+        <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+        <input type='submit' value='Signin'>
+    </div>
+</form>
+{{end}}

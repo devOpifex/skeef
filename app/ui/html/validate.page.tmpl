@@ -1,0 +1,28 @@
+{{template "base" .}}
+
+{{define "title"}}Home{{end}}
+
+{{define "main"}}
+<form action='/setup/validate' method='POST' novalidate>
+    <div>
+        {{with .Errors.exists}}
+            <span class="text-red-400">{{.}}</span>
+            <br/>
+        {{end}}
+        <label>Email:</label>
+        <input class="text-gray-900" type='email' name='email' placeholder='me@email.com'>
+    </div>
+    <div>
+        {{with .Errors.license}}
+            <span class="text-red-400">{{.}}</span>
+            <br/>
+        {{end}}
+        <label>License:</label>
+        <input class="text-gray-900" type='license' name='license'>
+    </div>
+    <div>
+        <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+        <input type='submit' value='Register'>
+    </div>
+</form>
+{{end}}

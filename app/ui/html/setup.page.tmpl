@@ -1,0 +1,32 @@
+{{template "base" .}}
+
+{{define "title"}}Home{{end}}
+
+{{define "main"}}
+<form action='/setup' method='POST' novalidate>
+    <div>
+        {{with .Errors.exists}}
+            <span class="text-red-400">{{.}}</span>
+            <br/>
+        {{end}}
+        <label>Email:</label>
+        <input class="text-gray-900" type='email' name='email' placeholder='me@email.com'>
+    </div>
+    <div>
+        {{with .Errors.password}}
+            <span class="text-red-400">{{.}}</span>
+            <br/>
+        {{end}}
+        <label>Password:</label>
+        <input class="text-gray-900" type='password' name='password'>
+    </div>
+    <div>
+        <label>Retype password:</label>
+        <input class="text-gray-900" type='password' name='password2'>
+    </div>
+    <div>
+        <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+        <input type='submit' value='Create'>
+    </div>
+</form>
+{{end}}
