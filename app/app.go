@@ -26,14 +26,7 @@ type Setup struct {
 }
 
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
-
-	if !app.Setup.Tables {
-		http.Redirect(w, r, "/setup", http.StatusSeeOther)
-		return
-	}
-
 	app.render(w, r, []string{"ui/html/home.page.tmpl"}, templateData{})
-
 }
 
 // Handlers Returns all routes

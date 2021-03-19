@@ -11,34 +11,10 @@ import (
 var EmailRX = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 func (app *Application) setupPage(w http.ResponseWriter, r *http.Request) {
-
-	if app.Setup.Admin {
-		http.Redirect(w, r, "/setup/validate", http.StatusSeeOther)
-		return
-	}
-
-	if !app.Setup.Tables {
-		errUser := app.Database.CreateTableUser()
-		errLicense := app.Database.CreateTableLicense()
-
-		if errUser != nil || errLicense != nil {
-			http.Error(w, "Failed to create database tables", http.StatusInternalServerError)
-			return
-		}
-	}
-
-	app.Setup.Tables = true
-
 	app.render(w, r, []string{"ui/html/setup.page.tmpl"}, templateData{})
 }
 
 func (app *Application) setupForm(w http.ResponseWriter, r *http.Request) {
-
-	if app.Setup.Admin {
-		http.Error(w, "Admin user already created", http.StatusNotAcceptable)
-		return
-	}
-
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, "Failed to parse form", http.StatusInternalServerError)
@@ -89,26 +65,15 @@ func (app *Application) setupForm(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not hash password", http.StatusInternalServerError)
 	}
 
-	app.Setup.Admin = true
-
+	app.InfoLog.Println("Redirect to validate from signupForm")
 	http.Redirect(w, r, "/setup/validate", http.StatusSeeOther)
 }
 
 func (app *Application) validatePage(w http.ResponseWriter, r *http.Request) {
-	if app.Setup.License {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
 	app.render(w, r, []string{"ui/html/validate.page.tmpl"}, templateData{})
 }
 
 func (app *Application) validateForm(w http.ResponseWriter, r *http.Request) {
-
-	if app.Setup.License {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, "Could not parse form", http.StatusInternalServerError)
@@ -123,9 +88,9 @@ func (app *Application) validateForm(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not store license", http.StatusInternalServerError)
 		return
 	}
-	app.Setup.License = true
 
 	app.Session.Put(r, "authenticatedUserID", email)
 
+	app.InfoLog.Println("Redirect to admin from validate form")
 	http.Redirect(w, r, "/admin", http.StatusSeeOther)
 }

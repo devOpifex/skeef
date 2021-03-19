@@ -1,7 +1,7 @@
-package app
+package db
 
-func (app *Application) TablesExists() bool {
-	userq, err := app.Database.Con.Query("SELECT COUNT(1) FROM users;")
+func (db Database) TablesExists() bool {
+	userq, err := db.Con.Query("SELECT COUNT(1) FROM users;")
 
 	if err != nil {
 		return false
@@ -14,7 +14,7 @@ func (app *Application) TablesExists() bool {
 		users = true
 	}
 
-	licenseq, err := app.Database.Con.Query("SELECT COUNT(1) FROM license;")
+	licenseq, err := db.Con.Query("SELECT COUNT(1) FROM license;")
 
 	if err != nil {
 		return false
@@ -34,8 +34,8 @@ func (app *Application) TablesExists() bool {
 	return false
 }
 
-func (app *Application) LicenseExists() bool {
-	rows, err := app.Database.Con.Query("SELECT COUNT(1) FROM license;")
+func (db Database) LicenseExists() bool {
+	rows, err := db.Con.Query("SELECT COUNT(1) FROM license;")
 
 	if err != nil {
 		return false
@@ -49,8 +49,8 @@ func (app *Application) LicenseExists() bool {
 	return result
 }
 
-func (app *Application) AdminExists() bool {
-	rows, err := app.Database.Con.Query("SELECT COUNT(1) FROM users;")
+func (db Database) AdminExists() bool {
+	rows, err := db.Con.Query("SELECT COUNT(1) FROM users;")
 
 	if err != nil {
 		return false
