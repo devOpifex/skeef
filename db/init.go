@@ -16,13 +16,13 @@ type Database struct {
 }
 
 // DBExists Whether the database exists
-func DBExists() bool {
+func Exists() bool {
 	_, err := os.Stat("skeef.db")
 	return err == nil
 }
 
 // DBCreate Create Database
-func DBCreate() error {
+func Create() error {
 	_, err := os.Create("skeef.db")
 
 	if err != nil {
@@ -33,12 +33,12 @@ func DBCreate() error {
 }
 
 // DBRemove Remove Database
-func DBRemove() error {
+func Remove() error {
 	return os.Remove("skeef.db")
 }
 
 // DBConnect Connect to database
-func DBConnect() *sql.DB {
+func Connect() *sql.DB {
 	db, err := sql.Open("sqlite3", "skeef.db")
 
 	if err != nil {

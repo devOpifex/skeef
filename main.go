@@ -22,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	if *reset {
-		db.DBRemove()
+		db.Remove()
 		return
 	}
 
@@ -37,13 +37,12 @@ func main() {
 		InfoLog:  infoLog,
 		ErrorLog: errorLog,
 		Session:  session,
-		Database: db.Database{Con: db.DBConnect()},
 	}
 
 	defer app.Database.Con.Close()
 
-	if !db.DBExists() {
-		err := db.DBCreate()
+	if !db.Exists() {
+		err := db.Create()
 
 		if err != nil {
 			errorLog.Fatal("Could not create database")
@@ -53,16 +52,20 @@ func main() {
 		err = app.Database.CreateTableUser()
 
 		if err != nil {
+			db.Remove()
 			errorLog.Fatal("Could not create users table")
 			return
 		}
 
 		err = app.Database.CreateTableLicense()
 		if err != nil {
+			db.Remove()
 			errorLog.Fatal("Could not create license table")
 			return
 		}
 	}
+
+	app.Database.Con = db.Connect()
 
 	srv := &http.Server{
 		Addr:     *addr,
