@@ -51,7 +51,7 @@ func Connect() *sql.DB {
 // CreateUserTable Create user table
 func (DB *Database) CreateTableUser() error {
 
-	_, err := DB.Con.Exec("CREATE TABLE users (email VARCHAR(50) NOT NULL, hashed_password CHAR(60) NOT NULL, admin INTEGER);")
+	_, err := DB.Con.Exec("CREATE TABLE users (email VARCHAR(50) NOT NULL PRIMARY KEY, hashed_password CHAR(60) NOT NULL, admin INTEGER);")
 
 	if err != nil {
 		return err

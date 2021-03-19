@@ -39,9 +39,9 @@ func main() {
 		Session:  session,
 	}
 
-	defer app.Database.Con.Close()
-
+	firstrun := false
 	if !db.Exists() {
+		firstrun = true
 		err := db.Create()
 
 		if err != nil {
@@ -49,8 +49,14 @@ func main() {
 			return
 		}
 
-		err = app.Database.CreateTableUser()
+	}
 
+	// connect
+	app.Database.Con = db.Connect()
+	defer app.Database.Con.Close()
+
+	if firstrun {
+		err := app.Database.CreateTableUser()
 		if err != nil {
 			db.Remove()
 			errorLog.Fatal("Could not create users table")
@@ -64,8 +70,6 @@ func main() {
 			return
 		}
 	}
-
-	app.Database.Con = db.Connect()
 
 	srv := &http.Server{
 		Addr:     *addr,

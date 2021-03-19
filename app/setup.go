@@ -11,6 +11,12 @@ import (
 var EmailRX = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 func (app *Application) setupPage(w http.ResponseWriter, r *http.Request) {
+
+	if app.Database.AdminExists() {
+		http.Redirect(w, r, "/setup/validate", http.StatusSeeOther)
+		return
+	}
+
 	app.render(w, r, []string{"ui/html/setup.page.tmpl"}, templateData{})
 }
 
@@ -65,11 +71,14 @@ func (app *Application) setupForm(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not hash password", http.StatusInternalServerError)
 	}
 
-	app.InfoLog.Println("Redirect to validate from signupForm")
 	http.Redirect(w, r, "/setup/validate", http.StatusSeeOther)
 }
 
 func (app *Application) validatePage(w http.ResponseWriter, r *http.Request) {
+	if app.Database.LicenseExists() {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 	app.render(w, r, []string{"ui/html/validate.page.tmpl"}, templateData{})
 }
 
@@ -91,6 +100,5 @@ func (app *Application) validateForm(w http.ResponseWriter, r *http.Request) {
 
 	app.Session.Put(r, "authenticatedUserID", email)
 
-	app.InfoLog.Println("Redirect to admin from validate form")
 	http.Redirect(w, r, "/admin", http.StatusSeeOther)
 }

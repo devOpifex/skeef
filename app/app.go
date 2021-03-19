@@ -26,6 +26,17 @@ type Setup struct {
 }
 
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
+
+	if !app.Database.AdminExists() {
+		http.Redirect(w, r, "/setup", http.StatusSeeOther)
+		return
+	}
+
+	if !app.Database.LicenseExists() {
+		http.Redirect(w, r, "/setup/validate", http.StatusSeeOther)
+		return
+	}
+
 	app.render(w, r, []string{"ui/html/home.page.tmpl"}, templateData{})
 }
 
