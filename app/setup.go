@@ -47,7 +47,7 @@ func (app *Application) setupForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if utf8.RuneCountInString(password) < 5 {
-		tmplData.Errors["password"] = "Password must be at least 5 characters"
+		tmplData.Errors["password"] = "Password must be at least 5 characters long"
 	}
 
 	if !EmailRX.MatchString(email) {

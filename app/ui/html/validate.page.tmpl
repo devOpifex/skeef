@@ -1,28 +1,39 @@
 {{template "base" .}}
 
-{{define "title"}}Home{{end}}
+{{define "title"}}License{{end}}
 
 {{define "main"}}
-<form action='/setup/validate' method='POST' novalidate>
-    <div>
-        {{with .Errors.email}}
-            <span class="text-red-400">{{.}}</span>
-            <br/>
-        {{end}}
-        <label>Email:</label>
-        <input class="text-gray-900" type='email' name='email' placeholder='me@email.com'>
-    </div>
-    <div>
-        {{with .Errors.license}}
-            <span class="text-red-400">{{.}}</span>
-            <br/>
-        {{end}}
-        <label>License:</label>
-        <input class="text-gray-900" type='license' name='license'>
-    </div>
-    <div>
-        <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
-        <input type='submit' value='Register'>
-    </div>
-</form>
+<div class="flex justify-center pt-20">
+    <form action='/setup/validate' method='POST' novalidate>
+        <h1 class="text-center text-5xl pb-4">License</h1>
+        <p class = "text-center text-xl pb-4">
+            Enter your license and the email address used
+            associated with it.
+        </p>
+        <div>
+            <div class="bg-gray-900 rounded-md px-6 py-4">
+                <div>
+                    <label class="font-bold uppercase text-xs">Email</label>
+                    <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='email' name='email' placeholder='me@email.com'>
+                </div>
+                <div class="pt-3">
+                    <label class="font-bold uppercase text-xs">License</label>
+                    <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='license'>
+                </div>
+                <div>
+                    <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+                    <input class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' value='Create'>
+                </div>
+            </div>
+        </div>
+    <p class="pt-4">
+        You can always update this later. 
+    </p>
+    <p class="pt-2 italic">
+        Don't have a license? Obtain one for free on
+        <a class="underline" href="https://skeef.io" target="_blank">skeef.io</a>
+    </p>
+    </form>
+</div>
 {{end}}
+
