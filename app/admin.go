@@ -1,6 +1,9 @@
 package app
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 func (app *Application) signinPage(w http.ResponseWriter, r *http.Request) {
 	tmpls := []string{
@@ -41,10 +44,32 @@ func (app *Application) isAuthenticated(r *http.Request) bool {
 	return app.Session.Exists(r, "authenticatedUserID")
 }
 
+func (app *Application) getAuthenticated(r *http.Request) string {
+	auth := app.Session.Get(r, "authenticatedUserID")
+	return fmt.Sprintf("%v", auth)
+}
+
 func (app *Application) adminPage(w http.ResponseWriter, r *http.Request) {
 	if !app.isAuthenticated(r) {
 		http.Redirect(w, r, "/admin/signin", http.StatusSeeOther)
 		return
 	}
-	app.render(w, r, []string{"ui/html/admin.page.tmpl"}, templateData{})
+
+	email := app.getAuthenticated(r)
+
+	if app.License.Email == "" {
+		license, err := app.Database.GetLicense(email)
+
+		if err != nil {
+			http.Error(w, "Could not fetch license", http.StatusInternalServerError)
+			return
+		}
+
+		app.License = license
+	}
+
+	tmplData := templateData{}
+	tmplData.License = app.License
+
+	app.render(w, r, []string{"ui/html/admin.page.tmpl"}, tmplData)
 }

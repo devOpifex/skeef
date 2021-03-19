@@ -117,6 +117,9 @@ func (app *Application) validateForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	app.License.Email = email
+	app.License.Email = license
+
 	app.Session.Put(r, "authenticatedUserID", email)
 
 	http.Redirect(w, r, "/admin", http.StatusSeeOther)

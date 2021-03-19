@@ -116,6 +116,33 @@ func (DB *Database) InsertLicense(email, license string) error {
 	return nil
 }
 
+func (DB *Database) GetLicense(email string) (License, error) {
+	res := DB.Con.QueryRow("SELECT license FROM license;")
+
+	license := License{}
+	license.Email = email
+	res.Scan(&license.License)
+
+	return license, nil
+}
+
+func (DB *Database) UpdateLicense(email, license string) error {
+
+	stmt, err := DB.Con.Prepare("UPDATE license SET license = ? WHERE email = ?")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(license, email)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (DB *Database) Authenticate(email, password string) (string, error) {
 	var hashedPassword []byte
 	stmt := "SELECT hashed_password FROM users WHERE email = ?"
