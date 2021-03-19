@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"unicode/utf8"
 
+	"github.com/devOpifex/skeef-app/db"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -68,7 +69,7 @@ func (app *Application) setupForm(w http.ResponseWriter, r *http.Request) {
 	err = app.Database.InsertUser(email, string(hashedPassword), 1)
 
 	if err != nil {
-		http.Error(w, "Could not hash password", http.StatusInternalServerError)
+		http.Error(w, "Could not create the user", http.StatusInternalServerError)
 	}
 
 	http.Redirect(w, r, "/setup/validate", http.StatusSeeOther)
@@ -90,6 +91,24 @@ func (app *Application) validateForm(w http.ResponseWriter, r *http.Request) {
 
 	email := r.PostForm.Get("email")
 	license := r.PostForm.Get("license")
+
+	tmplData := templateData{}
+	tmplData.Errors = make(map[string]string)
+	app.License = db.License{
+		Email:   email,
+		License: license,
+	}
+
+	response := app.LicenseCheck(false)
+
+	if !response.Success {
+		tmplData.Errors["license"] = response.Reason
+	}
+
+	if len(tmplData.Errors) > 0 {
+		app.render(w, r, []string{"ui/html/validate.page.tmpl"}, tmplData)
+		return
+	}
 
 	err = app.Database.InsertLicense(email, license)
 

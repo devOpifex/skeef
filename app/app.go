@@ -16,7 +16,7 @@ type Application struct {
 	ErrorLog *log.Logger
 	Database db.Database
 	Session  *sessions.Session
-	Setup    Setup
+	License  db.License
 }
 
 type Setup struct {

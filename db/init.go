@@ -91,6 +91,11 @@ func (DB *Database) InsertUser(email, password string, admin int) error {
 	return nil
 }
 
+type License struct {
+	Email   string
+	License string
+}
+
 // InsertLicense Insert the user license
 func (DB *Database) InsertLicense(email, license string) error {
 
