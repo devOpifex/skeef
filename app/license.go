@@ -19,6 +19,17 @@ type request struct {
 
 // LicenseCheck Check the license
 func (app *Application) LicenseCheck(ping bool) response {
+
+	if app.License.License == "" {
+		license, err := app.Database.GetLicense()
+
+		if err != nil {
+			return response{false, "Could not fetch license from database"}
+		}
+
+		app.License = license
+	}
+
 	payload := request{
 		Email:   app.License.Email,
 		License: app.License.License,

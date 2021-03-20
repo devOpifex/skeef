@@ -3,8 +3,54 @@
 {{define "title"}}Admin Area{{end}}
 
 {{define "main"}}
-<div class="container mx-auto">
+<div class="container mx-auto pt-12">
   <h1 class="uppercase text-4xl">Admin Area</h1>
-  <div>{{ .License.License }}</div>
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <p>Your skeef license</p>
+      <div>{{ .License.License }}</div>
+    </div>
+    <div>
+      <h2 class="uppercase text-2xl pb-4">Twitter application credentials</h2>
+      <form action='/admin' method='POST' novalidate>
+          <div>
+              <div class="bg-gray-900 rounded-md px-6 py-4">
+                  {{with .Errors.any}}
+                      <span class="text-red-400">{{.}}</span>
+                      <br/>
+                  {{end}}
+                  <div>
+                      <label class="font-bold uppercase text-xs">API Key</label>
+                      <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='apiKey'>
+                  </div>
+                  <div class="pt-3">
+                      <label class="font-bold uppercase text-xs">API secret</label>
+                      <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='apiSecret'>
+                  </div>
+                  <div class="pt-3">
+                      <label class="font-bold uppercase text-xs">Access Token</label>
+                      <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='accessToken'>
+                  </div>
+                  <div class="pt-3">
+                      <label class="font-bold uppercase text-xs">Access Secret</label>
+                      <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='accessSecret'>
+                  </div>
+                  <div>
+                      <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+                      {{ if .HasTokens}}
+                        <input class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' value='Update'>
+                      {{ else }}
+                        <input class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' value='Create'>
+                      {{ end }}
+                  </div>
+              </div>
+          </div>
+      </form>
+      <p class="pt-2 italic">
+          Don't have an application? Obtain one for free on
+          <a class="underline" href="https://developer.twitter.com" target="_blank">twitter.com</a>
+      </p>
+    </div>
+  </div>
 </div>
 {{end}}

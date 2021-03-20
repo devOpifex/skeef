@@ -69,6 +69,13 @@ func main() {
 			errorLog.Fatal("Could not create license table")
 			return
 		}
+
+		err = app.Database.CreateTableTwitterApp()
+		if err != nil {
+			db.Remove()
+			errorLog.Fatal("Could not create twitter app table")
+			return
+		}
 	}
 
 	srv := &http.Server{
