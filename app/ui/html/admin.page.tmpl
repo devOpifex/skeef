@@ -12,6 +12,11 @@
     </div>
     <div>
       <h2 class="uppercase text-2xl pb-4">Twitter application credentials</h2>
+      {{ if .HasTokens}}
+        <p class="text-green-400 pb-4">You have already setup your credentials.</p>
+      {{ else }}
+        <p class="text-red-400 pb-4">You have <strong>not</strong> yet setup your credentials.</p>
+      {{ end }}
       <form action='/admin' method='POST' novalidate>
           <div>
               <div class="bg-gray-900 rounded-md px-6 py-4">
@@ -47,8 +52,8 @@
           </div>
       </form>
       <p class="pt-2 italic">
-          Don't have an application? Obtain one for free on
-          <a class="underline" href="https://developer.twitter.com" target="_blank">twitter.com</a>
+          Don't have a Twitter application? Obtain one for free on
+          <a class="underline" href="https://developer.twitter.com" target="_blank">twitter's developer portal.</a>
       </p>
     </div>
   </div>

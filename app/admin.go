@@ -89,6 +89,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 	hasTokens := app.Database.TokensExist()
 	tmplData.HasTokens = hasTokens
+	tmplData.License = app.License
 
 	apiKey := r.Form.Get("apiKey")
 	apiSecret := r.Form.Get("apiSecret")
@@ -111,6 +112,8 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 			tmplData.Errors["any"] = "Could not store data"
 		}
 	}
+
+	tmplData.HasTokens = app.Database.TokensExist()
 
 	app.render(w, r, []string{"ui/html/admin.page.tmpl"}, tmplData)
 }
