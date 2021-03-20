@@ -15,6 +15,7 @@ type templateData struct {
 	CSRFToken     string
 	License       db.License
 	HasTokens     bool
+	Flash         string
 }
 
 //go:embed ui/html
