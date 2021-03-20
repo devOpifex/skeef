@@ -71,6 +71,17 @@ func (DB *Database) CreateTableLicense() error {
 	return nil
 }
 
+func (DB *Database) CreateTableTwitterApp() error {
+
+	_, err := DB.Con.Exec("CREATE TABLE twitter_app (api_key VARCHAR(255) NOT NULL, api_secret VARCHAR(255) NOT NULL, access_token VARCHAR(255) NOT NULL, access_secret VARCHAR(255) NOT NULL, id INTEGER);")
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // InsertUser Inserts a new user in the database
 func (DB *Database) InsertUser(email, password string, admin int) error {
 
@@ -83,58 +94,6 @@ func (DB *Database) InsertUser(email, password string, admin int) error {
 	defer stmt.Close()
 
 	_, err = stmt.Exec(email, password, admin)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-type License struct {
-	Email   string
-	License string
-}
-
-// InsertLicense Insert the user license
-func (DB *Database) InsertLicense(email, license string) error {
-
-	stmt, err := DB.Con.Prepare("INSERT INTO license (email, license) VALUES (?,?);")
-
-	if err != nil {
-		return err
-	}
-
-	defer stmt.Close()
-
-	_, err = stmt.Exec(email, license)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (DB *Database) GetLicense(email string) (License, error) {
-	res := DB.Con.QueryRow("SELECT license FROM license;")
-
-	license := License{}
-	license.Email = email
-	res.Scan(&license.License)
-
-	return license, nil
-}
-
-func (DB *Database) UpdateLicense(email, license string) error {
-
-	stmt, err := DB.Con.Prepare("UPDATE license SET license = ? WHERE email = ?")
-
-	if err != nil {
-		return err
-	}
-
-	_, err = stmt.Exec(license, email)
 
 	if err != nil {
 		return err

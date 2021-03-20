@@ -17,3 +17,12 @@ func (db Database) AdminExists() bool {
 
 	return count > 0
 }
+
+func (db Database) TokensExist() bool {
+	rows := db.Con.QueryRow("SELECT COUNT(1) FROM twitter_app;")
+
+	var count int
+	rows.Scan(&count)
+
+	return count > 0
+}
