@@ -120,9 +120,19 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			tmplData.Errors["license"] = "Failed to update license"
+		}
+
+		oldLicense := app.License.License
+		app.License.License = newLicense
+		response := app.LicenseCheck(false)
+
+		if !response.Success {
+			tmplData.Errors["license"] = response.Reason
+			app.License.License = oldLicense
 		} else {
 			app.License.License = newLicense
 		}
+
 	}
 
 	tmplData.License = app.License
