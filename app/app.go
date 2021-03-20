@@ -55,6 +55,7 @@ func (app *Application) Handlers() http.Handler {
 	mux.Post("/admin/signin", dynamicMiddleware.Then(http.HandlerFunc(app.signinForm)))
 	mux.Get("/admin", dynamicMiddleware.Then(http.HandlerFunc(app.adminPage)))
 	mux.Post("/admin", dynamicMiddleware.Then(http.HandlerFunc(app.adminForm)))
+	mux.Get("/admin/signout", dynamicMiddleware.ThenFunc(app.signout))
 
 	mux.Get("/static/", app.static())
 

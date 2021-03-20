@@ -117,3 +117,8 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 	app.render(w, r, []string{"ui/html/admin.page.tmpl"}, tmplData)
 }
+
+func (app *Application) signout(w http.ResponseWriter, r *http.Request) {
+	app.Session.Remove(r, "authenticatedUserID")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}

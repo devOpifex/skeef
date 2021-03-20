@@ -3,22 +3,28 @@
 {{define "title"}}Home{{end}}
 
 {{define "main"}}
-<form action='/admin/signin' method='POST' novalidate>
-    {{with .Errors.credentials}}
-        <span class="text-red-400">{{.}}</span>
-        <br/>
-    {{end}}
-    <div>
-        <label>Email:</label>
-        <input class="text-gray-900" type='email' name='email' placeholder='me@email.com'>
-    </div>
-    <div>
-        <label>Password:</label>
-        <input class="text-gray-900" type='password' name='password'>
-    </div>
-    <div>
-        <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
-        <input type='submit' value='Signin'>
-    </div>
-</form>
+<div class="flex justify-center pt-20">
+    <form action='/admin/signin' method='POST' novalidate>
+        <h1 class="text-center text-5xl pb-4">Signin</h1>
+        <p class = "text-center text-xl pb-4">Sign into the admin area</p>
+        <div class="bg-gray-900 rounded-md px-6 py-4">
+            {{with .Errors.credentials}}
+                <span class="text-red-400">{{.}}</span>
+                <br/>
+            {{end}}
+            <div>
+                <label class="font-bold uppercase text-xs">Email</label>
+                <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='email' name='email' placeholder='me@email.com'>
+            </div>
+            <div class="pt-3">
+                <label class="font-bold uppercase text-xs">Password</label>
+                <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='password'>
+            </div>
+            <div>
+                <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+                <input class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' value='Signin'>
+            </div>
+        </div>
+    </form>
+</div>
 {{end}}
