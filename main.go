@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -43,6 +44,7 @@ func main() {
 	if !db.Exists() {
 		firstrun = true
 		err := db.Create()
+		fmt.Printf("Visit port %v to setup skeef!", *addr)
 
 		if err != nil {
 			errorLog.Fatal("Could not create database")

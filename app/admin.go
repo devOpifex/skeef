@@ -88,31 +88,44 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 	tmplData.Errors = make(map[string]string)
 
 	hasTokens := app.Database.TokensExist()
-	tmplData.HasTokens = hasTokens
-	tmplData.License = app.License
 
-	apiKey := r.Form.Get("apiKey")
-	apiSecret := r.Form.Get("apiSecret")
-	accessToken := r.Form.Get("accessToken")
-	accessSecret := r.Form.Get("accessSecret")
+	action := r.Form.Get("action")
+	if action == "twitter" {
+		apiKey := r.Form.Get("apiKey")
+		apiSecret := r.Form.Get("apiSecret")
+		accessToken := r.Form.Get("accessToken")
+		accessSecret := r.Form.Get("accessSecret")
 
-	// UPDATE OR INSERT TOKENS
-	if hasTokens {
-		err = app.Database.UpdateTokens(apiKey, apiSecret, accessToken, accessSecret)
+		// UPDATE OR INSERT TOKENS
+		if hasTokens {
+			err = app.Database.UpdateTokens(apiKey, apiSecret, accessToken, accessSecret)
 
-		if err != nil {
-			app.ErrorLog.Println(err)
-			tmplData.Errors["any"] = "Could not store data"
-		}
-	} else {
-		err = app.Database.InsertTokens(apiKey, apiSecret, accessToken, accessSecret)
+			if err != nil {
+				app.ErrorLog.Println(err)
+				tmplData.Errors["any"] = "Could not store data"
+			}
+		} else {
+			err = app.Database.InsertTokens(apiKey, apiSecret, accessToken, accessSecret)
 
-		if err != nil {
-			app.ErrorLog.Println(err)
-			tmplData.Errors["any"] = "Could not store data"
+			if err != nil {
+				app.ErrorLog.Println(err)
+				tmplData.Errors["any"] = "Could not store data"
+			}
 		}
 	}
 
+	if action == "license" {
+		newLicense := r.Form.Get("license")
+		err = app.Database.UpdateLicense(app.GetAuthenticated(r), newLicense)
+
+		if err != nil {
+			tmplData.Errors["license"] = "Failed to update license"
+		} else {
+			app.License.License = newLicense
+		}
+	}
+
+	tmplData.License = app.License
 	tmplData.HasTokens = app.Database.TokensExist()
 
 	app.render(w, r, []string{"ui/html/admin.page.tmpl"}, tmplData)

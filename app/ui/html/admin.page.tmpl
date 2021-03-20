@@ -9,7 +9,22 @@
   <div class="grid grid-cols-2 gap-4">
     <div>
       <p>Your skeef license</p>
-      <div>{{ .License.License }}</div>
+      <form action='/admin' method='POST' novalidate>
+        <div class="bg-gray-900 rounded-md px-6 py-4">
+          {{with .Errors.license}}
+              <span class="text-red-400">{{.}}</span>
+              <br/>
+          {{end}}
+          <div class="pt-3">
+              <label class="font-bold uppercase text-xs">License</label>
+              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='license' placeholder='{{ .License.License }}'>
+          </div>
+          <div>
+            <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+            <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='license'>Update</button>
+          </div>
+        </div>
+      </form>
     </div>
     <div>
       <h2 class="uppercase text-2xl pb-4">Twitter application credentials</h2>
@@ -22,8 +37,8 @@
           <div>
               <div class="bg-gray-900 rounded-md px-6 py-4">
                   {{with .Errors.any}}
-                      <span class="text-red-400">{{.}}</span>
-                      <br/>
+                    <span class="text-red-400">{{.}}</span>
+                    <br/>
                   {{end}}
                   <div>
                       <label class="font-bold uppercase text-xs">API Key</label>
@@ -44,9 +59,9 @@
                   <div>
                       <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
                       {{ if .HasTokens}}
-                        <input class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' value='Update'>
+                        <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='twitter'>Update</button>
                       {{ else }}
-                        <input class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' value='Create'>
+                        <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='twitter'>Create</button>
                       {{ end }}
                   </div>
               </div>
