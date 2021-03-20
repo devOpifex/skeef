@@ -75,7 +75,7 @@ func (app *Application) LicenseCheck(ping bool) response {
 	}
 
 	if result.Success {
-		return response{true, "Valid"}
+		return response{true, "Valid license"}
 	}
 
 	app.ErrorLog.Println(result.Reason)

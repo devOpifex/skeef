@@ -134,6 +134,12 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+	if action == "validity" {
+		response := app.LicenseCheck(false)
+
+		tmplData.Flash = response.Reason
+	}
+
 	tmplData.License = app.License
 	tmplData.HasTokens = app.Database.TokensExist()
 
