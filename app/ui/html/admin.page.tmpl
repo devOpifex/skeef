@@ -13,85 +13,92 @@
     <div class="grid grid-cols-3 gap-4 pb-8">
     <div class="bg-gray-900 rounded-md px-6 py-4 col-span-2">
       <h3 class="uppercase text-2xl py-4">Manage Streams</h3>
-      <p>
+      <p class="pb-4">
         Manage your streams
         [<span class="text-sm font-light">only one can be actively streaming at any one time.</span>]
       </p>
       {{ with .Errors.existingStreams }}
-        <p class="pt-12 text-red-400">{{ . }}</p>
+        <p class="text-red-400">{{ . }}</p>
       {{ end }}
       {{ if not .Streams }}
-        <p class="pt-12 text-red-400">No streams, add one to get started.</p>
+        <p class="text-red-400">No streams, add one to get started.</p>
       {{ else }}
         {{ range $index, $stream := .Streams}}
-          <div class="pt-3 grid grid-cols-6">
-            <div>
+          <div class="pb-1 grid grid-cols-9 text-xs">
+            <div class="py-1 col-span-3">
               <p>{{ $stream.Name }}</p>
             </div>
-            <div class="py-2">
+            <div class="py-1">
               <p>
               {{ if $stream.Track }}
-                <svg class="h6- w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                <svg class="w-4 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
               {{ else }}
-                <svg class="h6- w-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                <svg class="w-4 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               {{ end }}
                 track
               </p>
             </div>
-            <div class="py-2">
+            <div class="py-1">
               <p>
               {{ if $stream.Follow }}
-                <svg class="h6- w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                <svg class="w-4 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
               {{ else }}
-                <svg class="h6- w-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                <svg class="w-4 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               {{ end }}
                 follow
               </p>
             </div>
-            <div class="py-2">
+            <div class="py-1">
               <p>
               {{ if $stream.Locations }}
-                <svg class="h6- w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                <svg class="w-4 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
               {{ else }}
-                <svg class="h6- w-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                <svg class="w-4 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               {{ end }}
                 locations
               </p>
             </div>
-            <div class="py-2">
+            <div class="py-1">
               <p>
               {{ if $stream.Active }}
-                <svg class="h6- w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                <svg class="w-4 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               {{ else }}
-                <svg class="h6- w-6 text-red-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                <svg class="w-4 text-red-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               {{ end }}
                 Stream
               </p>
             </div>
-            <div class="py-2">
+            <div class="py-1">
               <p>
-                <svg class="h6- w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="display: inline;">
+                <svg class="w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="display: inline;">
                   <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                 </svg>
                 Edit
+              </p>
+            </div>
+            <div class="py-1">
+              <p>
+                <svg class="w-4 text-red-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Delete
               </p>
             </div>
           </div>
@@ -128,7 +135,8 @@
             </div>
             <div class="pt-3">
               <label class="font-bold uppercase text-xs">Locations</label>
-              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='locations'>
+              <input id="locationsStream" class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='locations'>
+              <p class="text-yellow-400 italic text-sm pt-2" id="locationsWarning"></p>
             </div>
             <div>
               <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
