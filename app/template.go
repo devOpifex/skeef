@@ -6,6 +6,7 @@ import (
 	"text/template"
 
 	"github.com/devOpifex/skeef-app/db"
+	"github.com/devOpifex/skeef-app/stream"
 	"github.com/justinas/nosurf"
 )
 
@@ -16,6 +17,7 @@ type templateData struct {
 	License       db.License
 	HasTokens     bool
 	Flash         string
+	Stream        stream.Stream
 }
 
 //go:embed ui/html

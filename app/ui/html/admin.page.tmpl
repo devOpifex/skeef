@@ -3,15 +3,46 @@
 {{define "title"}}Admin Area{{end}}
 
 {{define "main"}}
-<div class="container mx-auto pt-12">
-  <h1 class="uppercase text-4xl pt-4">Admin Area</h1>
+<div class="container mx-auto pt-8">
+  <h1 class="uppercase font-light text-4xl pt-4">Admin Area</h1>
   <p class="pb-8">
     <a class="underline" href="/admin/signout">signout</a>
   </p>
+  {{ if .HasTokens }}
+  <div class="pb-8">
+    <div class="bg-gray-900 rounded-md px-6 py-4">
+      <h2 class="uppercase text-2xl py-4">Stream</h2>
+      <form action='/admin' method='POST' novalidate>
+        <div>
+          {{with .Errors.stream}}
+            <span class="text-red-400">{{.}}</span>
+            <br/>
+          {{end}}
+          <div class="pt-3">
+            <label class="font-bold uppercase text-xs">Follow</label>
+            <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='follow' placeholder="{{ .Stream.Follow }}">
+          </div>
+          <div class="pt-3">
+            <label class="font-bold uppercase text-xs">Track</label>
+            <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='track' placeholder="{{ .Stream.Track }}">
+          </div>
+          <div class="pt-3">
+            <label class="font-bold uppercase text-xs">Locations</label>
+            <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='locations' placeholder="{{ .Stream.Locations }}">
+          </div>
+          <div>
+            <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+            <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='stream'>Start</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  {{ end }}
   <div class="grid grid-cols-2 gap-4">
     <div>
       <div class="bg-gray-900 rounded-md px-6 py-4">
-        <h2 class="uppercase text-2xl py-4">Your license</h2>
+        <h2 class="uppercase text-2xl py-4">License</h2>
         <form action='/admin' method='POST' novalidate>
           <div>
             {{with .Errors.license}}
@@ -41,13 +72,12 @@
         </form>
       </div>
       <div class="bg-gray-900 text-white my-8 px-4 py-4 rounded-lg">
-        <h2 class="text-3xl font-semibold">Security</h2>
-        <p class="pt-4 pb-2">Change your password.</p>
-          {{with .Flash}}
-            <div class="bg-background rounded-sm px-2 py-2">
-              {{.}}
-            </div>
-          {{end}}
+        <h2 class="text-3xl uppercase">Security</h2>
+        {{with .Flash}}
+          <div class="bg-background rounded-sm px-2 py-2">
+            {{.}}
+          </div>
+        {{end}}
         <form action='/admin' method='POST' novalidate>
           {{with .Errors.password}}
               <span class="text-red-400">{{.}}</span>
@@ -79,43 +109,46 @@
           <p class="text-red-400 pb-4">You have <strong>not</strong> yet setup your credentials.</p>
         {{ end }}
         <form action='/admin' method='POST' novalidate>
+          <div>
             <div>
-                <div>
-                    {{with .Errors.any}}
-                      <span class="text-red-400">{{.}}</span>
-                      <br/>
-                    {{end}}
-                    <div>
-                        <label class="font-bold uppercase text-xs">API Key</label>
-                        <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='apiKey'>
-                    </div>
-                    <div class="pt-3">
-                        <label class="font-bold uppercase text-xs">API secret</label>
-                        <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='apiSecret'>
-                    </div>
-                    <div class="pt-3">
-                        <label class="font-bold uppercase text-xs">Access Token</label>
-                        <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='accessToken'>
-                    </div>
-                    <div class="pt-3">
-                        <label class="font-bold uppercase text-xs">Access Secret</label>
-                        <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='accessSecret'>
-                    </div>
-                    <div>
-                        <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
-                        {{ if .HasTokens}}
-                          <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='twitter'>Update</button>
-                        {{ else }}
-                          <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='twitter'>Create</button>
-                        {{ end }}
-                    </div>
-                </div>
+              {{with .Errors.any}}
+                <span class="text-red-400">{{.}}</span>
+                <br/>
+              {{end}}
+              <div>
+                <label class="font-bold uppercase text-xs">API Key</label>
+                <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='apiKey'>
+              </div>
+              <div class="pt-3">
+                <label class="font-bold uppercase text-xs">API secret</label>
+                <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='apiSecret'>
+              </div>
+              <div class="pt-3">
+                <label class="font-bold uppercase text-xs">Access Token</label>
+                <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='accessToken'>
+              </div>
+              <div class="pt-3">
+                <label class="font-bold uppercase text-xs">Access Secret</label>
+                <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='accessSecret'>
+              </div>
+              <div>
+                <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+                {{ if .HasTokens }}
+                  <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='twitter'>Update</button>
+                {{ else }}
+                  <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='twitter'>Create</button>
+                {{ end }}
+              </div>
             </div>
+          </div>
         </form>
+        {{ if .HasTokens }}
+        {{ else }}
         <p class="pt-2 italic">
-            Don't have a Twitter application? Obtain one for free on
-            <a class="underline" href="https://developer.twitter.com" target="_blank">twitter's developer portal.</a>
+          Don't have a Twitter application? Obtain one for free on
+          <a class="underline" href="https://developer.twitter.com" target="_blank">twitter's developer portal.</a>
         </p>
+        {{ end }}
       </div>
     </div>
   </div>
