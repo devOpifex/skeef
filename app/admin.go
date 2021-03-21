@@ -3,6 +3,9 @@ package app
 import (
 	"fmt"
 	"net/http"
+	"unicode/utf8"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (app *Application) signinPage(w http.ResponseWriter, r *http.Request) {
@@ -138,6 +141,43 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 		response := app.LicenseCheck(false)
 
 		tmplData.Flash = response.Reason
+	}
+
+	if action == "newPassword" {
+		password := r.PostForm.Get("password")
+		password2 := r.PostForm.Get("password2")
+
+		if password == "" || password2 == "" {
+			tmplData.Errors["password"] = "Empty password"
+		}
+
+		if password != password2 {
+			tmplData.Errors["password"] = "Passwords do not match"
+		}
+
+		if utf8.RuneCountInString(password) < 5 {
+			tmplData.Errors["password"] = "Password must be at least 5 characters"
+		}
+
+		if len(tmplData.Errors) > 0 {
+			app.render(w, r, []string{"ui/html/profile.page.tmpl"}, tmplData)
+			return
+		}
+
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
+		if err != nil {
+			http.Error(w, "Could not hash password", http.StatusInternalServerError)
+			return
+		}
+
+		err = app.Database.ChangePassword(app.License.Email, string(hashedPassword))
+
+		if err != nil {
+			http.Error(w, "Could not change password", http.StatusInternalServerError)
+			return
+		}
+
+		tmplData.Flash = "Password changed!"
 	}
 
 	tmplData.License = app.License

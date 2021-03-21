@@ -27,6 +27,22 @@ func (DB *Database) InsertUser(email, password string, admin int) error {
 	return nil
 }
 
+func (DB *Database) ChangePassword(email, password string) error {
+	stmt, err := DB.Con.Prepare("UPDATE users SET hashed_password = ? WHERE email = ?;")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(password, email)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (DB *Database) Authenticate(email, password string) (string, error) {
 	var hashedPassword []byte
 	stmt := "SELECT hashed_password FROM users WHERE email = ?"
