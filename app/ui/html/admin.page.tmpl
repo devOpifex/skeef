@@ -7,16 +7,15 @@
   <h1 class="uppercase text-4xl pt-4">Admin Area</h1>
   <a class="underline py-4" href="/admin/signout">signout</a>
   <div class="grid grid-cols-2 gap-4">
-    <div>
+    <div class="bg-gray-900 rounded-md px-6 py-4">
       <h2 class="uppercase text-2xl py-4">Your license</h2>
       <form action='/admin' method='POST' novalidate>
-        <div class="bg-gray-900 rounded-md px-6 py-4">
+        <div>
           {{with .Errors.license}}
             <span class="text-red-400">{{.}}</span>
             <br/>
           {{end}}
           <div class="pt-3">
-              <label class="font-bold uppercase text-xs">License</label>
               <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='license' placeholder='{{ .License.License }}'>
           </div>
           <div>
@@ -38,7 +37,7 @@
         </div>
       </form>
     </div>
-    <div>
+    <div class="bg-gray-900 rounded-md px-6 py-4">
       <h2 class="uppercase text-2xl pb-4">Twitter application credentials</h2>
       {{ if .HasTokens}}
         <p class="text-green-400 pb-4">You have already setup your credentials.</p>
@@ -47,7 +46,7 @@
       {{ end }}
       <form action='/admin' method='POST' novalidate>
           <div>
-              <div class="bg-gray-900 rounded-md px-6 py-4">
+              <div>
                   {{with .Errors.any}}
                     <span class="text-red-400">{{.}}</span>
                     <br/>
