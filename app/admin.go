@@ -71,10 +71,19 @@ func (app *Application) adminPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hasTokens := app.Database.TokensExist()
-
 	tmplData := templateData{}
 	tmplData.License = app.License
 	tmplData.HasTokens = hasTokens
+
+	if hasTokens {
+		streams, err := app.Database.GetStreams()
+
+		if err != nil {
+			tmplData.Errors["existingStreams"] = "Could not retrieve streams"
+		}
+
+		tmplData.Streams = streams
+	}
 
 	app.render(w, r, []string{"ui/html/admin.page.tmpl"}, tmplData)
 }
@@ -89,6 +98,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 	var tmplData templateData
 	tmplData.Errors = make(map[string]string)
+	tmplData.Flash = make(map[string]string)
 
 	hasTokens := app.Database.TokensExist()
 
@@ -140,7 +150,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 	if action == "validity" {
 		response := app.LicenseCheck(false)
 
-		tmplData.Flash = response.Reason
+		tmplData.Flash["validity"] = response.Reason
 	}
 
 	if action == "newPassword" {
@@ -177,8 +187,51 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		tmplData.Flash = "Password changed!"
+		tmplData.Flash["password"] = "Password changed!"
 	}
+
+	if action == "addStream" {
+		name := r.Form.Get("name")
+		follow := r.Form.Get("follow")
+		track := r.Form.Get("track")
+		locations := r.Form.Get("locations")
+
+		if name == "" {
+			tmplData.Errors["addStream"] = "Must specify a name"
+		}
+
+		if follow == "" && track == "" {
+			tmplData.Errors["addStream"] = "Must use 'follow' or 'track' (or both)"
+		}
+
+		streamExists, err := app.Database.StreamExists(name)
+
+		if err != nil {
+			tmplData.Errors["addStream"] = "Failed to check if stream exists"
+		}
+
+		if streamExists {
+			tmplData.Errors["addStream"] = "A stream under that name already exists"
+		}
+
+		if len(tmplData.Errors) == 0 {
+			err = app.Database.InsertStream(name, follow, track, locations)
+
+			if err != nil {
+				tmplData.Errors["addStream"] = "Failed to add the stream to the database"
+			} else {
+				tmplData.Flash["addStream"] = "Stream added to the database"
+			}
+		}
+
+	}
+
+	// get stored streams
+	streams, err := app.Database.GetStreams()
+	if err != nil {
+		tmplData.Errors["existingStreams"] = "Could not retrieve streams"
+	}
+	tmplData.Streams = streams
 
 	tmplData.License = app.License
 	tmplData.HasTokens = app.Database.TokensExist()

@@ -4,109 +4,150 @@
 
 {{define "main"}}
 <div class="container mx-auto pt-8">
-  <h1 class="uppercase font-light text-4xl pt-4">Admin Area</h1>
+  <h1 class="uppercase font-light text-5xl pt-4">Admin Area</h1>
   <p class="pb-8">
     <a class="underline" href="/admin/signout">signout</a>
   </p>
   {{ if .HasTokens }}
-  <div class="pb-8">
-    <div class="bg-gray-900 rounded-md px-6 py-4">
-      <h2 class="uppercase text-2xl py-4">Stream</h2>
-      <form action='/admin' method='POST' novalidate>
-        <div>
-          {{with .Errors.stream}}
-            <span class="text-red-400">{{.}}</span>
-            <br/>
-          {{end}}
-          <div class="pt-3">
-            <label class="font-bold uppercase text-xs">Follow</label>
-            <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='follow' placeholder="{{ .Stream.Follow }}">
+    <h2 class="uppercase text-3xl pb-4">Streaming</h2>
+    <div class="grid grid-cols-3 gap-4 pb-8">
+    <div class="bg-gray-900 rounded-md px-6 py-4 col-span-2">
+      <h3 class="uppercase text-2xl py-4">Manage Streams</h3>
+      <p>
+        Manage your streams
+        [<span class="text-sm font-light">only one can be actively streaming at any one time.</span>]
+      </p>
+      {{ with .Errors.existingStreams }}
+        <p class="pt-12 text-red-400">{{ . }}</p>
+      {{ end }}
+      {{ if not .Streams }}
+        <p class="pt-12 text-red-400">No streams, add one to get started.</p>
+      {{ else }}
+        {{ range $index, $stream := .Streams}}
+          <div class="pt-3 grid grid-cols-6">
+            <div>
+              <p>{{ $stream.Name }}</p>
+            </div>
+            <div class="py-2">
+              <p>
+              {{ if $stream.Track }}
+                <svg class="h6- w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              {{ else }}
+                <svg class="h6- w-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              {{ end }}
+                track
+              </p>
+            </div>
+            <div class="py-2">
+              <p>
+              {{ if $stream.Follow }}
+                <svg class="h6- w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              {{ else }}
+                <svg class="h6- w-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              {{ end }}
+                follow
+              </p>
+            </div>
+            <div class="py-2">
+              <p>
+              {{ if $stream.Locations }}
+                <svg class="h6- w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              {{ else }}
+                <svg class="h6- w-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              {{ end }}
+                locations
+              </p>
+            </div>
+            <div class="py-2">
+              <p>
+              {{ if $stream.Active }}
+                <svg class="h6- w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              {{ else }}
+                <svg class="h6- w-6 text-red-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: inline;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                </svg>
+              {{ end }}
+                Stream
+              </p>
+            </div>
+            <div class="py-2">
+              <p>
+                <svg class="h6- w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="display: inline;">
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                </svg>
+                Edit
+              </p>
+            </div>
           </div>
-          <div class="pt-3">
-            <label class="font-bold uppercase text-xs">Track</label>
-            <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='track' placeholder="{{ .Stream.Track }}">
-          </div>
-          <div class="pt-3">
-            <label class="font-bold uppercase text-xs">Locations</label>
-            <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='locations' placeholder="{{ .Stream.Locations }}">
-          </div>
-          <div>
-            <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
-            <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='stream'>Start</button>
-          </div>
-        </div>
-      </form>
+        {{ end }}
+      {{ end }}
     </div>
-  </div>
-  {{ end }}
-  <div class="grid grid-cols-2 gap-4">
-    <div>
       <div class="bg-gray-900 rounded-md px-6 py-4">
-        <h2 class="uppercase text-2xl py-4">License</h2>
+        <h3 class="uppercase text-2xl py-4">Add Stream</h3>
+        <p>
+          Add a new stream to the list
+          [<span class="text-sm font-light">this does not start the stream.</span>]
+        </p>
         <form action='/admin' method='POST' novalidate>
           <div>
-            {{with .Errors.license}}
+            {{with .Flash.addStream}}
+              <span class="font-bold">{{.}}</span>
+              <br/>
+            {{end}}
+            {{ with .Errors.addStream }}
               <span class="text-red-400">{{.}}</span>
               <br/>
             {{end}}
             <div class="pt-3">
-                <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='license' placeholder='{{ .License.License }}'>
+              <label class="font-bold uppercase text-xs">Name*</label>
+              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='name'>
+            </div>
+            <div class="pt-3">
+              <label class="font-bold uppercase text-xs">Follow</label>
+              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='follow'>
+            </div>
+            <div class="pt-3">
+              <label class="font-bold uppercase text-xs">Track</label>
+              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='track'>
+            </div>
+            <div class="pt-3">
+              <label class="font-bold uppercase text-xs">Locations</label>
+              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='locations'>
             </div>
             <div>
               <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
-              <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='license'>Update</button>
+              <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='addStream'>Add</button>
             </div>
-          </div>
-        </form>
-        <form action='/admin' method='POST' novalidate>
-          <div class="pt-4">
-            <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
-            <button type='submit' name="action" value='validity'>
-            <span class = "underline">Check</span> the license' validity
-            {{with .Flash}}
-              <span class="font-bold">: {{.}}</span>
-              <br/>
-            {{end}}
-            </button>
-          </div>
-        </form>
-      </div>
-      <div class="bg-gray-900 text-white my-8 px-4 py-4 rounded-lg">
-        <h2 class="text-3xl uppercase">Security</h2>
-        {{with .Flash}}
-          <div class="bg-background rounded-sm px-2 py-2">
-            {{.}}
-          </div>
-        {{end}}
-        <form action='/admin' method='POST' novalidate>
-          {{with .Errors.password}}
-              <span class="text-red-400">{{.}}</span>
-              <br/>
-          {{end}}
-          <div class="pt-3">
-              <label class="font-bold uppercase text-xs">Password</label>
-              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='password'>
-          </div>
-          <div class="pt-3">
-              <label class="font-bold uppercase text-xs">Repeat password</label>
-              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='password2'>
-          </div>
-          <div>
-            <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
-            <button class="uppercase bg-background text-white font-light rounded-md py-2 px-4" type='submit' name='action' value='newPassword'>
-              Change
-            </button>
           </div>
         </form>
       </div>
     </div>
-    <div>
+  {{ end }}
+  <h2 class="uppercase text-3xl pb-4">Settings</h2>
+  <div class="grid grid-cols-3 gap-4">
+    <div class="col-span-2">
       <div class="bg-gray-900 rounded-md px-6 py-4">
-        <h2 class="uppercase text-2xl pb-4">Twitter application credentials</h2>
+        <h3 class="uppercase text-2xl pb-4">Twitter application credentials</h3>
         {{ if .HasTokens}}
           <p class="text-green-400 pb-4">You have already setup your credentials.</p>
         {{ else }}
-          <p class="text-red-400 pb-4">You have <strong>not</strong> yet setup your credentials.</p>
+          <p class="pb-4">You have <strong class="text-red-400">not</strong> yet setup your credentials.</p>
         {{ end }}
         <form action='/admin' method='POST' novalidate>
           <div>
@@ -149,6 +190,68 @@
           <a class="underline" href="https://developer.twitter.com" target="_blank">twitter's developer portal.</a>
         </p>
         {{ end }}
+      </div>
+    </div>
+    <div>
+      <div class="bg-gray-900 rounded-md px-6 py-4">
+        <h3 class="uppercase text-2xl pb-4">License</h3>
+        <p>Update your license.</p>
+        <form action='/admin' method='POST' novalidate>
+          <div>
+            {{with .Errors.license}}
+              <span class="text-red-400">{{.}}</span>
+              <br/>
+            {{end}}
+            <div class="pt-3">
+                <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='license' placeholder='{{ .License.License }}'>
+            </div>
+            <div>
+              <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+              <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='license'>Update</button>
+            </div>
+          </div>
+        </form>
+        <form action='/admin' method='POST' novalidate>
+          <div class="pt-4">
+            <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+            <button type='submit' name="action" value='validity'>
+            <span class = "underline">Check</span> the license' validity
+            {{with .Flash.validity}}
+              <span class="font-bold">: {{.}}</span>
+              <br/>
+            {{end}}
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="bg-gray-900 text-white my-8 px-4 py-4 rounded-lg">
+        <h3 class="text-2xl uppercase pb-4">Security</h3>
+        <p>Change your password.</p>
+        {{with .Flash.password}}
+          <div class="bg-background rounded-sm px-2 py-2">
+            {{.}}
+          </div>
+        {{end}}
+        <form action='/admin' method='POST' novalidate>
+          {{with .Errors.password}}
+              <span class="text-red-400">{{.}}</span>
+              <br/>
+          {{end}}
+          <div class="pt-3">
+              <label class="font-bold uppercase text-xs">Password</label>
+              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='password'>
+          </div>
+          <div class="pt-3">
+              <label class="font-bold uppercase text-xs">Repeat password</label>
+              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='password' name='password2'>
+          </div>
+          <div>
+            <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+            <button class="uppercase bg-background text-white font-light rounded-md py-2 px-4" type='submit' name='action' value='newPassword'>
+              Change
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

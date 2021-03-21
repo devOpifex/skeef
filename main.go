@@ -44,7 +44,7 @@ func main() {
 	if !db.Exists() {
 		firstrun = true
 		err := db.Create()
-		fmt.Printf("Visit port %v to setup skeef!", *addr)
+		fmt.Println("Visit the homepage to setup skeef!")
 
 		if err != nil {
 			errorLog.Fatal("Could not create database")
@@ -76,6 +76,13 @@ func main() {
 		if err != nil {
 			db.Remove()
 			errorLog.Fatal("Could not create twitter app table")
+			return
+		}
+
+		err = app.Database.CreateTableStreams()
+		if err != nil {
+			db.Remove()
+			errorLog.Fatal("Could not create streams table")
 			return
 		}
 	}

@@ -33,3 +33,14 @@ func (DB *Database) CreateTableTwitterApp() error {
 
 	return nil
 }
+
+func (DB *Database) CreateTableStreams() error {
+
+	_, err := DB.Con.Exec("CREATE TABLE streams (name VARCHAR(50) NOT NULL PRIMARY KEY, follow VARCHAR(400), track VARCHAR(400), locations VARCHAR(400), active INTEGER);")
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
