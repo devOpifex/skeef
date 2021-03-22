@@ -18,12 +18,15 @@ type templateData struct {
 	HasTokens     bool
 	Flash         map[string]string
 	Streams       []stream.Stream
+	Addr          string
 }
 
 //go:embed ui/html
 var embededTemplates embed.FS
 
 func (app *Application) render(w http.ResponseWriter, r *http.Request, files []string, data templateData) {
+
+	data.Addr = app.Addr
 
 	tmpls := []string{
 		"ui/html/base.layout.tmpl",

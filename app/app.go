@@ -7,6 +7,7 @@ import (
 	"github.com/bmizerany/pat"
 	"github.com/devOpifex/skeef-app/db"
 	"github.com/golangcollege/sessions"
+	"github.com/gorilla/websocket"
 	"github.com/justinas/alice"
 )
 
@@ -17,12 +18,28 @@ type Application struct {
 	Database db.Database
 	Session  *sessions.Session
 	License  db.License
+	Addr     string
 }
 
 type Setup struct {
 	Tables  bool
 	Admin   bool
 	License bool
+}
+
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool { return true },
+}
+
+func (app *Application) socket(w http.ResponseWriter, r *http.Request) {
+	ws, err := upgrader.Upgrade(w, r, nil)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	app.readSocket(ws)
+
 }
 
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
@@ -56,6 +73,7 @@ func (app *Application) Handlers() http.Handler {
 	mux.Get("/admin", dynamicMiddleware.Then(http.HandlerFunc(app.adminPage)))
 	mux.Post("/admin", dynamicMiddleware.Then(http.HandlerFunc(app.adminForm)))
 	mux.Get("/admin/signout", dynamicMiddleware.ThenFunc(app.signout))
+	mux.Get("/ws", dynamicMiddleware.ThenFunc(app.socket))
 
 	mux.Get("/static/", app.static())
 

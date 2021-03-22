@@ -1,6 +1,6 @@
-console.log("Hello, world");
-
 document.addEventListener("DOMContentLoaded",function(){
+
+  // warning on admin inputs
   let locationsInput = document.getElementById("locationsStream");
   let locationsWarning = document.getElementById("locationsWarning");
   locationsInput.addEventListener("input", (event) => {
@@ -8,6 +8,24 @@ document.addEventListener("DOMContentLoaded",function(){
       locationsWarning.innerHTML = "";
       return ;
     }
-    locationsWarning.innerHTML = "This dramatically reduces the number of tweets streamed, see the documentation."
+    locationsWarning.innerHTML = "Few tweets are geo-tagged; this dramatically reduces the number of tweets streamed."
   });
+
+  window.socket.onopen = () => {
+    console.log("Socket opened")
+    socket.send("Client Connected")
+  }
+  
+  window.socket.onclose = () => {
+    console.log("Websocket closed")
+  }
+  
+  window.socket.onerror = (error) => {
+    console.log(error);
+  }
+  
+  window.socket.onmessage = (data) => {
+    let parsed = JSON.parse(data.data);
+    console.log(parsed);
+  }
 });

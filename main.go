@@ -38,6 +38,7 @@ func main() {
 		InfoLog:  infoLog,
 		ErrorLog: errorLog,
 		Session:  session,
+		Addr:     *addr,
 	}
 
 	firstrun := false
