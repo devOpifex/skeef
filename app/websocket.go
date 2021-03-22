@@ -15,7 +15,7 @@ func (app *Application) readSocket(con *websocket.Conn) {
 			return
 		}
 
-		app.InfoLog.Printf("%s\n", string(msgType))
+		app.InfoLog.Printf("%v\n", msgType)
 		app.InfoLog.Printf("%s\n", string(msg))
 
 	}
