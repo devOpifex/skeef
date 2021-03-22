@@ -61,3 +61,67 @@ func (DB *Database) GetStreams() ([]stream.Stream, error) {
 
 	return streams, nil
 }
+
+func (DB *Database) DeleteStream(name string) error {
+	stmt, err := DB.Con.Prepare("DELETE FROM streams WHERE name = ?")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(&name)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (DB *Database) PauseAllStreams() error {
+	_, err := DB.Con.Exec("UPDATE streams SET active = 0")
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (DB *Database) StartStream(name string) error {
+
+	DB.PauseAllStreams()
+
+	stmt, err := DB.Con.Prepare("UPDATE streams SET active = 1 WHERE name = ?")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(&name)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (DB *Database) PauseStream(name string) error {
+
+	DB.PauseAllStreams()
+
+	stmt, err := DB.Con.Prepare("UPDATE streams SET active = 0 WHERE name = ?")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(&name)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

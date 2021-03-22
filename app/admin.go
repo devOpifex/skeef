@@ -226,6 +226,36 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+	if action == "deleteStream" {
+		err = app.Database.DeleteStream(r.Form.Get("streamName"))
+
+		if err != nil {
+			tmplData.Errors["existingStreams"] = "Failed to delete the stream from the database"
+		} else {
+			tmplData.Flash["existingStreams"] = "Deleted stream from the database"
+		}
+	}
+
+	if action == "startStream" {
+		err = app.Database.StartStream(r.Form.Get("streamName"))
+
+		if err != nil {
+			tmplData.Errors["existingStreams"] = "Failed to start stream"
+		} else {
+			tmplData.Flash["existingStreams"] = "Stream Started"
+		}
+	}
+
+	if action == "stopStream" {
+		err = app.Database.PauseStream(r.Form.Get("streamName"))
+
+		if err != nil {
+			tmplData.Errors["existingStreams"] = "Failed to pause stream"
+		} else {
+			tmplData.Flash["existingStreams"] = "Stream Pause"
+		}
+	}
+
 	// get stored streams
 	streams, err := app.Database.GetStreams()
 	if err != nil {

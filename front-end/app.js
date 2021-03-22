@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded",function(){
     locationsWarning.innerHTML = "Few tweets are geo-tagged; this dramatically reduces the number of tweets streamed."
   });
 
+  // websocket
   window.socket.onopen = () => {
-    console.log("Socket opened")
     socket.send("Client Connected")
   }
   
