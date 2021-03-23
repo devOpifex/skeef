@@ -252,7 +252,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			tmplData.Errors["existingStreams"] = "Failed to pause stream"
 		} else {
-			tmplData.Flash["existingStreams"] = "Stream Pause"
+			tmplData.Flash["existingStreams"] = "Stream Paused"
 		}
 	}
 
