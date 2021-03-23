@@ -19,6 +19,8 @@ import (
 var session *sessions.Session
 var secret = []byte("u46IpCV8y5Vlur8YvODJEhgOY8m9JVE5")
 
+var StopStream = make(chan bool)
+
 func main() {
 
 	reset := flag.Bool("reset", false, "Reset the application and redo the first time setup.")
@@ -38,10 +40,11 @@ func main() {
 	session.SameSite = http.SameSiteStrictMode
 
 	app := &app.Application{
-		InfoLog:  infoLog,
-		ErrorLog: errorLog,
-		Session:  session,
-		Addr:     *addr,
+		InfoLog:    infoLog,
+		ErrorLog:   errorLog,
+		Session:    session,
+		Addr:       *addr,
+		StopStream: StopStream,
 	}
 
 	firstrun := false

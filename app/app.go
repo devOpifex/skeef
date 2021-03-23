@@ -13,12 +13,13 @@ import (
 
 // Application Application object
 type Application struct {
-	InfoLog  *log.Logger
-	ErrorLog *log.Logger
-	Database db.Database
-	Session  *sessions.Session
-	License  db.License
-	Addr     string
+	InfoLog    *log.Logger
+	ErrorLog   *log.Logger
+	Database   db.Database
+	Session    *sessions.Session
+	License    db.License
+	Addr       string
+	StopStream chan bool
 }
 
 type Setup struct {

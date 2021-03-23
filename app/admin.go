@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"unicode/utf8"
 
+	"github.com/devOpifex/skeef-app/stream"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -246,6 +247,11 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 		} else {
 			tmplData.Flash["existingStreams"] = "Stream Started"
 		}
+
+		go func() {
+			stream.StartStream(app.StopStream)
+		}()
+
 	}
 
 	if action == "stopStream" {
@@ -256,6 +262,9 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 		} else {
 			tmplData.Flash["existingStreams"] = "Stream Paused"
 		}
+
+		app.StopStream <- true
+
 	}
 
 	// get stored streams
