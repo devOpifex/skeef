@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"unicode/utf8"
 
-	"github.com/devOpifex/skeef-app/stream"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -249,7 +248,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 		}
 
 		go func() {
-			stream.StartStream(app.StopStream)
+			app.StartStream()
 		}()
 
 	}
