@@ -20,6 +20,7 @@ type templateData struct {
 	Streams       []stream.Stream
 	Stream        stream.Stream
 	Addr          string
+	Email         string
 }
 
 //go:embed ui/html

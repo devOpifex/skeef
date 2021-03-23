@@ -74,6 +74,7 @@ func (app *Application) adminPage(w http.ResponseWriter, r *http.Request) {
 	tmplData := templateData{}
 	tmplData.License = app.License
 	tmplData.HasTokens = hasTokens
+	tmplData.Email = app.GetAuthenticated(r)
 
 	if hasTokens {
 		streams, err := app.Database.GetStreams()
@@ -99,6 +100,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 	var tmplData templateData
 	tmplData.Errors = make(map[string]string)
 	tmplData.Flash = make(map[string]string)
+	tmplData.Email = app.GetAuthenticated(r)
 
 	hasTokens := app.Database.TokensExist()
 

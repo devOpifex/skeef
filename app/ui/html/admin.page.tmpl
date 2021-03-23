@@ -5,7 +5,7 @@
 {{define "main"}}
 <div class="container mx-auto pt-8">
   <h1 class="uppercase font-light text-5xl pt-4">Admin Area</h1>
-  <p class="pb-8">
+  <p class="pb-8 font-light">
     <a class="underline" href="/admin/signout">signout</a>
   </p>
   {{ if .HasTokens }}
@@ -249,7 +249,7 @@
       </div>
       <div class="bg-gray-900 text-white my-8 px-4 py-4 rounded-lg">
         <h3 class="text-2xl uppercase pb-4">Security</h3>
-        <p>Change your password.</p>
+        <p>Change your password <span class="font-light float-right text-sm">{{ .Email }}</span>.</p>
         {{with .Flash.password}}
           <div class="bg-background rounded-sm px-2 py-2">
             {{.}}
