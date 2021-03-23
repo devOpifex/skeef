@@ -4,9 +4,6 @@ import (
 	"database/sql"
 	"log"
 	"os"
-
-	// sqlite3 driver
-	_ "github.com/mattn/go-sqlite3"
 )
 
 type Database struct {

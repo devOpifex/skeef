@@ -1,0 +1,48 @@
+{{template "base" .}}
+
+{{define "title"}}Setup{{end}}
+
+{{define "main"}}
+<div class="flex justify-center pt-20">
+  <form action='/admin/edit' method='POST' novalidate>
+    <h1 class="text-center text-5xl pb-4">Edit Stream</h1>
+    {{ with .Flash.success }}
+      <p class="uppercase bold">{{ . }}</p>
+    {{ end }}
+    <p class="pb-3 text-center">
+      The stream is currently
+      {{ if .Stream.Active }}
+      <span class="w-4 text-green-400">running</span>
+      {{ else }}
+      <span class="w-4 text-red-400">paused</span>
+      {{ end }}
+    </p>
+    <div>
+      <div class="bg-gray-900 rounded-md px-6 py-4 w-full">
+        <div>
+          <label class="font-bold uppercase text-xs">Follow</label>
+          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='name' value='{{ .Stream.Name }}'>
+        </div>
+        <div class="pt-3">
+          <label class="font-bold uppercase text-xs">Follow</label>
+          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='follow' value='{{ .Stream.Follow }}'>
+        </div>
+        <div class="pt-3">
+          <label class="font-bold uppercase text-xs">Track</label>
+          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='track' value='{{ .Stream.Track }}'>
+        </div>
+        <div class="pt-3">
+          <label class="font-bold uppercase text-xs">Follow</label>
+          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='locations' value='{{ .Stream.Locations }}'>
+        </div>
+        <div>
+          <input type='hidden' name='currentName' value='{{ .Stream.Name }}'>
+          <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+          <input class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' value='Update'>
+        </div>
+      </div>
+    </div>
+    <p class="text-center">Go back to the <a href="/admin" class="underline">admin area</a>.</p>
+  </form>
+</div>
+{{end}}

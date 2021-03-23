@@ -18,6 +18,7 @@ type templateData struct {
 	HasTokens     bool
 	Flash         map[string]string
 	Streams       []stream.Stream
+	Stream        stream.Stream
 	Addr          string
 }
 

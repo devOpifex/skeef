@@ -11,6 +11,9 @@ import (
 	"github.com/devOpifex/skeef-app/app"
 	"github.com/devOpifex/skeef-app/db"
 	"github.com/golangcollege/sessions"
+
+	// sqlite3 driver
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var session *sessions.Session

@@ -125,3 +125,36 @@ func (DB *Database) PauseStream(name string) error {
 
 	return nil
 }
+
+func (DB *Database) GetStream(name string) (stream.Stream, error) {
+	var stream stream.Stream
+
+	stmt, err := DB.Con.Prepare("SELECT name, follow, track, locations, active FROM streams WHERE name = ?")
+
+	if err != nil {
+		return stream, err
+	}
+
+	row := stmt.QueryRow(name)
+
+	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active)
+
+	return stream, nil
+}
+
+func (DB *Database) UpdateStream(track, follow, locations, newName, currentName string) error {
+
+	stmt, err := DB.Con.Prepare("UPDATE streams SET track = ?, follow = ?, locations = ?, name = ? WHERE name = ?")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(track, follow, locations, newName, currentName)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
