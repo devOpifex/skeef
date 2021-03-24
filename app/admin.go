@@ -253,9 +253,6 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 				tmplData.Flash["existingStreams"] = "Stream Started"
 			}
 
-			go func() {
-				app.StartStream()
-			}()
 		}
 
 	}
@@ -273,7 +270,6 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 				tmplData.Flash["existingStreams"] = "Stream Paused"
 			}
 
-			app.StopStream <- true
 		}
 
 	}
