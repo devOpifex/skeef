@@ -78,19 +78,16 @@ func (DB *Database) DeleteStream(name string) error {
 	return nil
 }
 
-func (DB *Database) PauseAllStreams() error {
-	_, err := DB.Con.Exec("UPDATE streams SET active = 0")
+func (DB *Database) StreamOnGoing() bool {
+	rows := DB.Con.QueryRow("SELECT COUNT(1) FROM streams WHERE active = 1;")
 
-	if err != nil {
-		return err
-	}
+	var count int
+	rows.Scan(&count)
 
-	return nil
+	return count > 0
 }
 
 func (DB *Database) StartStream(name string) error {
-
-	DB.PauseAllStreams()
 
 	stmt, err := DB.Con.Prepare("UPDATE streams SET active = 1 WHERE name = ?")
 
@@ -108,8 +105,6 @@ func (DB *Database) StartStream(name string) error {
 }
 
 func (DB *Database) PauseStream(name string) error {
-
-	DB.PauseAllStreams()
 
 	stmt, err := DB.Con.Prepare("UPDATE streams SET active = 0 WHERE name = ?")
 

@@ -239,30 +239,42 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if action == "startStream" {
-		err = app.Database.StartStream(r.Form.Get("streamName"))
 
-		if err != nil {
-			tmplData.Errors["existingStreams"] = "Failed to start stream"
+		if app.Database.StreamOnGoing() {
+
+			tmplData.Errors["existingStreams"] = "There is already one stream active"
+
 		} else {
-			tmplData.Flash["existingStreams"] = "Stream Started"
-		}
+			err = app.Database.StartStream(r.Form.Get("streamName"))
 
-		go func() {
-			app.StartStream()
-		}()
+			if err != nil {
+				tmplData.Errors["existingStreams"] = "Failed to start stream"
+			} else {
+				tmplData.Flash["existingStreams"] = "Stream Started"
+			}
+
+			go func() {
+				app.StartStream()
+			}()
+		}
 
 	}
 
 	if action == "stopStream" {
-		err = app.Database.PauseStream(r.Form.Get("streamName"))
 
-		if err != nil {
-			tmplData.Errors["existingStreams"] = "Failed to pause stream"
+		if !app.Database.StreamOnGoing() {
+			tmplData.Errors["existingStreams"] = "There is no active stream to pause"
 		} else {
-			tmplData.Flash["existingStreams"] = "Stream Paused"
-		}
+			err = app.Database.PauseStream(r.Form.Get("streamName"))
 
-		app.StopStream <- true
+			if err != nil {
+				tmplData.Errors["existingStreams"] = "Failed to pause stream"
+			} else {
+				tmplData.Flash["existingStreams"] = "Stream Paused"
+			}
+
+			app.StopStream <- true
+		}
 
 	}
 
