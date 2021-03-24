@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/bmizerany/pat v0.0.0-20170815010413-6226ea591a40
+	github.com/dghubble/go-twitter v0.0.0-20201011215211-4b180d0cc78d
 	github.com/golangcollege/sessions v1.2.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/justinas/alice v1.2.0
