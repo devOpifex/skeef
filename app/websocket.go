@@ -10,6 +10,11 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+type message struct {
+	Graph       graph.Graph `json:"graph"`
+	TweetsCount int         `json:"tweetsCount"`
+}
+
 func (app *Application) readSocket(con *websocket.Conn) {
 	for {
 		msgType, msg, err := con.ReadMessage()
@@ -22,6 +27,9 @@ func (app *Application) readSocket(con *websocket.Conn) {
 		app.InfoLog.Printf("%s\n", string(msg))
 
 		if !app.Database.StreamOnGoing() {
+			if app.Stream != nil {
+				app.Stream.Stop()
+			}
 			continue
 		}
 
@@ -32,7 +40,6 @@ func (app *Application) readSocket(con *websocket.Conn) {
 		}
 
 		search := app.Database.GetActiveStream()
-		var index int
 
 		var twitterConfig = oauth1.NewConfig(tokens.ApiKey, tokens.ApiSecret)
 		var token = oauth1.NewToken(tokens.AccessToken, tokens.AccessSecret)
@@ -47,22 +54,26 @@ func (app *Application) readSocket(con *websocket.Conn) {
 			Track:         []string{search.Track},
 			StallWarnings: twitter.Bool(true),
 		}
-		var stream, _ = client.Streams.Filter(params)
+		app.Stream, _ = client.Streams.Filter(params)
 
 		var demux = twitter.NewSwitchDemux()
 		demux.Tweet = func(tweet *twitter.Tweet) {
-			index++
-			fmt.Printf("Tweet #%v\n", index)
+			app.Count++
+			app.InfoLog.Printf("Tweet #%v\n", app.Count)
 			nodes, edges := graph.GetUserNet(*tweet)
 			hashNodes, hashEdges := graph.GetHashNet(*tweet)
 			nodes = append(nodes, hashNodes...)
 			edges = append(edges, hashEdges...)
 			g := graph.BuildGraph(nodes, edges)
-			j, _ := json.Marshal(g)
+			m := message{
+				Graph:       g,
+				TweetsCount: app.Count,
+			}
+			j, _ := json.Marshal(m)
 			con.WriteMessage(msgType, []byte(j))
 		}
 
-		for message := range stream.Messages {
+		for message := range app.Stream.Messages {
 			demux.Handle(message)
 		}
 

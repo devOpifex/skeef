@@ -6,6 +6,7 @@ import (
 
 	"github.com/bmizerany/pat"
 	"github.com/devOpifex/skeef-app/db"
+	"github.com/dghubble/go-twitter/twitter"
 	"github.com/golangcollege/sessions"
 	"github.com/gorilla/websocket"
 	"github.com/justinas/alice"
@@ -20,6 +21,8 @@ type Application struct {
 	License    db.License
 	Addr       string
 	StopStream chan bool
+	Count      int
+	Stream     *twitter.Stream
 }
 
 type Setup struct {
