@@ -62,6 +62,8 @@ document.addEventListener("DOMContentLoaded",function(){
         }
       }
     });
+
+    renderer.clearColor("0x262b36");
   }
 
   // websocket
