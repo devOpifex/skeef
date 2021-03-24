@@ -226,7 +226,7 @@
               <br/>
             {{end}}
             <div class="pt-3">
-                <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='license' placeholder='{{ .License.License }}'>
+                <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='license' placeholder='Last 5 characters: {{ slice .License.License 35 40}}'>
             </div>
             <div>
               <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
