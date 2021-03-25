@@ -3,6 +3,9 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
+	"net/http"
 
 	"github.com/devOpifex/skeef-app/graph"
 	"github.com/dghubble/go-twitter/twitter"
@@ -15,12 +18,26 @@ type message struct {
 	TweetsCount int         `json:"tweetsCount"`
 }
 
-func (app *Application) readSocket(con *websocket.Conn) {
-	for {
-		msgType, msg, err := con.ReadMessage()
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin:     func(r *http.Request) bool { return true },
+}
 
+func (app *Application) wsUpgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return ws, err
+	}
+	return ws, nil
+}
+
+func (app *Application) wsReader(conn *websocket.Conn) {
+	for {
+		messageType, msg, err := conn.ReadMessage()
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return
 		}
 
@@ -70,12 +87,35 @@ func (app *Application) readSocket(con *websocket.Conn) {
 				TweetsCount: app.Count,
 			}
 			j, _ := json.Marshal(m)
-			con.WriteMessage(msgType, []byte(j))
+			conn.WriteMessage(messageType, []byte(j))
 		}
 
 		for message := range app.Stream.Messages {
 			demux.Handle(message)
 		}
+	}
+}
 
+func (app *Application) wsWriter(conn *websocket.Conn) {
+	for {
+		fmt.Println("Sending")
+		messageType, r, err := conn.NextReader()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		w, err := conn.NextWriter(messageType)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		if _, err := io.Copy(w, r); err != nil {
+			fmt.Println(err)
+			return
+		}
+		if err := w.Close(); err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/devOpifex/skeef-app/db"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/golangcollege/sessions"
-	"github.com/gorilla/websocket"
 	"github.com/justinas/alice"
 )
 
@@ -31,18 +30,13 @@ type Setup struct {
 	License bool
 }
 
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool { return true },
-}
-
 func (app *Application) socket(w http.ResponseWriter, r *http.Request) {
-	ws, err := upgrader.Upgrade(w, r, nil)
-
+	ws, err := app.wsUpgrade(w, r)
 	if err != nil {
-		log.Println(err)
+		app.ErrorLog.Printf("%+V\n", err)
 	}
-
-	app.readSocket(ws)
+	go app.wsWriter(ws)
+	app.wsReader(ws)
 
 }
 
