@@ -3,7 +3,10 @@
 {{define "title"}}Home{{end}}
 
 {{define "main"}}
-<div>
-  <div id="graph" class="focus:outline-none"></div>
+<div class="w-full">
+  {{ if .Authenticated }}
+    <a href="/admin" class="text-xs float-right text-light underline px-4">Admin area</a>
+  {{ end }}
+  <div id="graph" class="w-full focus:outline-none"></div>
 </div>
 {{end}}

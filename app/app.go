@@ -30,23 +30,6 @@ type Setup struct {
 	License bool
 }
 
-func (app *Application) socket(pool *Pool, w http.ResponseWriter, r *http.Request) {
-	ws, err := app.wsUpgrade(w, r)
-
-	if err != nil {
-		log.Println(err)
-	}
-
-	client := &Client{
-		Conn: ws,
-		Pool: pool,
-	}
-
-	pool.Register <- client
-	client.Read(app)
-
-}
-
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 
 	if !app.Database.AdminExists() {
@@ -59,7 +42,13 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, r, []string{"ui/html/home.page.tmpl"}, templateData{})
+	var tmplData templateData
+
+	if app.isAuthenticated(r) {
+		tmplData.Authenticated = true
+	}
+
+	app.render(w, r, []string{"ui/html/home.page.tmpl"}, tmplData)
 }
 
 // Handlers Returns all routes

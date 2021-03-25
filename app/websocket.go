@@ -142,3 +142,20 @@ func (app *Application) wsUpgrade(w http.ResponseWriter, r *http.Request) (*webs
 	}
 	return ws, nil
 }
+
+func (app *Application) socket(pool *Pool, w http.ResponseWriter, r *http.Request) {
+	ws, err := app.wsUpgrade(w, r)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	client := &Client{
+		Conn: ws,
+		Pool: pool,
+	}
+
+	pool.Register <- client
+	client.Read(app)
+
+}

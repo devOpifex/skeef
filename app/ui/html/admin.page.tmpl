@@ -5,8 +5,9 @@
 {{define "main"}}
 <div class="container mx-auto pt-8">
   <h1 class="uppercase font-light text-5xl pt-4">Admin Area</h1>
-  <p class="pb-8 font-light">
-    <a class="underline" href="/admin/signout">signout</a>
+  <p class="pb-10 font-light pt-2">
+  <a class="underline float-left text-sm" href="/">View stream</a>
+    <a class="underline float-right text-xs" href="/admin/signout">signout</a>
   </p>
   {{ if .HasTokens }}
     <h2 class="uppercase text-3xl pb-4 mx-4">Streaming</h2>
