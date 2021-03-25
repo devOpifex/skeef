@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded",function(){
     var renderer = pixel(g, {
       is3d: true,
       container: document.getElementById("graph"),
+      clearAlpha: 0.0,
       physics: {
         springLength : 80,
         springCoeff : 0.0002,
@@ -35,17 +36,17 @@ document.addEventListener("DOMContentLoaded",function(){
       node: function (n) {
         if(n.data.type == 'user'){
           return {
-            color: 0xFFC6FF,
+            color: 0xff9e00,
             size: n.data.count * 10
           }
         } else if(n.data.type == 'hashtag'){
           return {
-            color: 0x9BF6FF,
+            color: 0x9d4edd,
             size: n.data.count * 10
           }
         } else if (n.data.type == 'hidden') {
           return {
-            color: 0x000000,
+            color: 0x262b36,
             size: 0
           }
         } else {
@@ -62,8 +63,6 @@ document.addEventListener("DOMContentLoaded",function(){
         }
       }
     });
-
-    renderer.clearColor("0x262b36");
   }
 
   // websocket

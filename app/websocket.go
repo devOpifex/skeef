@@ -1,7 +1,6 @@
 package app
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/devOpifex/skeef-app/graph"
@@ -22,7 +21,7 @@ var upgrader = websocket.Upgrader{
 func (app *Application) wsUpgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		app.ErrorLog.Println(err)
 		return ws, err
 	}
 	return ws, nil
