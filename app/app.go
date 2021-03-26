@@ -75,8 +75,10 @@ func (app *Application) Handlers() http.Handler {
 	mux.Get("/ws", dynamicMiddleware.ThenFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.socket(pool, w, r)
 	}))
-	mux.Get("/admin/:stream", dynamicMiddleware.Then(http.HandlerFunc(app.streamPage)))
-	mux.Post("/admin/edit", dynamicMiddleware.Then(http.HandlerFunc(app.streamForm)))
+	mux.Get("/admin/edit/:stream", dynamicMiddleware.Then(http.HandlerFunc(app.streamEditPage)))
+	mux.Post("/admin/edit", dynamicMiddleware.Then(http.HandlerFunc(app.streamEditForm)))
+	mux.Get("/admin/add", dynamicMiddleware.Then(http.HandlerFunc(app.streamAddPage)))
+	mux.Post("/admin/add", dynamicMiddleware.Then(http.HandlerFunc(app.streamAddForm)))
 
 	mux.Get("/static/", app.static())
 

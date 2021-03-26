@@ -11,12 +11,12 @@
   </p>
   {{ if .HasTokens }}
     <h2 class="uppercase text-3xl pb-4 mx-4">Streaming</h2>
-    <div class="grid grid-cols-3 gap-4 pb-8">
     <div class="bg-gray-900 rounded-md px-6 py-4 col-span-2">
-      <h3 class="uppercase text-2xl py-4">Manage Streams</h3>
+      <h3 class="uppercase text-2xl pb-4">Manage Streams</h3>
       <p class="pb-4">
         Manage your streams
         [<span class="text-sm font-light">only one can be actively streaming at any one time.</span>]
+        <a class="float-right uppercase font-light text-sm bg-background rounded-sm px-4 py-2" href="/admin/add">Add a stream</a>
       </p>
       {{ with .Errors.existingStreams }}
         <p class="text-red-400">{{ . }}</p>
@@ -26,11 +26,11 @@
         <br/>
       {{ end }}
       {{ if not .Streams }}
-        <p class="text-red-400">No streams, add one to get started.</p>
+        <p>No streams, <a class="underline text-yellow-400" href="/admin/add">add one</a> to get started.</p>
       {{ else }}
         {{ range $index, $stream := .Streams}}
-          <div class="pb-1 grid grid-cols-9 text-xs">
-            <div class="py-1 col-span-3">
+          <div class="pb-1 pt-4 grid grid-cols-9 text-sm font-light">
+            <div class="py-1 col-span-3 font-semibold">
               <p>{{ $stream.Name }}</p>
             </div>
             <div class="py-1">
@@ -98,7 +98,7 @@
               </form>
             </div>
             <div class="py-1">
-              <a href="/admin/{{ $stream.Name }}">
+              <a href="/admin/edit/{{ $stream.Name }}">
                 <svg class="w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="display: inline;">
                   <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                 </svg>
@@ -121,49 +121,8 @@
         {{ end }}
       {{ end }}
     </div>
-      <div class="bg-gray-900 rounded-md px-6 py-4">
-        <h3 class="uppercase text-2xl py-4">Add Stream</h3>
-        <p>
-          Add a new stream to the list
-          [<span class="text-sm font-light">this does not start the stream.</span>]
-        </p>
-        <form action='/admin' method='POST' novalidate>
-          <div>
-            {{with .Flash.addStream}}
-              <span class="font-bold">{{.}}</span>
-              <br/>
-            {{end}}
-            {{ with .Errors.addStream }}
-              <span class="text-red-400">{{.}}</span>
-              <br/>
-            {{end}}
-            <div class="pt-3">
-              <label class="font-bold uppercase text-xs">Name*</label>
-              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='name'>
-            </div>
-            <div class="pt-3">
-              <label class="font-bold uppercase text-xs">Follow</label>
-              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='follow'>
-            </div>
-            <div class="pt-3">
-              <label class="font-bold uppercase text-xs">Track</label>
-              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='track'>
-            </div>
-            <div class="pt-3">
-              <label class="font-bold uppercase text-xs">Locations</label>
-              <input id="locationsStream" class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='locations'>
-              <p class="text-yellow-400 italic text-sm pt-2" id="locationsWarning"></p>
-            </div>
-            <div>
-              <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
-              <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='addStream'>Add</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
   {{ end }}
-  <h2 class="uppercase text-3xl pb-4 mx-4">Settings</h2>
+  <h2 class="uppercase text-3xl pb-4 mx-4 pt-4">Settings</h2>
   <div class="grid grid-cols-3 gap-4">
     <div class="col-span-2">
       <div class="bg-gray-900 rounded-md px-6 py-4">

@@ -1,0 +1,61 @@
+{{template "base" .}}
+
+{{define "title"}}Add Stream{{end}}
+
+{{define "main"}}
+<div class="flex justify-center pt-20">
+  <form class="w-2/5" action='/admin/add' method='POST' novalidate>
+    <h1 class="text-5xl pb-4">Add Stream</h1>
+    {{ with .Flash.stream }}
+      <p class="bold pb-4 text-green-400">{{ . }}</p>
+    {{ end }}
+    <p class="pb-3">
+      Add a stream, you can always edit this later.
+    </p>
+    <div>
+    {{ with .Errors.stream }}
+      <p class="bold text-red-400">{{ . }}</p>
+    {{ end }}
+      <div class="bg-gray-900 rounded-md px-6 py-4 w-full">
+        <div>
+          <label class="font-bold uppercase text-xs">Name</label>
+          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='name' placeholder='Name of the stream'>
+        </div>
+        <div class="pt-3">
+          <label class="font-bold uppercase text-xs">Follow</label>
+          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='follow' placeholder='Users to track'>
+        </div>
+        <div class="pt-3">
+          <label class="font-bold uppercase text-xs">Track</label>
+          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='track' placeholder='Keywords, and hashtags to track'>
+        </div>
+        <div class="pt-3">
+          <label class="font-bold uppercase text-xs">Locations</label>
+          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='locations' placeholder='Bounding box of coordinates'>
+        </div>
+        <div class="pt-3">
+          <label class="font-bold uppercase text-xs">Exclude</label>
+          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='exclude' placeholder='Comma separated keywords to exclude from the network'>
+        </div>
+        <div class="pt-3">
+          <label class="font-bold uppercase text-xs">Maximum edges on screen: <span id='rangeMaxEdges'>2000</span></label>
+          <br/>
+          <input id="maxEdges" class="rounded-sm overflow-hidden w-full" type='range' name='maxEdges' min='200' max='10000' value='2000'>
+        </div>
+        <div>
+          <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+          <input class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' value='Add'>
+        </div>
+      </div>
+    </div>
+    <p class="pt-4">Go back to the <a href="/admin" class="underline">admin area</a>.</p>
+  </form>
+  <script>
+    var rng = document.getElementById("maxEdges");
+    rng.addEventListener("change", function(){
+      var sp = document.getElementById("rangeMaxEdges");
+      sp.innerText = rng.value;
+    });
+  </script>
+</div>
+{{end}}

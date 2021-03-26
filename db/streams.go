@@ -3,9 +3,9 @@ package db
 import "github.com/devOpifex/skeef-app/stream"
 
 // InsertStream Insert a new stream
-func (DB *Database) InsertStream(name, follow, track, locations string) error {
+func (DB *Database) InsertStream(name, follow, track, locations, exclude, maxEdges string) error {
 
-	stmt, err := DB.Con.Prepare("INSERT INTO streams (name, follow, track, locations, active) VALUES (?,?,?,?,?);")
+	stmt, err := DB.Con.Prepare("INSERT INTO streams (name, follow, track, locations, active, exclude, max_edges) VALUES (?,?,?,?,?,?,?);")
 
 	if err != nil {
 		return err
@@ -13,7 +13,7 @@ func (DB *Database) InsertStream(name, follow, track, locations string) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(name, follow, track, locations, 0)
+	_, err = stmt.Exec(name, follow, track, locations, 0, exclude, maxEdges)
 
 	if err != nil {
 		return err

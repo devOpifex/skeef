@@ -36,7 +36,7 @@ func (DB *Database) CreateTableTwitterApp() error {
 
 func (DB *Database) CreateTableStreams() error {
 
-	_, err := DB.Con.Exec("CREATE TABLE streams (name VARCHAR(50) NOT NULL PRIMARY KEY, follow VARCHAR(400), track VARCHAR(400), locations VARCHAR(400), active INTEGER);")
+	_, err := DB.Con.Exec("CREATE TABLE streams (name VARCHAR(50) NOT NULL PRIMARY KEY, follow VARCHAR(400), track VARCHAR(400), locations VARCHAR(400), active INTEGER, max_edges INTEGER, exclude VARCHAR(254));")
 
 	if err != nil {
 		return err

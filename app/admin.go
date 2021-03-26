@@ -192,42 +192,6 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 		tmplData.Flash["password"] = "Password changed!"
 	}
 
-	if action == "addStream" {
-		name := r.Form.Get("name")
-		follow := r.Form.Get("follow")
-		track := r.Form.Get("track")
-		locations := r.Form.Get("locations")
-
-		if name == "" {
-			tmplData.Errors["addStream"] = "Must specify a name"
-		}
-
-		if follow == "" && track == "" {
-			tmplData.Errors["addStream"] = "Must use 'follow' or 'track' (or both)"
-		}
-
-		streamExists, err := app.Database.StreamExists(name)
-
-		if err != nil {
-			tmplData.Errors["addStream"] = "Failed to check if stream exists"
-		}
-
-		if streamExists {
-			tmplData.Errors["addStream"] = "A stream under that name already exists"
-		}
-
-		if len(tmplData.Errors) == 0 {
-			err = app.Database.InsertStream(name, follow, track, locations)
-
-			if err != nil {
-				tmplData.Errors["addStream"] = "Failed to add the stream to the database"
-			} else {
-				tmplData.Flash["addStream"] = "Stream added to the database"
-			}
-		}
-
-	}
-
 	if action == "deleteStream" {
 		err = app.Database.DeleteStream(r.Form.Get("streamName"))
 
