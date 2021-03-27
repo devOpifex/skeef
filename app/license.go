@@ -74,7 +74,7 @@ func (app *Application) LicenseCheck(ping bool) LicenseResponse {
 		return LicenseResponse{false, "Could not parse response from license endpoint"}
 	}
 
-	app.ErrorLog.Println(result.Reason)
+	app.InfoLog.Println(result.Reason)
 
 	return result
 }
