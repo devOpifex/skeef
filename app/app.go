@@ -13,15 +13,18 @@ import (
 
 // Application Application object
 type Application struct {
-	InfoLog    *log.Logger
-	ErrorLog   *log.Logger
-	Database   db.Database
-	Session    *sessions.Session
-	License    db.License
-	Addr       string
-	StopStream chan bool
-	Count      int
-	Stream     *twitter.Stream
+	InfoLog         *log.Logger
+	ErrorLog        *log.Logger
+	Database        db.Database
+	Session         *sessions.Session
+	License         db.License
+	Addr            string
+	StopStream      chan bool
+	Count           int
+	Stream          *twitter.Stream
+	Valid           bool
+	Streaming       bool
+	LicenseResponse LicenseResponse
 }
 
 type Setup struct {

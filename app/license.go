@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type response struct {
+type LicenseResponse struct {
 	Success bool   `json:"success"`
 	Reason  string `json:"reason"`
 }
@@ -18,13 +18,13 @@ type request struct {
 }
 
 // LicenseCheck Check the license
-func (app *Application) LicenseCheck(ping bool) response {
+func (app *Application) LicenseCheck(ping bool) LicenseResponse {
 
 	if app.License.License == "" {
 		license, err := app.Database.GetLicense()
 
 		if err != nil {
-			return response{false, "Could not fetch license from database"}
+			return LicenseResponse{false, "Could not fetch license from database"}
 		}
 
 		app.License = license
@@ -40,7 +40,7 @@ func (app *Application) LicenseCheck(ping bool) response {
 
 	if err != nil {
 		app.ErrorLog.Println("Could not serialise payload")
-		return response{false, "Could not serialise payload"}
+		return LicenseResponse{false, "Could not serialise payload"}
 	}
 
 	req, err := http.NewRequest(
@@ -48,7 +48,7 @@ func (app *Application) LicenseCheck(ping bool) response {
 
 	if err != nil {
 		app.ErrorLog.Println("Could not ping license endpoint")
-		return response{false, "Could not ping license endpoint"}
+		return LicenseResponse{false, "Could not ping license endpoint"}
 	}
 
 	req.Header.Set("skeef-token", "9a525de4769cca6398d0019b909bba84e26a2b80")
@@ -57,24 +57,28 @@ func (app *Application) LicenseCheck(ping bool) response {
 	resp, err := client.Do(req)
 	if err != nil {
 		app.ErrorLog.Println("Could not ping license endpoint")
-		return response{false, "Could not ping license endpoint"}
+		return LicenseResponse{false, "Could not ping license endpoint"}
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return response{false, "Could not ping license endpoint"}
+		return LicenseResponse{false, "Could not ping license endpoint"}
 	}
 
-	var result response
+	var result LicenseResponse
 
 	err = json.NewDecoder(resp.Body).Decode(&result)
 
 	if err != nil {
 		app.ErrorLog.Println("Could not parse response from license endpoint")
-		return response{false, "Could not parse response from license endpoint"}
+		return LicenseResponse{false, "Could not parse response from license endpoint"}
 	}
 
 	app.ErrorLog.Println(result.Reason)
 
 	return result
+}
+
+func (app *Application) LicenseValidity() {
+	app.LicenseResponse = app.LicenseCheck(app.Streaming)
 }

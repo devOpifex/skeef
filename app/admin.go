@@ -151,6 +151,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 	if action == "validity" {
 		response := app.LicenseCheck(false)
+		app.LicenseResponse = response
 
 		tmplData.Flash["validity"] = response.Reason
 	}
@@ -214,6 +215,10 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				tmplData.Errors["existingStreams"] = "Failed to start stream"
 			} else {
+
+				app.LicenseValidity()
+				app.Streaming = true
+
 				tmplData.Flash["existingStreams"] = "Stream Started"
 			}
 
@@ -231,6 +236,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				tmplData.Errors["existingStreams"] = "Failed to pause stream"
 			} else {
+				app.Streaming = false
 				tmplData.Flash["existingStreams"] = "Stream Paused"
 			}
 
