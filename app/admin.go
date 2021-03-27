@@ -217,9 +217,14 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 			} else {
 
 				app.LicenseValidity()
-				app.Streaming = true
 
-				tmplData.Flash["existingStreams"] = "Stream Started"
+				if app.LicenseResponse.Success {
+					app.Streaming = true
+
+					tmplData.Flash["existingStreams"] = "Stream Started"
+				} else {
+					tmplData.Errors["existingStreams"] = app.LicenseResponse.Reason
+				}
 			}
 
 		}

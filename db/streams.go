@@ -121,6 +121,23 @@ func (DB *Database) PauseStream(name string) error {
 	return nil
 }
 
+func (DB *Database) PauseAllStreams() error {
+
+	stmt, err := DB.Con.Prepare("UPDATE streams SET active = 0")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (DB *Database) GetStream(name string) (stream.Stream, error) {
 	var stream stream.Stream
 

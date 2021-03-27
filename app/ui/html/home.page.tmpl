@@ -7,6 +7,20 @@
   {{ if .Authenticated }}
     <a href="/admin" class="text-xs float-right text-light underline px-4">Admin area</a>
   {{ end }}
-  <div id="graph" class="w-full focus:outline-none"></div>
+  {{ if .Streaming }}
+    <div id="graph" class="w-full focus:outline-none"></div>
+  {{ else }}
+    <div class="flex justify-center pt-12">
+      <div class="bg-gray-900 px-4 py-6 rounded-md">
+        <h1 class="uppercase text-center font-light text-3xl pb-8">Currently not streaming</h1>
+        {{ if .Authenticated }}
+          <p class="text-center w-full">
+            It looks like you are the admin,
+            <a href="/admin" class="text-light text-green-400 underline">start streaming.</a>
+          </p>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
 </div>
 {{end}}

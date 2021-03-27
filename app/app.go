@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -47,9 +48,10 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 
 	var tmplData templateData
 
-	if app.isAuthenticated(r) {
-		tmplData.Authenticated = true
-	}
+	tmplData.Authenticated = app.isAuthenticated(r)
+
+	fmt.Println(app.Streaming)
+	tmplData.Streaming = app.Streaming
 
 	app.render(w, r, []string{"ui/html/home.page.tmpl"}, tmplData)
 }

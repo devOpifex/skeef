@@ -81,4 +81,11 @@ func (app *Application) LicenseCheck(ping bool) LicenseResponse {
 
 func (app *Application) LicenseValidity() {
 	app.LicenseResponse = app.LicenseCheck(app.Streaming)
+
+	if app.LicenseResponse.Success {
+		return
+	}
+
+	app.Database.PauseAllStreams()
+	app.Streaming = false
 }
