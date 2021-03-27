@@ -35,6 +35,11 @@
           <label class="font-bold uppercase text-xs">Follow</label>
           <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='locations' value='{{ .Stream.Locations }}'>
         </div>
+        <div class="pt-3">
+          <label class="font-bold uppercase text-xs">Maximum edges on screen: <span id='rangeMaxEdges'>{{ .Stream.MaxEdges }}</span></label>
+          <br/>
+          <input id="maxEdges" class="rounded-sm overflow-hidden w-full" type='range' name='maxEdges' min='200' max='10000' value='{{ .Stream.MaxEdges }}' step='100'>
+        </div>
         <div>
           <input type='hidden' name='currentName' value='{{ .Stream.Name }}'>
           <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
@@ -44,5 +49,12 @@
     </div>
     <p class="text-center pt-4">Go back to the <a href="/admin" class="underline">admin area</a>.</p>
   </form>
+  <script>
+    var rng = document.getElementById("maxEdges");
+    rng.addEventListener("change", function(){
+      var sp = document.getElementById("rangeMaxEdges");
+      sp.innerText = rng.value;
+    });
+  </script>
 </div>
 {{end}}

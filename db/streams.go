@@ -41,7 +41,7 @@ func (DB *Database) StreamExists(name string) (bool, error) {
 func (DB *Database) GetStreams() ([]stream.Stream, error) {
 	var streams []stream.Stream
 
-	rows, err := DB.Con.Query("SELECT name, follow, track, locations, active FROM streams;")
+	rows, err := DB.Con.Query("SELECT name, follow, track, locations, active, max_edges FROM streams;")
 
 	if err != nil {
 		return streams, err
@@ -50,7 +50,7 @@ func (DB *Database) GetStreams() ([]stream.Stream, error) {
 	for rows.Next() {
 		var stream stream.Stream
 
-		err := rows.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active)
+		err := rows.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges)
 
 		if err != nil {
 			continue
@@ -141,7 +141,7 @@ func (DB *Database) PauseAllStreams() error {
 func (DB *Database) GetStream(name string) (stream.Stream, error) {
 	var stream stream.Stream
 
-	stmt, err := DB.Con.Prepare("SELECT name, follow, track, locations, active FROM streams WHERE name = ?")
+	stmt, err := DB.Con.Prepare("SELECT name, follow, track, locations, active, max_edges FROM streams WHERE name = ?")
 
 	if err != nil {
 		return stream, err
@@ -149,20 +149,20 @@ func (DB *Database) GetStream(name string) (stream.Stream, error) {
 
 	row := stmt.QueryRow(name)
 
-	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active)
+	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges)
 
 	return stream, nil
 }
 
-func (DB *Database) UpdateStream(track, follow, locations, newName, currentName string) error {
+func (DB *Database) UpdateStream(track, follow, locations, newName, currentName string, maxEdges int) error {
 
-	stmt, err := DB.Con.Prepare("UPDATE streams SET track = ?, follow = ?, locations = ?, name = ? WHERE name = ?")
+	stmt, err := DB.Con.Prepare("UPDATE streams SET track = ?, follow = ?, locations = ?, name = ?, max_edges = ? WHERE name = ?")
 
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(track, follow, locations, newName, currentName)
+	_, err = stmt.Exec(track, follow, locations, newName, maxEdges, currentName)
 
 	if err != nil {
 		return err

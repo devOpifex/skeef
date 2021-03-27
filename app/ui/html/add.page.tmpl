@@ -40,7 +40,7 @@
         <div class="pt-3">
           <label class="font-bold uppercase text-xs">Maximum edges on screen: <span id='rangeMaxEdges'>2000</span></label>
           <br/>
-          <input id="maxEdges" class="rounded-sm overflow-hidden w-full" type='range' name='maxEdges' min='200' max='10000' value='2000'>
+          <input id="maxEdges" class="rounded-sm overflow-hidden w-full" type='range' name='maxEdges' min='200' max='10000' value='2000' step='100'>
         </div>
         <div>
           <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>

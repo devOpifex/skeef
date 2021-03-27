@@ -2,6 +2,7 @@ package app
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/devOpifex/skeef-app/stream"
 )
@@ -38,12 +39,15 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 	tmplData.Errors = make(map[string]string)
 	tmplData.Flash = make(map[string]string)
 
+	maxEdges, _ := strconv.Atoi(r.Form.Get("maxEdges"))
+
 	err = app.Database.UpdateStream(
 		r.Form.Get("track"),
 		r.Form.Get("follow"),
 		r.Form.Get("locations"),
 		r.Form.Get("name"),
 		r.Form.Get("currentName"),
+		maxEdges,
 	)
 
 	if err != nil {
@@ -57,6 +61,7 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 		Track:     r.Form.Get("track"),
 		Locations: r.Form.Get("locations"),
 		Name:      r.Form.Get("name"),
+		MaxEdges:  maxEdges,
 	}
 
 	app.render(w, r, []string{"ui/html/stream.page.tmpl"}, tmplData)
