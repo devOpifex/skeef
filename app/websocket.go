@@ -53,6 +53,7 @@ func (c *Client) Read(app *Application) {
 
 		if !app.Database.StreamOnGoing() {
 
+			// stop the stream
 			if app.Stream != nil {
 				app.Stream.Stop()
 				app.Stream = nil
