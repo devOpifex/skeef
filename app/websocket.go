@@ -51,7 +51,7 @@ func (c *Client) Read(app *Application) {
 			return
 		}
 
-		if !app.Database.StreamOnGoing() {
+		if !app.Streaming {
 
 			// stop the stream
 			if app.Stream != nil {
@@ -73,10 +73,8 @@ func (c *Client) Read(app *Application) {
 		var twitterConfig = oauth1.NewConfig(tokens.ApiKey, tokens.ApiSecret)
 		var token = oauth1.NewToken(tokens.AccessToken, tokens.AccessSecret)
 
-		// http.Client will automatically authorize Requests
 		var httpClient = twitterConfig.Client(oauth1.NoContext, token)
 
-		// Twitter client
 		var client = twitter.NewClient(httpClient)
 
 		var params = &twitter.StreamFilterParams{
