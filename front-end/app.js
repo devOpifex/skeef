@@ -41,19 +41,11 @@ document.addEventListener("DOMContentLoaded",function(){
           }
         } else if(n.data.type == 'hashtag'){
           return {
-            color: 0x9d4edd,
+            color: 0xb700ff,
             size: n.data.count * 10
           }
         } else if (n.data.type == 'hidden') {
-          return {
-            color: 0x262b36,
-            size: 0
-          }
-        } else {
-          return {
-            color: 0xFFFFFF,
-            size: 15
-          }
+          return ;
         }
       },
       link: function(l){
@@ -106,11 +98,14 @@ document.addEventListener("DOMContentLoaded",function(){
 
     if(parsed.graph.edges){
       for(let i = 0; i < parsed.graph.edges.length; i++){
-        if(g.hasLink(parsed.graph.edges[i].source, parsed.graph.edges[i].target)){
+        if(parsed.graph.edges[i].action == "update"){
           continue; 
         }
 
-        g.addLink(parsed.graph.edges[i].source, parsed.graph.edges[i].target);
+        if(parsed.graph.edges[i].action == "add"){
+          g.addLink(parsed.graph.edges[i].source, parsed.graph.edges[i].target);
+        }
+        
       }
     }
     g.endUpdate();
