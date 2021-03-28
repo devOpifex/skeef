@@ -21,9 +21,8 @@
   },
   "homepage": "https://github.com/devOpifex/skeef#readme",
   "dependencies": {
-    "esbuild": "^0.8.56",
-    "ngraph.graph": "^19.1.0",
-    "ngraph.pixel": "^2.4.1"
+    "3d-force-graph": "^1.69.1",
+    "esbuild": "^0.8.56"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.5",

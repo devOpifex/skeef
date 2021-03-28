@@ -118,9 +118,7 @@ func (app *Application) StopStream() {
 }
 
 func (app *Application) StartStream() {
-	defer func() {
-		app.Count = 0
-	}()
+	app.Count = 0
 
 	for {
 

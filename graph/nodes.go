@@ -19,12 +19,10 @@ func (g *Graph) UpsertNode(node *Node) {
 		if g.Nodes[index].Name == node.Name {
 			g.Nodes[index].Count++
 			node.Count = g.Nodes[index].Count
-			node.Action = "update"
 			return
 		}
 	}
 
-	node.Action = "add"
 	g.Nodes = append(g.Nodes, *node)
 
 }

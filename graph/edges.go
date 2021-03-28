@@ -19,12 +19,10 @@ func (g *Graph) UpsertEdge(edge *Edge) {
 		if g.Edges[index].Source == edge.Source && g.Edges[index].Target == edge.Target {
 			g.Edges[index].Weight++
 			edge.Weight = g.Edges[index].Weight
-			edge.Action = "update"
 			return
 		}
 	}
 
-	edge.Action = "add"
 	g.Edges = append(g.Edges, *edge)
 
 }
