@@ -81,6 +81,7 @@ document.addEventListener("DOMContentLoaded",function(){
   let ntweets = document.getElementById("ntweets")
   window.socket.onmessage = (data) => {
     let parsed = JSON.parse(data.data);
+    console.log(parsed);
     
     if(parsed.tweetsCount != 0){
       ntweets.innerText = parsed.tweetsCount;
@@ -90,14 +91,16 @@ document.addEventListener("DOMContentLoaded",function(){
     if(parsed.graph.nodes){
       for(let i = 0; i < parsed.graph.nodes.length; i++)  {
 
-        if(g.hasNode(parsed.graph.nodes[i].name)){
-          continue;
+        if(parsed.graph.nodes[i].action == "update")
+          continue
+
+        if(parsed.graph.nodes[i].action == "add"){
+          g.addNode(
+            parsed.graph.nodes[i].name,
+            {type: parsed.graph.nodes[i].type, count: parsed.graph.nodes[i].count}
+          );
         }
 
-        g.addNode(
-          parsed.graph.nodes[i].name,
-          {type: parsed.graph.nodes[i].type, count: parsed.graph.nodes[i].count}
-        );
       }
     }
 
@@ -108,6 +111,33 @@ document.addEventListener("DOMContentLoaded",function(){
         }
 
         g.addLink(parsed.graph.edges[i].source, parsed.graph.edges[i].target);
+      }
+    }
+    g.endUpdate();
+
+    g.beginUpdate();
+    if(parsed.graph.nodes){
+      for(let i = 0; i < parsed.graph.nodes.length; i++)  {
+
+        if(parsed.graph.nodes[i].action == "add")
+          continue
+
+        if(parsed.graph.nodes[i].action == "update"){
+          let n = g.getNode(parsed.graph.nodes[i].name);
+
+          // if undefined then we have an issue and we must add 
+          // the node instead
+          if(n == undefined) {
+            g.addNode(
+              parsed.graph.nodes[i].name,
+              {type: parsed.graph.nodes[i].type, count: parsed.graph.nodes[i].count}
+            );
+            continue
+          }
+
+          n.count = parsed.graph.nodes[i].count;
+        }
+
       }
     }
     g.endUpdate();

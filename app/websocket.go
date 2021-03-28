@@ -54,21 +54,22 @@ func (c *Client) Read(app *Application) {
 	}
 }
 
-func (pool *Pool) Start() {
+func (app *Application) StartPool() {
 	for {
 		select {
-		case client := <-pool.Register:
-			pool.Clients[client] = true
-			for client := range pool.Clients {
+		case client := <-app.Pool.Register:
+			app.Pool.Clients[client] = true
+			for client := range app.Pool.Clients {
+				// send current state of the graph on connect
+				client.Conn.WriteJSON(message{Graph: app.Graph, TweetsCount: app.Count})
+			}
+		case client := <-app.Pool.Unregister:
+			delete(app.Pool.Clients, client)
+			for client := range app.Pool.Clients {
 				client.Conn.WriteJSON(message{})
 			}
-		case client := <-pool.Unregister:
-			delete(pool.Clients, client)
-			for client := range pool.Clients {
-				client.Conn.WriteJSON(message{})
-			}
-		case message := <-pool.Broadcast:
-			for client := range pool.Clients {
+		case message := <-app.Pool.Broadcast:
+			for client := range app.Pool.Clients {
 				if err := client.Conn.WriteJSON(message); err != nil {
 					fmt.Println(err)
 					return
@@ -152,7 +153,13 @@ func (app *Application) StartStream() {
 			hashNodes, hashEdges := graph.GetHashNet(*tweet)
 			nodes = append(nodes, hashNodes...)
 			edges = append(edges, hashEdges...)
-			g := graph.BuildGraph(nodes, edges)
+			for key := range edges {
+				app.Graph.UpsertEdge(&edges[key])
+			}
+			for key := range nodes {
+				app.Graph.UpsertNode(&nodes[key])
+			}
+			g := graph.Graph{Edges: edges, Nodes: nodes}
 			m := message{
 				Graph:       g,
 				TweetsCount: app.Count,

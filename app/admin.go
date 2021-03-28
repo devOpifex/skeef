@@ -219,7 +219,9 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 				if app.LicenseResponse.Success {
 					app.InfoLog.Println("Starting stream")
-					app.Start <- true
+					defer func() {
+						app.Start <- true
+					}()
 					tmplData.Flash["existingStreams"] = "Stream Started"
 				} else {
 					tmplData.Errors["existingStreams"] = app.LicenseResponse.Reason
@@ -238,7 +240,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				tmplData.Errors["existingStreams"] = "Failed to pause stream"
 			} else {
-				app.StopStream()
+				defer app.StopStream()
 				tmplData.Flash["existingStreams"] = "Stream Paused"
 			}
 

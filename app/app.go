@@ -6,6 +6,7 @@ import (
 
 	"github.com/bmizerany/pat"
 	"github.com/devOpifex/skeef-app/db"
+	"github.com/devOpifex/skeef-app/graph"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/golangcollege/sessions"
 	"github.com/justinas/alice"
@@ -27,6 +28,7 @@ type Application struct {
 	Quit            chan bool
 	Start           chan bool
 	Streaming       bool
+	Graph           graph.Graph
 }
 
 type Setup struct {

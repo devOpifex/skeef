@@ -51,7 +51,7 @@ func main() {
 	app.Start = make(chan bool)
 
 	// websocket pool
-	go app.Pool.Start()
+	go app.StartPool()
 
 	firstrun := false
 	if !db.Exists() {

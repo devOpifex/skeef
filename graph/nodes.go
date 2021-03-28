@@ -1,10 +1,10 @@
 package graph
 
 // HasNode Does the node exist in the graph
-func (g *Graph) HasNode(name string) bool {
+func (g *Graph) HasNode(node Node) bool {
 
 	for index := range g.Nodes {
-		if g.Nodes[index].Name == name {
+		if g.Nodes[index].Name == node.Name {
 			return true
 		}
 	}
@@ -13,13 +13,18 @@ func (g *Graph) HasNode(name string) bool {
 }
 
 // UpdateNode Update the node count
-func (g *Graph) UpdateNode(name string, count int) {
+func (g *Graph) UpsertNode(node *Node) {
 
 	for index := range g.Nodes {
-		if g.Nodes[index].Name == name {
-			g.Nodes[index].Count = count
-			break
+		if g.Nodes[index].Name == node.Name {
+			g.Nodes[index].Count++
+			node.Count = g.Nodes[index].Count
+			node.Action = "update"
+			return
 		}
 	}
+
+	node.Action = "add"
+	g.Nodes = append(g.Nodes, *node)
 
 }
