@@ -80,12 +80,14 @@ func (app *Application) LicenseCheck(ping bool) LicenseResponse {
 }
 
 func (app *Application) LicenseValidity() {
-	app.LicenseResponse = app.LicenseCheck(app.Streaming)
+	app.InfoLog.Printf("Checking license, ping:%v", app.Database.StreamOnGoing())
+	app.LicenseResponse = app.LicenseCheck(app.Database.StreamOnGoing())
 
 	if app.LicenseResponse.Success {
 		return
 	}
 
+	app.InfoLog.Printf("License check: %v\n", app.LicenseResponse.Reason)
+
 	app.Database.PauseAllStreams()
-	app.Streaming = false
 }

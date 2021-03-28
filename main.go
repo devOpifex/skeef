@@ -47,6 +47,9 @@ func main() {
 		Pool:     pool,
 	}
 
+	app.Quit = make(chan bool)
+	app.Start = make(chan bool)
+
 	// websocket pool
 	go app.Pool.Start()
 
@@ -97,10 +100,6 @@ func main() {
 		}
 	}
 
-	go func() {
-		app.StartStream()
-	}()
-
 	srv := &http.Server{
 		Addr:     *addr,
 		ErrorLog: errorLog,
@@ -111,6 +110,17 @@ func main() {
 	go func() {
 		for range time.Tick(time.Minute * 30) {
 			app.LicenseValidity()
+		}
+	}()
+
+	go func() {
+		for {
+			select {
+			case <-app.Quit:
+				return
+			case <-app.Start:
+				app.StartStream()
+			}
 		}
 	}()
 

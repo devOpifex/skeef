@@ -5,9 +5,10 @@
 {{define "main"}}
 <div class="w-full">
   {{ if .Authenticated }}
-    <a href="/admin" class="text-xs float-right text-light underline px-4">Admin area</a>
+    <a href="/admin" class="pt-2 text-xs float-right text-light underline px-4">Admin area</a>
   {{ end }}
   {{ if .Streaming }}
+    <p class="float-left px-4 pt-2 font-light"><span id="ntweets"></span> tweets</p>
     <div id="graph" class="w-full focus:outline-none"></div>
   {{ else }}
     <div class="flex justify-center pt-12">

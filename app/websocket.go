@@ -111,21 +111,17 @@ func (app *Application) socket(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Application) StopStream() {
-	app.Streaming = false
-
-	if app.Stream != nil {
-		app.Stream.Stop()
-		app.Stream = nil
-	}
+	app.Stream.Stop()
+	app.Database.PauseAllStreams()
+	app.Quit <- true
 }
 
 func (app *Application) StartStream() {
-	for {
+	defer func() {
+		app.Count = 0
+	}()
 
-		if !app.Streaming {
-			app.StopStream()
-			continue
-		}
+	for {
 
 		tokens, err := app.Database.GetTokens()
 
@@ -165,10 +161,6 @@ func (app *Application) StartStream() {
 		}
 
 		for message := range app.Stream.Messages {
-			if !app.Streaming {
-				app.StopStream()
-				break
-			}
 			demux.Handle(message)
 		}
 	}

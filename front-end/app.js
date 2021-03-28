@@ -78,9 +78,13 @@ document.addEventListener("DOMContentLoaded",function(){
     console.log(error);
   }
 
+  let ntweets = document.getElementById("ntweets")
   window.socket.onmessage = (data) => {
     let parsed = JSON.parse(data.data);
-    console.log(parsed);
+    
+    if(parsed.tweetsCount != 0){
+      ntweets.innerText = parsed.tweetsCount;
+    }
 
     g.beginUpdate();
     if(parsed.graph.nodes){

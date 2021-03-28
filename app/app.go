@@ -22,9 +22,11 @@ type Application struct {
 	Count           int
 	Stream          *twitter.Stream
 	Valid           bool
-	Streaming       bool
 	LicenseResponse LicenseResponse
 	Pool            *Pool
+	Quit            chan bool
+	Start           chan bool
+	Streaming       bool
 }
 
 type Setup struct {
@@ -49,7 +51,7 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 
 	tmplData.Authenticated = app.isAuthenticated(r)
 
-	tmplData.Streaming = app.Streaming
+	tmplData.Streaming = app.Database.StreamOnGoing()
 
 	app.render(w, r, []string{"ui/html/home.page.tmpl"}, tmplData)
 }

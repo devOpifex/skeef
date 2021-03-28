@@ -205,29 +205,27 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 	if action == "startStream" {
 
-		if app.Streaming {
+		if app.Database.StreamOnGoing() {
 
 			tmplData.Errors["existingStreams"] = "There is already one stream active"
 
 		} else {
+			app.LicenseValidity()
 			err = app.Database.StartStream(r.Form.Get("streamName"))
 
 			if err != nil {
 				tmplData.Errors["existingStreams"] = "Failed to start stream"
 			} else {
 
-				app.LicenseValidity()
-
 				if app.LicenseResponse.Success {
-					app.Streaming = true
+					app.InfoLog.Println("Starting stream")
+					app.Start <- true
 					tmplData.Flash["existingStreams"] = "Stream Started"
 				} else {
 					tmplData.Errors["existingStreams"] = app.LicenseResponse.Reason
 				}
 			}
-
 		}
-
 	}
 
 	if action == "stopStream" {
@@ -240,7 +238,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				tmplData.Errors["existingStreams"] = "Failed to pause stream"
 			} else {
-				app.Streaming = false
+				app.StopStream()
 				tmplData.Flash["existingStreams"] = "Stream Paused"
 			}
 
