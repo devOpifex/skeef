@@ -19,12 +19,12 @@ type Application struct {
 	Session         *sessions.Session
 	License         db.License
 	Addr            string
-	StopStream      chan bool
 	Count           int
 	Stream          *twitter.Stream
 	Valid           bool
 	Streaming       bool
 	LicenseResponse LicenseResponse
+	Pool            *Pool
 }
 
 type Setup struct {
@@ -57,10 +57,6 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 // Handlers Returns all routes
 func (app *Application) Handlers() http.Handler {
 
-	// websocket pool
-	pool := NewPool()
-	go pool.Start()
-
 	standardMiddleware := alice.New(secureHeaders)
 	dynamicMiddleware := alice.New(app.Session.Enable, noSurf)
 
@@ -75,9 +71,7 @@ func (app *Application) Handlers() http.Handler {
 	mux.Get("/admin", dynamicMiddleware.Then(http.HandlerFunc(app.adminPage)))
 	mux.Post("/admin", dynamicMiddleware.Then(http.HandlerFunc(app.adminForm)))
 	mux.Get("/admin/signout", dynamicMiddleware.ThenFunc(app.signout))
-	mux.Get("/ws", dynamicMiddleware.ThenFunc(func(w http.ResponseWriter, r *http.Request) {
-		app.socket(pool, w, r)
-	}))
+	mux.Get("/ws", dynamicMiddleware.ThenFunc(app.socket))
 	mux.Get("/admin/edit/:stream", dynamicMiddleware.Then(http.HandlerFunc(app.streamEditPage)))
 	mux.Post("/admin/edit", dynamicMiddleware.Then(http.HandlerFunc(app.streamEditForm)))
 	mux.Get("/admin/add", dynamicMiddleware.Then(http.HandlerFunc(app.streamAddPage)))

@@ -51,58 +51,6 @@ func (c *Client) Read(app *Application) {
 			return
 		}
 
-		if !app.Streaming {
-
-			// stop the stream
-			if app.Stream != nil {
-				app.Stream.Stop()
-				app.Stream = nil
-			}
-
-			continue
-		}
-
-		tokens, err := app.Database.GetTokens()
-
-		if err != nil {
-			continue
-		}
-
-		search := app.Database.GetActiveStream()
-
-		var twitterConfig = oauth1.NewConfig(tokens.ApiKey, tokens.ApiSecret)
-		var token = oauth1.NewToken(tokens.AccessToken, tokens.AccessSecret)
-
-		var httpClient = twitterConfig.Client(oauth1.NoContext, token)
-
-		var client = twitter.NewClient(httpClient)
-
-		var params = &twitter.StreamFilterParams{
-			Track:         []string{search.Track},
-			StallWarnings: twitter.Bool(true),
-		}
-		app.Stream, _ = client.Streams.Filter(params)
-
-		var demux = twitter.NewSwitchDemux()
-		demux.Tweet = func(tweet *twitter.Tweet) {
-			app.Count++
-			app.InfoLog.Printf("Tweet #%v\n", app.Count)
-			nodes, edges := graph.GetUserNet(*tweet)
-			hashNodes, hashEdges := graph.GetHashNet(*tweet)
-			nodes = append(nodes, hashNodes...)
-			edges = append(edges, hashEdges...)
-			g := graph.BuildGraph(nodes, edges)
-			m := message{
-				Graph:       g,
-				TweetsCount: app.Count,
-			}
-			c.Pool.Broadcast <- m
-		}
-
-		for message := range app.Stream.Messages {
-			demux.Handle(message)
-		}
-
 	}
 }
 
@@ -145,7 +93,7 @@ func (app *Application) wsUpgrade(w http.ResponseWriter, r *http.Request) (*webs
 	return ws, nil
 }
 
-func (app *Application) socket(pool *Pool, w http.ResponseWriter, r *http.Request) {
+func (app *Application) socket(w http.ResponseWriter, r *http.Request) {
 	ws, err := app.wsUpgrade(w, r)
 
 	if err != nil {
@@ -154,10 +102,74 @@ func (app *Application) socket(pool *Pool, w http.ResponseWriter, r *http.Reques
 
 	client := &Client{
 		Conn: ws,
-		Pool: pool,
+		Pool: app.Pool,
 	}
 
-	pool.Register <- client
+	app.Pool.Register <- client
 	client.Read(app)
 
+}
+
+func (app *Application) StopStream() {
+	app.Streaming = false
+
+	if app.Stream != nil {
+		app.Stream.Stop()
+		app.Stream = nil
+	}
+}
+
+func (app *Application) StartStream() {
+	for {
+
+		if !app.Streaming {
+			app.StopStream()
+			continue
+		}
+
+		tokens, err := app.Database.GetTokens()
+
+		if err != nil {
+			continue
+		}
+
+		search := app.Database.GetActiveStream()
+
+		var twitterConfig = oauth1.NewConfig(tokens.ApiKey, tokens.ApiSecret)
+		var token = oauth1.NewToken(tokens.AccessToken, tokens.AccessSecret)
+
+		var httpClient = twitterConfig.Client(oauth1.NoContext, token)
+
+		var client = twitter.NewClient(httpClient)
+
+		var params = &twitter.StreamFilterParams{
+			Track:         []string{search.Track},
+			StallWarnings: twitter.Bool(true),
+		}
+		app.Stream, _ = client.Streams.Filter(params)
+
+		var demux = twitter.NewSwitchDemux()
+		demux.Tweet = func(tweet *twitter.Tweet) {
+			app.Count++
+			app.InfoLog.Printf("Tweet #%v\n", app.Count)
+			nodes, edges := graph.GetUserNet(*tweet)
+			hashNodes, hashEdges := graph.GetHashNet(*tweet)
+			nodes = append(nodes, hashNodes...)
+			edges = append(edges, hashEdges...)
+			g := graph.BuildGraph(nodes, edges)
+			m := message{
+				Graph:       g,
+				TweetsCount: app.Count,
+			}
+			app.Pool.Broadcast <- m
+		}
+
+		for message := range app.Stream.Messages {
+			if !app.Streaming {
+				app.StopStream()
+				break
+			}
+			demux.Handle(message)
+		}
+	}
 }

@@ -171,3 +171,12 @@ func (DB *Database) GetActiveStream() stream.Stream {
 
 	return stream
 }
+
+func (DB *Database) StreamOnGoing() bool {
+	rows := DB.Con.QueryRow("SELECT COUNT(1) FROM streams WHERE active = 1;")
+
+	var count int
+	rows.Scan(&count)
+
+	return count > 0
+}

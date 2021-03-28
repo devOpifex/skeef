@@ -232,7 +232,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 	if action == "stopStream" {
 
-		if !app.Streaming {
+		if !app.Database.StreamOnGoing() {
 			tmplData.Errors["existingStreams"] = "There is no active stream to pause"
 		} else {
 			err = app.Database.PauseStream(r.Form.Get("streamName"))
