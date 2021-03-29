@@ -7,7 +7,8 @@
     "dev-css": "postcss build front-end/tailwind.css -o app/ui/static/compiled.min.css",
     "build-css": "NODE_ENV=production postcss build front-end/tailwind.css -o app/ui/static/compiled.min.css",
     "watch-css": "postcss -w build front-end/tailwind.css -o app/ui/static/compiled.min.css",
-    "build": "esbuild front-end/app.js --bundle --minify --outfile=app/ui/static/app.min.js"
+    "build": "esbuild front-end/app.js --bundle --minify --outfile=app/ui/static/app.min.js",
+    "build-dev": "esbuild front-end/app.js --bundle --outfile=app/ui/static/app.min.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,9 @@
   "homepage": "https://github.com/devOpifex/skeef#readme",
   "dependencies": {
     "3d-force-graph": "^1.69.1",
-    "esbuild": "^0.8.56"
+    "esbuild": "^0.8.56",
+    "three": "^0.126.1",
+    "three-spritetext": "^1.6.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.5",

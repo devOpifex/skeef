@@ -1,4 +1,5 @@
 import ForceGraph3D from '3d-force-graph';
+import SpriteText from 'three-spritetext';
 
 document.addEventListener("DOMContentLoaded",function(){
 
@@ -30,7 +31,13 @@ document.addEventListener("DOMContentLoaded",function(){
       .backgroundColor('#262b36')
       .nodeAutoColorBy('type')
       .nodeVal('count')
-      .linkDirectionalParticleSpeed(d => d.weight);
+      .nodeThreeObject(node => {
+        const sprite = new SpriteText(node.id);
+        sprite.material.depthWrite = false; // make sprite background transparent
+        sprite.color = node.color;
+        sprite.textHeight = node.count;
+        return sprite;
+      });
 
   }
 
@@ -47,20 +54,70 @@ document.addEventListener("DOMContentLoaded",function(){
     console.log(error);
   }
 
-  let ntweets = document.getElementById("ntweets")
+  let firstrun = true;
+  let ntweets = document.getElementById("ntweets");
+
   window.socket.onmessage = (data) => {
     let parsed = JSON.parse(data.data);
     console.log(parsed);
     
-    if(parsed.tweetsCount != 0){
-      ntweets.innerText = parsed.tweetsCount;
+    if(parsed.tweetsCount == 0){
+      return ;
     }
-    
+
+    ntweets.innerText = parsed.tweetsCount;
+
     let { nodes, links } = Graph.graphData();
 
+    if (firstrun == true){
+      Graph.graphData({
+        nodes: [...nodes, ...parsed.graph.nodes],
+        links: [...links, ...parsed.graph.edges]
+      });
+      firstrun = false;
+      return ;
+    }
+
+    // only nodes to add
+    let nodesAdditions = parsed.graph.nodes.filter(function(n){
+      return n.action == "add"
+    })
+
+    if(parsed.graph.nodes != null){
+      let nodeUpdates = parsed.graph.nodes.filter(function(n){
+        return n.action == "update"
+      });
+  
+      for(let i = 0; i < nodeUpdates.length; i++){
+        for(let j = 0; j < nodes.length; j++){
+          if(nodes[j].id == nodeUpdates[i].name){
+            nodes[j].count = nodeUpdates[i].count
+          }
+        }
+      }
+    }
+
+    let edgesAdditions = parsed.graph.edges.filter(function(e){
+      return e.action == "add"
+    });
+
+    if(parsed.graph.nodes != null){
+      let edgeUpdates = parsed.graph.nodes.filter(function(e){
+        return e.action == "update"
+      });
+  
+      for(let i = 0; i < edgeUpdates.length; i++){
+        for(let j = 0; j < links.length; j++){
+          if(links[j].id == edgeUpdates[i].name){
+            links[j].weight = edgeUpdates[i].weight
+          }
+        }
+      }
+    }
+
     Graph.graphData({
-      nodes: [...nodes, ...parsed.graph.nodes],
-      links: [...links, ...parsed.graph.edges]
+      nodes: [...nodes, ...nodesAdditions],
+      links: [...links, ...edgesAdditions]
     });
   
   }

@@ -219,6 +219,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 				if app.LicenseResponse.Success {
 					app.InfoLog.Println("Starting stream")
+					app.Count = 0
 					defer func() {
 						app.Start <- true
 					}()

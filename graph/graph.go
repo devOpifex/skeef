@@ -6,9 +6,10 @@ import (
 
 // Node defines nodes
 type Node struct {
-	Name  string `json:"id"`
-	Type  string `json:"type"`
-	Count int    `json:"count"`
+	Name   string `json:"id"`
+	Type   string `json:"type"`
+	Count  int    `json:"count"`
+	Action string `json:"action"`
 }
 
 // Edge edges
@@ -16,6 +17,7 @@ type Edge struct {
 	Source string `json:"source"`
 	Target string `json:"target"`
 	Weight int    `json:"weight"`
+	Action string `json:"action"`
 }
 
 // Graph defines a graph
@@ -32,14 +34,14 @@ func GetUserNet(tweet twitter.Tweet) ([]Node, []Edge) {
 	var nodes []Node
 
 	for _, m := range tweet.Entities.UserMentions {
-		edge := Edge{tweet.User.ScreenName, m.ScreenName, 1}
+		edge := Edge{tweet.User.ScreenName, m.ScreenName, 1, "add"}
 
 		edges = append(edges, edge)
 	}
 
 	for _, n := range edges {
-		src := Node{n.Source, "user", 1}
-		tgt := Node{n.Target, "user", 1}
+		src := Node{n.Source, "user", 1, "add"}
+		tgt := Node{n.Target, "user", 1, "add"}
 		nodes = append(nodes, src, tgt)
 	}
 
@@ -54,13 +56,13 @@ func GetHashNet(tweet twitter.Tweet) ([]Node, []Edge) {
 
 	for _, h := range tweet.Entities.Hashtags {
 
-		edge := Edge{tweet.User.ScreenName, h.Text, 1}
+		edge := Edge{tweet.User.ScreenName, h.Text, 1, "add"}
 		edges = append(edges, edge)
 	}
 
 	for _, e := range edges {
-		src := Node{e.Source, "user", 1}
-		tgt := Node{e.Target, "hashtag", 1}
+		src := Node{e.Source, "user", 1, "add"}
+		tgt := Node{e.Target, "hashtag", 1, "add"}
 
 		nodes = append(nodes, src, tgt)
 	}

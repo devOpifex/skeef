@@ -118,7 +118,6 @@ func (app *Application) StopStream() {
 }
 
 func (app *Application) StartStream() {
-	app.Count = 0
 
 	for {
 
