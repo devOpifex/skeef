@@ -59,15 +59,17 @@ func (app *Application) StartPool() {
 		select {
 		case client := <-app.Pool.Register:
 			app.Pool.Clients[client] = true
+			app.Connected++
 			for client := range app.Pool.Clients {
 				// send current state of the graph on connect
 				client.Conn.WriteJSON(message{Graph: app.Graph, TweetsCount: app.Count})
 			}
 		case client := <-app.Pool.Unregister:
 			delete(app.Pool.Clients, client)
-			for client := range app.Pool.Clients {
-				client.Conn.WriteJSON(message{})
-			}
+			app.Connected--
+			// for client := range app.Pool.Clients {
+			// 	client.Conn.WriteJSON(message{})
+			// }
 		case message := <-app.Pool.Broadcast:
 			for client := range app.Pool.Clients {
 				if err := client.Conn.WriteJSON(message); err != nil {

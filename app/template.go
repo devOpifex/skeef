@@ -22,6 +22,7 @@ type templateData struct {
 	Addr          string
 	Email         string
 	Streaming     bool
+	Connected     int
 }
 
 //go:embed ui/html

@@ -29,6 +29,7 @@ type Application struct {
 	Start           chan bool
 	Streaming       bool
 	Graph           graph.Graph
+	Connected       int
 }
 
 type Setup struct {

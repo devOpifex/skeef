@@ -75,6 +75,7 @@ func (app *Application) adminPage(w http.ResponseWriter, r *http.Request) {
 	tmplData.License = app.License
 	tmplData.HasTokens = hasTokens
 	tmplData.Email = app.GetAuthenticated(r)
+	tmplData.Connected = app.Connected
 
 	if hasTokens {
 		streams, err := app.Database.GetStreams()
@@ -258,6 +259,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 	tmplData.License = app.License
 	tmplData.HasTokens = app.Database.TokensExist()
+	tmplData.Connected = app.Connected
 
 	app.render(w, r, []string{"ui/html/admin.page.tmpl"}, tmplData)
 }
