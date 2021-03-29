@@ -37,12 +37,12 @@ document.addEventListener("DOMContentLoaded",function(){
         if(n.data.type == 'user'){
           return {
             color: 0xff9e00,
-            size: n.data.count * 5
+            size: n.data.count * 10
           }
         } else if(n.data.type == 'hashtag'){
           return {
             color: 0x9d4edd,
-            size: n.data.count * 5
+            size: n.data.count * 10
           }
         } else if (n.data.type == 'hidden') {
           return {
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded",function(){
             );
             continue
           }
-          n.size = parsed.graph.nodes[i].count * 5;
+          n.size = parsed.graph.nodes[i].count;
         }
 
         if(parsed.graph.nodes[i].action == "add"){
