@@ -28,16 +28,19 @@ document.addEventListener("DOMContentLoaded",function(){
     Graph = ForceGraph3D()(graphElem)
       .onNodeHover(node => graphElem.style.cursor = node ? 'pointer' : null)
       .graphData(initData)
+      .enableNodeDrag(false)
       .backgroundColor('#262b36')
       .nodeAutoColorBy('type')
-      .nodeVal('count')
+      .nodeVal('value')
       .nodeThreeObject(node => {
         const sprite = new SpriteText(node.id);
         sprite.material.depthWrite = false; // make sprite background transparent
         sprite.color = node.color;
-        sprite.textHeight = node.count;
+        sprite.textHeight = node.value;
         return sprite;
-      });
+      })
+      .linkDirectionalParticles("value")
+      .linkDirectionalParticleSpeed(d => d.value * 0.001);
 
   }
 
@@ -91,7 +94,7 @@ document.addEventListener("DOMContentLoaded",function(){
       for(let i = 0; i < nodeUpdates.length; i++){
         for(let j = 0; j < nodes.length; j++){
           if(nodes[j].id == nodeUpdates[i].name){
-            nodes[j].count = nodeUpdates[i].count
+            nodes[j].value = nodeUpdates[i].value
           }
         }
       }
@@ -109,7 +112,7 @@ document.addEventListener("DOMContentLoaded",function(){
       for(let i = 0; i < edgeUpdates.length; i++){
         for(let j = 0; j < links.length; j++){
           if(links[j].id == edgeUpdates[i].name){
-            links[j].weight = edgeUpdates[i].weight
+            links[j].value = edgeUpdates[i].value
           }
         }
       }
