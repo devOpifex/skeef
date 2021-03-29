@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/devOpifex/skeef-app/graph"
 	"github.com/dghubble/go-twitter/twitter"
@@ -14,7 +15,6 @@ import (
 type message struct {
 	Graph       graph.Graph `json:"graph"`
 	TweetsCount int         `json:"tweetsCount"`
-	Remove      []string
 }
 
 type Client struct {
@@ -39,11 +39,23 @@ func NewPool() *Pool {
 	}
 }
 
+const (
+	// Time allowed to read the next pong message from the peer.
+	pongWait = 60 * time.Second
+
+	// Maximum message size allowed from peer.
+	maxMessageSize = 512
+)
+
 func (c *Client) Read(app *Application) {
 	defer func() {
 		c.Pool.Unregister <- c
 		c.Conn.Close()
 	}()
+
+	c.Conn.SetReadLimit(maxMessageSize)
+	c.Conn.SetReadDeadline(time.Now().Add(pongWait))
+	c.Conn.SetPongHandler(func(string) error { c.Conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 
 	for {
 		_, _, err := c.Conn.ReadMessage()
@@ -160,6 +172,7 @@ func (app *Application) StartStream() {
 				app.Graph.UpsertNode(&nodes[key])
 			}
 			g := graph.Graph{Edges: edges, Nodes: nodes}
+
 			m := message{
 				Graph:       g,
 				TweetsCount: app.Count,

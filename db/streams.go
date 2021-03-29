@@ -165,9 +165,9 @@ func (DB *Database) UpdateStream(track, follow, locations, newName, currentName 
 func (DB *Database) GetActiveStream() stream.Stream {
 	var stream stream.Stream
 
-	row := DB.Con.QueryRow("SELECT name, follow, track, locations, active FROM streams WHERE active = 1;")
+	row := DB.Con.QueryRow("SELECT name, follow, track, locations, active, max_edges FROM streams WHERE active = 1;")
 
-	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active)
+	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges)
 
 	return stream
 }

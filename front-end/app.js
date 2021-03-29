@@ -118,6 +118,14 @@ document.addEventListener("DOMContentLoaded",function(){
       }
     }
 
+    // remove
+    if(parsed.removeNodes.length > 0){
+      for(let node of parsed.removeNodes){
+        links = links.filter(l => l.source !== node && l.target !== node);
+        nodes = nodes.filter(n => n.id != node);
+      }
+    }
+
     Graph.graphData({
       nodes: [...nodes, ...nodesAdditions],
       links: [...links, ...edgesAdditions]
