@@ -14,6 +14,7 @@ import (
 type message struct {
 	Graph       graph.Graph `json:"graph"`
 	TweetsCount int         `json:"tweetsCount"`
+	Remove      []string
 }
 
 type Client struct {
