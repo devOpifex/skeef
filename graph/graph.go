@@ -6,9 +6,9 @@ import (
 
 // Node defines nodes
 type Node struct {
-	Name   string `json:"id"`
+	Name   string `json:"name"`
 	Type   string `json:"type"`
-	Count  int    `json:"value"`
+	Count  int    `json:"count"`
 	Action string `json:"action"`
 }
 
@@ -16,7 +16,7 @@ type Node struct {
 type Edge struct {
 	Source string `json:"source"`
 	Target string `json:"target"`
-	Weight int    `json:"value"`
+	Weight int    `json:"weight"`
 	Action string `json:"action"`
 }
 
