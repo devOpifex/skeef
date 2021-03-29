@@ -127,7 +127,11 @@ func (app *Application) socket(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Application) StopStream() {
-	app.Stream.Stop()
+
+	if app.Stream != nil {
+		app.Stream.Stop()
+	}
+
 	app.Database.PauseAllStreams()
 	app.Quit <- true
 }
