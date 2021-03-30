@@ -120,6 +120,6 @@ func main() {
 	}()
 
 	infoLog.Printf("Listening on port%s", *addr)
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	log.Fatal(err)
 }
