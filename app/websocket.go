@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/devOpifex/skeef-app/graph"
 	"github.com/dghubble/go-twitter/twitter"
@@ -39,13 +38,7 @@ func NewPool() *Pool {
 	}
 }
 
-const (
-	// Time allowed to read the next pong message from the peer.
-	pongWait = 60 * time.Second
-
-	// Maximum message size allowed from peer.
-	maxMessageSize = 512
-)
+const maxMessageSize = 512
 
 func (c *Client) Read(app *Application) {
 	defer func() {
@@ -54,8 +47,6 @@ func (c *Client) Read(app *Application) {
 	}()
 
 	c.Conn.SetReadLimit(maxMessageSize)
-	c.Conn.SetReadDeadline(time.Now().Add(pongWait))
-	c.Conn.SetPongHandler(func(string) error { c.Conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 
 	for {
 		_, _, err := c.Conn.ReadMessage()
