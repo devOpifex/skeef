@@ -47,8 +47,7 @@ func main() {
 		Pool:     pool,
 	}
 
-	app.Quit = make(chan bool)
-	app.Start = make(chan bool)
+	app.Quit = make(chan struct{})
 
 	// websocket pool
 	go app.StartPool()
@@ -110,17 +109,6 @@ func main() {
 	go func() {
 		for range time.Tick(time.Minute * 30) {
 			app.LicenseValidity()
-		}
-	}()
-
-	go func() {
-		for {
-			select {
-			case <-app.Quit:
-				return
-			case <-app.Start:
-				app.StartStream()
-			}
 		}
 	}()
 

@@ -132,60 +132,65 @@ func (app *Application) StopStream() {
 		app.Stream.Stop()
 	}
 
+	app.Quit <- struct{}{}
 	app.Database.PauseAllStreams()
-	app.Quit <- true
 }
 
 func (app *Application) StartStream() {
 
-	for {
+	app.Count = 0
+	app.Graph = graph.Graph{}
 
-		tokens, err := app.Database.GetTokens()
+	tokens, err := app.Database.GetTokens()
 
-		if err != nil {
-			continue
+	if err != nil {
+		return
+	}
+
+	search := app.Database.GetActiveStream()
+
+	var twitterConfig = oauth1.NewConfig(tokens.ApiKey, tokens.ApiSecret)
+	var token = oauth1.NewToken(tokens.AccessToken, tokens.AccessSecret)
+
+	var httpClient = twitterConfig.Client(oauth1.NoContext, token)
+
+	var client = twitter.NewClient(httpClient)
+
+	var params = &twitter.StreamFilterParams{
+		Track:         []string{search.Track},
+		StallWarnings: twitter.Bool(true),
+	}
+	app.Stream, _ = client.Streams.Filter(params)
+
+	var demux = twitter.NewSwitchDemux()
+	demux.Tweet = app.demux()
+
+	for message := range app.Stream.Messages {
+		demux.Handle(message)
+	}
+}
+
+// demux Demux tweets and broadcast
+func (app *Application) demux() func(tweet *twitter.Tweet) {
+	return func(tweet *twitter.Tweet) {
+		app.Count++
+		app.InfoLog.Printf("Tweet #%v\n", app.Count)
+		nodes, edges := graph.GetUserNet(*tweet)
+		hashNodes, hashEdges := graph.GetHashNet(*tweet)
+		nodes = append(nodes, hashNodes...)
+		edges = append(edges, hashEdges...)
+		for key := range edges {
+			app.Graph.UpsertEdge(&edges[key])
 		}
-
-		search := app.Database.GetActiveStream()
-
-		var twitterConfig = oauth1.NewConfig(tokens.ApiKey, tokens.ApiSecret)
-		var token = oauth1.NewToken(tokens.AccessToken, tokens.AccessSecret)
-
-		var httpClient = twitterConfig.Client(oauth1.NoContext, token)
-
-		var client = twitter.NewClient(httpClient)
-
-		var params = &twitter.StreamFilterParams{
-			Track:         []string{search.Track},
-			StallWarnings: twitter.Bool(true),
+		for key := range nodes {
+			app.Graph.UpsertNode(&nodes[key])
 		}
-		app.Stream, _ = client.Streams.Filter(params)
+		g := graph.Graph{Edges: edges, Nodes: nodes}
 
-		var demux = twitter.NewSwitchDemux()
-		demux.Tweet = func(tweet *twitter.Tweet) {
-			app.Count++
-			app.InfoLog.Printf("Tweet #%v\n", app.Count)
-			nodes, edges := graph.GetUserNet(*tweet)
-			hashNodes, hashEdges := graph.GetHashNet(*tweet)
-			nodes = append(nodes, hashNodes...)
-			edges = append(edges, hashEdges...)
-			for key := range edges {
-				app.Graph.UpsertEdge(&edges[key])
-			}
-			for key := range nodes {
-				app.Graph.UpsertNode(&nodes[key])
-			}
-			g := graph.Graph{Edges: edges, Nodes: nodes}
-
-			m := message{
-				Graph:       g,
-				TweetsCount: app.Count,
-			}
-			app.Pool.Broadcast <- m
+		m := message{
+			Graph:       g,
+			TweetsCount: app.Count,
 		}
-
-		for message := range app.Stream.Messages {
-			demux.Handle(message)
-		}
+		app.Pool.Broadcast <- m
 	}
 }

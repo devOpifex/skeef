@@ -90,5 +90,5 @@ func (app *Application) LicenseValidity() {
 	app.InfoLog.Printf("License check: %v\n", app.LicenseResponse.Reason)
 
 	app.Database.PauseAllStreams()
-	app.Quit <- true
+	app.Quit <- struct{}{}
 }

@@ -25,8 +25,7 @@ type Application struct {
 	Valid           bool
 	LicenseResponse LicenseResponse
 	Pool            *Pool
-	Quit            chan bool
-	Start           chan bool
+	Quit            chan struct{}
 	Streaming       bool
 	Graph           graph.Graph
 	Connected       int
