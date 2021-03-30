@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/devOpifex/skeef-app/app"
-	"github.com/devOpifex/skeef-app/data"
 	"github.com/devOpifex/skeef-app/db"
 	"github.com/golangcollege/sessions"
 
@@ -39,19 +38,13 @@ func main() {
 	session.SameSite = http.SameSiteStrictMode
 
 	pool := app.NewPool()
-	bb, err := data.ReadBoundingBox()
-
-	if err != nil {
-		errorLog.Println("failed to read bounding boxes")
-	}
 
 	app := &app.Application{
-		InfoLog:       infoLog,
-		ErrorLog:      errorLog,
-		Session:       session,
-		Addr:          *addr,
-		Pool:          pool,
-		BoundingBoxes: &bb,
+		InfoLog:  infoLog,
+		ErrorLog: errorLog,
+		Session:  session,
+		Addr:     *addr,
+		Pool:     pool,
 	}
 
 	app.Quit = make(chan struct{})
@@ -120,6 +113,6 @@ func main() {
 	}()
 
 	infoLog.Printf("Listening on port%s", *addr)
-	err = srv.ListenAndServe()
+	err := srv.ListenAndServe()
 	log.Fatal(err)
 }
