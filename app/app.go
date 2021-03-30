@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/bmizerany/pat"
+	"github.com/devOpifex/skeef-app/data"
 	"github.com/devOpifex/skeef-app/db"
 	"github.com/devOpifex/skeef-app/graph"
 	"github.com/dghubble/go-twitter/twitter"
@@ -29,6 +30,7 @@ type Application struct {
 	Streaming       bool
 	Graph           graph.Graph
 	Connected       int
+	BoundingBoxes   *[]data.BoundingBox
 }
 
 type Setup struct {
