@@ -6,6 +6,8 @@
         <link rel="stylesheet" href="/static/compiled.min.css">
         <script>window.socket = new WebSocket("ws://localhost{{ .Addr }}/ws")</script>
         <script src="static/app.min.js"></script>
+        <script src="static/uplot.min.js"></script>
+        <link rel="stylesheet" href="/static/uplot.min.css">
         <title>{{template "title" .}} - Skeef</title>
     </head>
     <body class="bg-background text-white">

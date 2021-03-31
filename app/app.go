@@ -29,6 +29,7 @@ type Application struct {
 	Streaming       bool
 	Graph           graph.Graph
 	Connected       int
+	Trend           map[string]int
 }
 
 type Setup struct {

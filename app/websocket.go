@@ -12,8 +12,9 @@ import (
 )
 
 type message struct {
-	Graph       graph.Graph `json:"graph"`
-	TweetsCount int         `json:"tweetsCount"`
+	Graph       graph.Graph    `json:"graph"`
+	TweetsCount int            `json:"tweetsCount"`
+	Trend       map[string]int `json:"trend"`
 }
 
 type Client struct {
@@ -129,6 +130,7 @@ func (app *Application) StopStream() {
 
 func (app *Application) StartStream() {
 
+	app.Trend = make(map[string]int)
 	app.Count = 0
 	app.Graph = graph.Graph{}
 
@@ -165,6 +167,7 @@ func (app *Application) StartStream() {
 func (app *Application) demux() func(tweet *twitter.Tweet) {
 	return func(tweet *twitter.Tweet) {
 		app.Count++
+		app.Trend[tweet.CreatedAt]++
 		app.InfoLog.Printf("Tweet #%v\n", app.Count)
 		nodes, edges := graph.GetUserNet(*tweet)
 		hashNodes, hashEdges := graph.GetHashNet(*tweet)
@@ -181,6 +184,7 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 		m := message{
 			Graph:       g,
 			TweetsCount: app.Count,
+			Trend:       app.Trend,
 		}
 		app.Pool.Broadcast <- m
 	}

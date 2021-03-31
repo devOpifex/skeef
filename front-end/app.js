@@ -75,8 +75,15 @@ document.addEventListener("DOMContentLoaded",function(){
 
   let firstrun = true;
   let ntweets = document.getElementById("ntweets");
+  let trendData = [];
+  let trendPlot = initPlot();
+
   window.socket.onmessage = (data) => {
     let parsed = JSON.parse(data.data);
+
+    trendData.push(prepTrendData(parsed.trend));
+    trendPlot.setData(trendData);
+    console.log(trendData);
     
     if(parsed.tweetsCount == 0){
       return ;
@@ -148,4 +155,56 @@ document.addEventListener("DOMContentLoaded",function(){
     g.endUpdate();
 
   }
+
 });
+
+function initPlot(){
+  let xs = [];
+  let vals = [];
+
+  let data = [
+    xs,
+    vals,
+  ];
+
+  const opts = {
+    zDate: ts => uPlot.tzDate(new Date(ts * 1e3), tz),
+    width: 1920,
+    height: 600,
+    title: "Area Fill",
+    scales: {
+      x: {
+        time: true,
+      },
+    },
+    series: [
+      {},
+      {
+        stroke: "#ff9e00",
+        fill: "rgba(255,158,0,0.1)",
+      }
+    ],
+  };
+
+  let u = new uPlot(opts, data, document.getElementById("trend"));
+
+  return u;
+}
+
+function prepTrendData(data){
+  if(data == undefined)
+    return [];
+
+  if(data == null){
+    return [];
+  }
+
+  // dates
+  let dates = Object.keys(data);
+  dates = dates.map((v) => {Date.parse(v) / 1000});
+
+  // trend
+  let trend = Object.values(data);
+
+  return [dates, trend];
+}
