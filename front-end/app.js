@@ -1,6 +1,8 @@
 var createGraph = require('ngraph.graph');
 var pixel = require('ngraph.pixel');
 
+let trendPlot;
+
 document.addEventListener("DOMContentLoaded",function(){
 
   // warning on admin inputs
@@ -75,15 +77,12 @@ document.addEventListener("DOMContentLoaded",function(){
 
   let firstrun = true;
   let ntweets = document.getElementById("ntweets");
-  let trendData = [];
-  let trendPlot = initPlot();
+  trendPlot = initPlot();
 
   window.socket.onmessage = (data) => {
     let parsed = JSON.parse(data.data);
 
-    trendData.push(prepTrendData(parsed.trend));
-    trendPlot.setData(trendData);
-    console.log(trendData);
+    updatePlot(parsed.trend);
     
     if(parsed.tweetsCount == 0){
       return ;
@@ -169,19 +168,51 @@ function initPlot(){
 
   const opts = {
     zDate: ts => uPlot.tzDate(new Date(ts * 1e3), tz),
-    width: 1920,
-    height: 600,
-    title: "Area Fill",
+    width: window.innerWidth - 100,
+    height: 100,
+    title: "Trend",
+    axes: [
+      {
+        stroke: "#c7d0d9",
+      //	font: `12px 'Roboto'`,
+      //	labelFont: `12px 'Roboto'`,
+        grid: {
+          width: 1 / devicePixelRatio,
+          stroke: "#2c3235",
+        },
+        ticks: {
+          width: 1 / devicePixelRatio,
+          stroke: "#2c3235",
+        }
+      },
+      {
+        stroke: "#c7d0d9",
+      //	font: `12px 'Roboto'`,
+      //	labelFont: `12px 'Roboto'`,
+        grid: {
+          width: 1 / devicePixelRatio,
+          stroke: "#2c3235",
+        },
+        ticks: {
+          width: 1 / devicePixelRatio,
+          stroke: "#2c3235",
+        }
+      },
+    ],
     scales: {
       x: {
         time: true,
       },
     },
     series: [
-      {},
       {
+        label: 'Date time'
+      },
+      {
+        label: 'Tweets',
         stroke: "#ff9e00",
         fill: "rgba(255,158,0,0.1)",
+        width: 1/devicePixelRatio,
       }
     ],
   };
@@ -191,20 +222,33 @@ function initPlot(){
   return u;
 }
 
-function prepTrendData(data){
+function updatePlot(data){
   if(data == undefined)
-    return [];
+    return ;
 
   if(data == null){
-    return [];
+    return ;
   }
 
-  // dates
-  let dates = Object.keys(data);
-  dates = dates.map((v) => {Date.parse(v) / 1000});
+  if(data.length < 1){
+    return ;
+  }
 
-  // trend
-  let trend = Object.values(data);
+  let result = [
+    Object.keys(data),
+    Object.values(data)
+  ]
 
-  return [dates, trend];
+  trendPlot.setData(result);
 }
+
+function getSize() {
+  return {
+    width: window.innerWidth - 100,
+    height: 100,
+  }
+}
+
+window.addEventListener("resize", e => {
+  trendPlot.setSize(getSize());
+});

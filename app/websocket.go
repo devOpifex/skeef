@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/devOpifex/skeef-app/graph"
 	"github.com/dghubble/go-twitter/twitter"
@@ -12,9 +13,9 @@ import (
 )
 
 type message struct {
-	Graph       graph.Graph    `json:"graph"`
-	TweetsCount int            `json:"tweetsCount"`
-	Trend       map[string]int `json:"trend"`
+	Graph       graph.Graph   `json:"graph"`
+	TweetsCount int           `json:"tweetsCount"`
+	Trend       map[int64]int `json:"trend"`
 }
 
 type Client struct {
@@ -67,7 +68,7 @@ func (app *Application) StartPool() {
 			app.Connected++
 			for client := range app.Pool.Clients {
 				// send current state of the graph on connect
-				client.Conn.WriteJSON(message{Graph: app.Graph, TweetsCount: app.Count})
+				client.Conn.WriteJSON(message{Graph: app.Graph, TweetsCount: app.Count, Trend: app.Trend})
 			}
 		case client := <-app.Pool.Unregister:
 			delete(app.Pool.Clients, client)
@@ -130,7 +131,7 @@ func (app *Application) StopStream() {
 
 func (app *Application) StartStream() {
 
-	app.Trend = make(map[string]int)
+	app.Trend = make(map[int64]int)
 	app.Count = 0
 	app.Graph = graph.Graph{}
 
@@ -167,7 +168,7 @@ func (app *Application) StartStream() {
 func (app *Application) demux() func(tweet *twitter.Tweet) {
 	return func(tweet *twitter.Tweet) {
 		app.Count++
-		app.Trend[tweet.CreatedAt]++
+		app.Trend[parseTime(tweet.CreatedAt)]++
 		app.InfoLog.Printf("Tweet #%v\n", app.Count)
 		nodes, edges := graph.GetUserNet(*tweet)
 		hashNodes, hashEdges := graph.GetHashNet(*tweet)
@@ -188,4 +189,11 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 		}
 		app.Pool.Broadcast <- m
 	}
+}
+
+func parseTime(date string) int64 {
+	toRound, _ := time.Parse(time.RubyDate, date)
+	minute := toRound.Round(30 * time.Second)
+
+	return minute.Unix()
 }
