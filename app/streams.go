@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -48,8 +49,11 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 		r.Form.Get("locations"),
 		r.Form.Get("name"),
 		r.Form.Get("currentName"),
+		r.Form.Get("exclude"),
 		maxEdges,
 	)
+
+	fmt.Println(err)
 
 	if err != nil {
 		tmplData.Errors["failure"] = "Failed to update stream"

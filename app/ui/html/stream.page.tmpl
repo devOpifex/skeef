@@ -36,6 +36,10 @@
           <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='locations' value='{{ .Stream.Locations }}'>
         </div>
         <div class="pt-3">
+          <label class="font-bold uppercase text-xs">Exclude</label>
+          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='exclude' value='{{ .Stream.Exclusion }}'>
+        </div>
+        <div class="pt-3">
           <label class="font-bold uppercase text-xs">Maximum edges on screen: <span id='rangeMaxEdges'>{{ .Stream.MaxEdges }}</span></label>
           <br/>
           <input id="maxEdges" class="rounded-sm overflow-hidden w-full" type='range' name='maxEdges' min='200' max='10000' value='{{ .Stream.MaxEdges }}' step='100'>
