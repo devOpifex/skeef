@@ -28,12 +28,24 @@ type Graph struct {
 
 // GetUserNet builds the network of users, where one user
 // mentions another
-func GetUserNet(tweet twitter.Tweet) ([]Node, []Edge) {
+func GetUserNet(tweet twitter.Tweet, exclusion map[string]bool) ([]Node, []Edge) {
 
 	var edges []Edge
 	var nodes []Node
 
 	for _, m := range tweet.Entities.UserMentions {
+		_, ok := exclusion[tweet.User.ScreenName]
+
+		if ok {
+			continue
+		}
+
+		_, ok = exclusion[m.ScreenName]
+
+		if ok {
+			continue
+		}
+
 		edge := Edge{tweet.User.ScreenName, m.ScreenName, 1, "add"}
 
 		edges = append(edges, edge)
@@ -49,12 +61,24 @@ func GetUserNet(tweet twitter.Tweet) ([]Node, []Edge) {
 }
 
 // GetHashNet builds the network of users to hashtags they use in tweets
-func GetHashNet(tweet twitter.Tweet) ([]Node, []Edge) {
+func GetHashNet(tweet twitter.Tweet, exclusion map[string]bool) ([]Node, []Edge) {
 
 	var edges []Edge
 	var nodes []Node
 
 	for _, h := range tweet.Entities.Hashtags {
+
+		_, ok := exclusion[tweet.User.ScreenName]
+
+		if ok {
+			continue
+		}
+
+		_, ok = exclusion[h.Text]
+
+		if ok {
+			continue
+		}
 
 		edge := Edge{tweet.User.ScreenName, h.Text, 1, "add"}
 		edges = append(edges, edge)

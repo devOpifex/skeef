@@ -39,12 +39,12 @@ document.addEventListener("DOMContentLoaded",function(){
         if(n.data.type == 'user'){
           return {
             color: 0xff9e00,
-            size: n.data.count * 10
+            size: Math.log10(n.data.count + 1) * 15
           }
         } else if(n.data.type == 'hashtag'){
           return {
             color: 0x9d4edd,
-            size: n.data.count * 10
+            size: Math.log10(n.data.count + 1) * 15
           }
         } else if (n.data.type == 'hidden') {
           return {
@@ -230,7 +230,7 @@ function updatePlot(data){
     return ;
   }
 
-  if(data.length < 1){
+  if(Object.keys(data).length < 2){
     return ;
   }
 

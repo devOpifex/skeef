@@ -3,6 +3,7 @@ package app
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/devOpifex/skeef-app/stream"
 )
@@ -125,4 +126,15 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.render(w, r, []string{"ui/html/add.page.tmpl"}, tmplData)
+}
+
+func splitExlusion(exclusion string) map[string]bool {
+	mp := make(map[string]bool)
+	list := strings.Split(exclusion, ",")
+
+	for _, str := range list {
+		mp[str] = true
+	}
+
+	return mp
 }

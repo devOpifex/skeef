@@ -30,6 +30,7 @@ type Application struct {
 	Graph           graph.Graph
 	Connected       int
 	Trend           map[int64]int
+	Exclusion       map[string]bool
 }
 
 type Setup struct {

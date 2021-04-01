@@ -132,7 +132,7 @@ func (DB *Database) PauseAllStreams() error {
 func (DB *Database) GetStream(name string) (stream.Stream, error) {
 	var stream stream.Stream
 
-	stmt, err := DB.Con.Prepare("SELECT name, follow, track, locations, active, max_edges FROM streams WHERE name = ?")
+	stmt, err := DB.Con.Prepare("SELECT name, follow, track, locations, active, max_edges, exclude FROM streams WHERE name = ?")
 
 	if err != nil {
 		return stream, err
@@ -140,7 +140,7 @@ func (DB *Database) GetStream(name string) (stream.Stream, error) {
 
 	row := stmt.QueryRow(name)
 
-	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges)
+	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges, &stream.Exclusion)
 
 	return stream, nil
 }
