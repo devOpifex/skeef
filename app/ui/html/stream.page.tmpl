@@ -4,12 +4,12 @@
 
 {{define "main"}}
 <div class="flex justify-center pt-20">
-  <form action='/admin/edit' method='POST' novalidate>
-    <h1 class="text-center text-5xl pb-4">Edit Stream</h1>
+  <form class="w-2/5" action='/admin/edit' method='POST' novalidate>
+    <h1 class="text-5xl pb-4 px-4">Edit Stream</h1>
     {{ with .Flash.success }}
       <p class="uppercase bold">{{ . }}</p>
     {{ end }}
-    <p class="pb-3 text-center">
+    <p class="pb-3 px-4">
       The stream is currently
       {{ if .Stream.Active }}
       <span class="w-4 text-green-400">running</span>
@@ -32,7 +32,7 @@
           <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='track' value='{{ .Stream.Track }}'>
         </div>
         <div class="pt-3">
-          <label class="font-bold uppercase text-xs">Follow</label>
+          <label class="font-bold uppercase text-xs">Locations</label>
           <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='locations' value='{{ .Stream.Locations }}'>
         </div>
         <div class="pt-3">
@@ -52,7 +52,7 @@
         </div>
       </div>
     </div>
-    <p class="text-center pt-4">Go back to the <a href="/admin" class="underline">admin area</a>.</p>
+    <p class="pt-4 px-4">Go back to the <a href="/admin" class="underline">admin area</a></p>
   </form>
   <script>
     var rng = document.getElementById("maxEdges");

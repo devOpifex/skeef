@@ -35,7 +35,8 @@
         </div>
         <div class="pt-3">
           <label class="font-bold uppercase text-xs">Exclude</label>
-          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='exclude' placeholder='Comma separated keywords to exclude from the network'>
+          <input id="exclusion" class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='exclude' placeholder='Comma separated keywords to exclude from the network'>
+          <p id="exclusion-warning" class="text-yellow-400 pt-2"></p>
         </div>
         <div class="pt-3">
           <label class="font-bold uppercase text-xs">Maximum edges on screen: <span id='rangeMaxEdges'>2000</span></label>
@@ -55,6 +56,12 @@
     rng.addEventListener("change", function(){
       var sp = document.getElementById("rangeMaxEdges");
       sp.innerText = rng.value;
+    });
+
+    var excl = document.getElementById("exclusion");
+    excl.addEventListener("input", function(){
+      var sp = document.getElementById("exclusion-warning");
+      sp.innerText = "This is case sensitive!";
     });
   </script>
 </div>

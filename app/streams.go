@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -52,8 +51,6 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 		r.Form.Get("exclude"),
 		maxEdges,
 	)
-
-	fmt.Println(err)
 
 	if err != nil {
 		tmplData.Errors["failure"] = "Failed to update stream"
@@ -132,12 +129,13 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, []string{"ui/html/add.page.tmpl"}, tmplData)
 }
 
-func splitExlusion(exclusion string) map[string]bool {
+func exclusionMap(exclusion string) map[string]bool {
 	mp := make(map[string]bool)
 	list := strings.Split(exclusion, ",")
 
 	for _, str := range list {
-		mp[str] = true
+		key := strings.TrimSpace(str)
+		mp[key] = true
 	}
 
 	return mp

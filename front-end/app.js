@@ -1,7 +1,8 @@
 var createGraph = require('ngraph.graph');
 var pixel = require('ngraph.pixel');
 
-let trendPlot;
+let trendPlot,
+    graphContainer;
 
 document.addEventListener("DOMContentLoaded",function(){
 
@@ -22,12 +23,14 @@ document.addEventListener("DOMContentLoaded",function(){
   var g = createGraph();
   g.addNode(1, {type: 'hidden'});
   g.addNode(2, {type: 'hidden'});
+  graphContainer = document.getElementById("graph");
 
-  if(document.getElementById("graph") != null){
+  if(graphContainer != null){
     var renderer = pixel(g, {
       is3d: true,
-      container: document.getElementById("graph"),
+      container: graphContainer,
       clearAlpha: 0.0,
+      autoFit: true,
       physics: {
         springLength : 50,
         springCoeff : 0.0002,
@@ -39,12 +42,12 @@ document.addEventListener("DOMContentLoaded",function(){
         if(n.data.type == 'user'){
           return {
             color: 0xff9e00,
-            size: Math.log10(n.data.count + 1) * 15
+            size: sizeNode(n.data.count + 1)
           }
         } else if(n.data.type == 'hashtag'){
           return {
             color: 0x9d4edd,
-            size: Math.log10(n.data.count + 1) * 15
+            size: sizeNode(n.data.count + 1)
           }
         } else if (n.data.type == 'hidden') {
           return {
@@ -55,11 +58,13 @@ document.addEventListener("DOMContentLoaded",function(){
       },
       link: function(l){
         return {
-          fromColor: 0xCCCCCC,
-          toColor: 0xCCCCCC
+          fromColor: 0xbfbfbf,
+          toColor: 0xbfbfbf
         }
       }
     });
+
+    resizeGraph();
   }
 
   // websocket
@@ -168,17 +173,16 @@ function initPlot(){
 
   const opts = {
     zDate: ts => uPlot.tzDate(new Date(ts * 1e3), tz),
-    width: window.innerWidth - 100,
-    height: 100,
-    title: "Trend",
+    width: window.innerWidth - 40,
+    height: 120,
+    title: "",
     axes: [
       {
         stroke: "#c7d0d9",
       //	font: `12px 'Roboto'`,
       //	labelFont: `12px 'Roboto'`,
         grid: {
-          width: 1 / devicePixelRatio,
-          stroke: "#2c3235",
+          show: false
         },
         ticks: {
           width: 1 / devicePixelRatio,
@@ -244,11 +248,20 @@ function updatePlot(data){
 
 function getSize() {
   return {
-    width: window.innerWidth - 100,
-    height: 100,
+    width: window.innerWidth - 40,
+    height: 120,
   }
 }
 
 window.addEventListener("resize", e => {
   trendPlot.setSize(getSize());
+  resizeGraph();
 });
+
+function resizeGraph(){
+  graphContainer.childNodes[0].style.width = graphContainer.offsetWidth + 'px';
+}
+
+function sizeNode(n){
+  return Math.round(Math.log10(n + 1) * 25);
+}
