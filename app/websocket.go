@@ -165,7 +165,7 @@ func (app *Application) StartStream() {
 	}
 }
 
-// demux Demux tweets and broadcast
+// demux Demux tweets and broadcast to websocket clients
 func (app *Application) demux() func(tweet *twitter.Tweet) {
 	return func(tweet *twitter.Tweet) {
 		app.Count++
@@ -192,6 +192,7 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 	}
 }
 
+// parseTime Parse the ruby date and round to nearest 15 seconds
 func parseTime(date string) int64 {
 	toRound, _ := time.Parse(time.RubyDate, date)
 	minute := toRound.Round(15 * time.Second)
