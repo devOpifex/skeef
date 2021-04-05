@@ -93,3 +93,35 @@ func GetHashNet(tweet twitter.Tweet, exclusion map[string]bool) ([]Node, []Edge)
 
 	return nodes, edges
 }
+
+// GetUserNet builds the network of users, where one user
+// mentions another
+func GetRetweetNet(tweet twitter.Tweet, exclusion map[string]bool) (bool, []Node, Edge) {
+
+	var edge Edge
+	var nodes []Node
+
+	if tweet.InReplyToScreenName == "" {
+		return false, nodes, edge
+	}
+
+	_, ok := exclusion[tweet.InReplyToScreenName]
+
+	if ok {
+		return false, nodes, edge
+	}
+
+	_, ok = exclusion[tweet.User.ScreenName]
+
+	if ok {
+		return false, nodes, edge
+	}
+
+	edge = Edge{tweet.User.ScreenName, tweet.InReplyToScreenName, 1, "add"}
+	from := Node{tweet.User.ScreenName, "user", 1, "add"}
+	to := Node{tweet.InReplyToScreenName, "user", 1, "add"}
+
+	nodes = append(nodes, from, to)
+
+	return true, nodes, edge
+}

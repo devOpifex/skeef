@@ -173,8 +173,14 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 		app.InfoLog.Printf("Tweet #%v\n", app.Count)
 		nodes, edges := graph.GetUserNet(*tweet, app.Exclusion)
 		hashNodes, hashEdges := graph.GetHashNet(*tweet, app.Exclusion)
+		ok, retweetNodes, retweetEdges := graph.GetRetweetNet(*tweet, app.Exclusion)
 		nodes = append(nodes, hashNodes...)
 		edges = append(edges, hashEdges...)
+
+		if ok {
+			nodes = append(nodes, retweetNodes...)
+			edges = append(edges, retweetEdges)
+		}
 		for key := range edges {
 			app.Graph.UpsertEdge(&edges[key])
 		}
