@@ -212,13 +212,16 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 
 		} else {
 			app.LicenseValidity()
-			err = app.Database.StartStream(r.Form.Get("streamName"))
 
-			if err != nil {
-				tmplData.Errors["existingStreams"] = "Failed to start stream"
+			if !app.LicenseResponse.Success {
+				tmplData.Errors["existingStreams"] = app.LicenseResponse.Reason
 			} else {
 
-				if app.LicenseResponse.Success {
+				err = app.Database.StartStream(r.Form.Get("streamName"))
+
+				if err != nil {
+					tmplData.Errors["existingStreams"] = "Failed to start stream"
+				} else {
 					app.InfoLog.Println("Starting stream")
 					go func() {
 						for {
@@ -231,8 +234,6 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 						}
 					}()
 					tmplData.Flash["existingStreams"] = "Stream Started"
-				} else {
-					tmplData.Errors["existingStreams"] = app.LicenseResponse.Reason
 				}
 			}
 		}
