@@ -18,7 +18,7 @@
     {{ end }}
       <div class="bg-gray-900 rounded-md px-6 py-4 w-full">
         <div>
-          <label class="font-bold uppercase text-xs">Name</label>
+          <label class="font-bold uppercase text-xs">Name*</label>
           <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='name' placeholder='Name of the stream'>
         </div>
         <div class="pt-3">
@@ -27,7 +27,7 @@
         </div>
         <div class="pt-3">
           <label class="font-bold uppercase text-xs">Track</label>
-          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='track' placeholder='Keywords, and hashtags to track'>
+          <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='track' placeholder='Keywords, and hashtags to track (comma separated)'>
         </div>
         <div class="pt-3">
           <label class="font-bold uppercase text-xs">Locations</label>
@@ -35,7 +35,7 @@
         </div>
         <div class="pt-3">
           <label class="font-bold uppercase text-xs">Exclude</label>
-          <input id="exclusion" class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='exclude' placeholder='Comma separated keywords to exclude from the network'>
+          <input id="exclusion" class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='exclude' placeholder='Keywords to exclude from the network (comma separated)'>
           <p id="exclusion-warning" class="text-yellow-400 pt-2"></p>
         </div>
         <div class="pt-3">
