@@ -31,6 +31,7 @@ type Application struct {
 	Connected       int
 	Trend           map[int64]int
 	Exclusion       map[string]bool
+	MaxEdges        int
 }
 
 type Setup struct {

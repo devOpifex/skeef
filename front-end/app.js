@@ -86,6 +86,7 @@ document.addEventListener("DOMContentLoaded",function(){
 
   window.socket.onmessage = (data) => {
     let parsed = JSON.parse(data.data);
+    console.log(parsed);
 
     updatePlot(parsed.trend);
     

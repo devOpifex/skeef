@@ -143,6 +143,7 @@ func (app *Application) StartStream() {
 
 	search := app.Database.GetActiveStream()
 	app.Exclusion = exclusionMap(search.Exclusion)
+	app.MaxEdges = search.MaxEdges
 
 	var twitterConfig = oauth1.NewConfig(tokens.ApiKey, tokens.ApiSecret)
 	var token = oauth1.NewToken(tokens.AccessToken, tokens.AccessSecret)

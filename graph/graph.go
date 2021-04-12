@@ -125,3 +125,38 @@ func GetRetweetNet(tweet twitter.Tweet, exclusion map[string]bool) (bool, []Node
 
 	return true, nodes, edge
 }
+
+func (g *Graph) Truncate(max int) ([]Node, []Edge) {
+
+	var edgesToRemove []Edge
+	var nodesToRemove []Node
+
+	// no need to truncate
+	if len(g.Edges) < max {
+		return nodesToRemove, edgesToRemove
+	}
+
+	diff := len(g.Edges) - max
+	edgesToRemove = g.Edges[0:diff]
+	for i := range edgesToRemove {
+		edgesToRemove[i].Action = "remove"
+	}
+
+	var nodesKeep []Node
+	for _, n := range g.Nodes {
+		for _, e := range g.Edges {
+
+			if n.Name == e.Source || n.Name == e.Target {
+				n.Action = "remove"
+				nodesToRemove = append(nodesToRemove, n)
+			} else {
+				nodesKeep = append(nodesKeep, n)
+			}
+
+		}
+	}
+
+	g.Nodes = nodesKeep
+
+	return nodesToRemove, edgesToRemove
+}
