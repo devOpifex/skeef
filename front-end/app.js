@@ -95,16 +95,16 @@ document.addEventListener("DOMContentLoaded",function(){
     
     // Initial load, all at once
     if(firstrun){
-      nnodes = parsed.graph.nodes.length;
-      nedges = parsed.graph.edges.length;
       g.beginUpdate();
       for(let i = 0; i < parsed.graph.nodes.length; i++) {
+        nnodes++
         g.addNode(
           parsed.graph.nodes[i].name,
           {type: parsed.graph.nodes[i].type, count: parsed.graph.nodes[i].count}
         );
       }
       for(let i = 0; i < parsed.graph.edges.length; i++) {
+        nedges++
         g.addLink(parsed.graph.edges[i].source, parsed.graph.edges[i].target);
       }
       g.endUpdate();

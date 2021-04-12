@@ -74,13 +74,13 @@ func GetHashNet(tweet twitter.Tweet, exclusion map[string]bool) ([]Node, []Edge)
 			continue
 		}
 
-		_, ok = exclusion[h.Text]
+		_, ok = exclusion["#"+h.Text]
 
 		if ok {
 			continue
 		}
 
-		edge := Edge{tweet.User.ScreenName, h.Text, 1, "add"}
+		edge := Edge{tweet.User.ScreenName, "#" + h.Text, 1, "add"}
 		edges = append(edges, edge)
 	}
 
