@@ -28,3 +28,9 @@ func (g *Graph) UpsertEdge(edge *Edge) {
 	g.Edges = append(g.Edges, *edge)
 
 }
+
+func (g *Graph) UpsertEdges(edges ...Edge) {
+	for key := range edges {
+		g.UpsertEdge(&edges[key])
+	}
+}

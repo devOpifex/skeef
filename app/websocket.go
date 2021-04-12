@@ -182,12 +182,8 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 			nodes = append(nodes, retweetNodes...)
 			edges = append(edges, retweetEdges)
 		}
-		for key := range edges {
-			app.Graph.UpsertEdge(&edges[key])
-		}
-		for key := range nodes {
-			app.Graph.UpsertNode(&nodes[key])
-		}
+		app.Graph.UpsertEdges(edges...)
+		app.Graph.UpsertNodes(nodes...)
 		g := graph.Graph{Edges: edges, Nodes: nodes}
 
 		m := message{

@@ -28,3 +28,9 @@ func (g *Graph) UpsertNode(node *Node) {
 	g.Nodes = append(g.Nodes, *node)
 
 }
+
+func (g *Graph) UpsertNodes(nodes ...Node) {
+	for key := range nodes {
+		g.UpsertNode(&nodes[key])
+	}
+}
