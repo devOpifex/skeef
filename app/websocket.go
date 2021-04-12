@@ -13,9 +13,8 @@ import (
 )
 
 type message struct {
-	Graph       graph.Graph   `json:"graph"`
-	TweetsCount int           `json:"tweetsCount"`
-	Trend       map[int64]int `json:"trend"`
+	Graph graph.Graph   `json:"graph"`
+	Trend map[int64]int `json:"trend"`
 }
 
 type Client struct {
@@ -68,7 +67,7 @@ func (app *Application) StartPool() {
 			app.Connected++
 			for client := range app.Pool.Clients {
 				// send current state of the graph on connect
-				client.Conn.WriteJSON(message{Graph: app.Graph, TweetsCount: app.Count, Trend: app.Trend})
+				client.Conn.WriteJSON(message{Graph: app.Graph, Trend: app.Trend})
 			}
 		case client := <-app.Pool.Unregister:
 			delete(app.Pool.Clients, client)
@@ -187,9 +186,8 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 		g := graph.Graph{Edges: edges, Nodes: nodes}
 
 		m := message{
-			Graph:       g,
-			TweetsCount: app.Count,
-			Trend:       app.Trend,
+			Graph: g,
+			Trend: app.Trend,
 		}
 		app.Pool.Broadcast <- m
 	}

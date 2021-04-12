@@ -80,8 +80,11 @@ document.addEventListener("DOMContentLoaded",function(){
     console.log(error);
   }
 
-  let firstrun = true;
-  let ntweets = document.getElementById("ntweets");
+  let firstrun = true,
+      nnodes = 0,
+      nedges = 0;
+  let nedgesEl = document.getElementById("nedges");
+  let nnodesEl = document.getElementById("nnodes");
   trendPlot = initPlot();
 
   window.socket.onmessage = (data) => {
@@ -90,12 +93,10 @@ document.addEventListener("DOMContentLoaded",function(){
 
     updatePlot(parsed.trend);
     
-    if(parsed.tweetsCount == 0){
-      return ;
-    }
-
     // Initial load, all at once
     if(firstrun){
+      nnodes = parsed.graph.nodes.length;
+      nedges = parsed.graph.edges.length;
       g.beginUpdate();
       for(let i = 0; i < parsed.graph.nodes.length; i++) {
         g.addNode(
@@ -110,8 +111,6 @@ document.addEventListener("DOMContentLoaded",function(){
       firstrun = false
       return ;
     }
-
-    ntweets.innerText = parsed.tweetsCount;
 
     g.beginUpdate();
     if(parsed.graph.nodes){
@@ -136,6 +135,7 @@ document.addEventListener("DOMContentLoaded",function(){
         }
 
         if(parsed.graph.nodes[i].action == "add"){
+          nnodes++
           g.addNode(
             parsed.graph.nodes[i].name,
             {type: parsed.graph.nodes[i].type, count: parsed.graph.nodes[i].count}
@@ -152,12 +152,21 @@ document.addEventListener("DOMContentLoaded",function(){
         }
 
         if(parsed.graph.edges[i].action == "add"){
+          nedges++
           g.addLink(parsed.graph.edges[i].source, parsed.graph.edges[i].target);
         }
         
       }
     }
     g.endUpdate();
+
+    if(parsed.graph.nodes != null){
+      nnodesEl.innerText = nnodes;
+    }
+
+    if(parsed.graph.edges != null){
+      nedgesEl.innerText = nedges;
+    }
 
   }
 
