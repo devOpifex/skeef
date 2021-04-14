@@ -13,8 +13,10 @@ import (
 )
 
 type message struct {
-	Graph graph.Graph   `json:"graph"`
-	Trend map[int64]int `json:"trend"`
+	Graph       graph.Graph   `json:"graph"`
+	Trend       map[int64]int `json:"trend"`
+	RemoveEdges []graph.Edge  `json:"removeEdges"`
+	RemoveNodes []graph.Node  `json:"removeNodes"`
 }
 
 type Client struct {
@@ -183,11 +185,19 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 		}
 		app.Graph.UpsertEdges(edges...)
 		app.Graph.UpsertNodes(nodes...)
-		g := graph.Graph{Edges: edges, Nodes: nodes}
+
+		removeNodes, removeEdges := app.Graph.Truncate(app.MaxEdges)
+
+		g := graph.Graph{
+			Edges: edges,
+			Nodes: nodes,
+		}
 
 		m := message{
-			Graph: g,
-			Trend: app.Trend,
+			Graph:       g,
+			Trend:       app.Trend,
+			RemoveNodes: removeNodes,
+			RemoveEdges: removeEdges,
 		}
 		app.Pool.Broadcast <- m
 	}

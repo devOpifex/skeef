@@ -160,6 +160,29 @@ document.addEventListener("DOMContentLoaded",function(){
     }
     g.endUpdate();
 
+    let lnk;
+    if(parsed.removeEdges != null){
+      g.beginUpdate();
+      for( let i = 0; i < parsed.removeEdges.length; i++){
+        nedges--
+        lnk = g.getLink(
+          parsed.removeEdges[i].source,
+          parsed.removeEdges[i].target
+        )
+        g.removeLink(lnk);
+      }
+      g.endUpdate();
+    }
+
+    if(parsed.removeNodes != null){
+      g.beginUpdate();
+      for( let i = 0; i < parsed.removeNodes.length; i++){
+        nnodes--
+        g.removeNode(parsed.removeNodes[i].name);
+      }
+      g.endUpdate();
+    }
+
     if(parsed.graph.nodes != null){
       nnodesEl.innerText = nnodes;
     }
