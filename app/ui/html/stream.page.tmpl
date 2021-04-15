@@ -45,6 +45,11 @@
           <br/>
           <input id="maxEdges" class="rounded-sm overflow-hidden w-full" type='range' name='maxEdges' min='200' max='10000' value='{{ .Stream.MaxEdges }}' step='100'>
         </div>
+        <div class="pt-3">
+          <label class="font-bold uppercase text-xs">Description</label>
+          <br/>
+          <input id="desc" class="px-2 appearance-none text-gray-900 w-full rounded block h-24" type="text" name="desc" value="{{ .Stream.Description }}"/>
+        </div>
         <div>
           <input type='hidden' name='currentName' value='{{ .Stream.Name }}'>
           <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>

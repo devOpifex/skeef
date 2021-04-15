@@ -49,6 +49,7 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 		r.Form.Get("name"),
 		r.Form.Get("currentName"),
 		r.Form.Get("exclude"),
+		r.Form.Get("desc"),
 		maxEdges,
 	)
 
@@ -97,6 +98,7 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	locations := r.Form.Get("locations")
 	exclude := r.Form.Get("exclude")
 	maxEdges := r.Form.Get("maxEdges")
+	desc := r.Form.Get("desc")
 
 	if name == "" {
 		tmplData.Errors["stream"] = "Must specify a name"
@@ -117,7 +119,7 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(tmplData.Errors) == 0 {
-		err = app.Database.InsertStream(name, follow, track, locations, exclude, maxEdges)
+		err = app.Database.InsertStream(name, follow, track, locations, exclude, maxEdges, desc)
 
 		if err != nil {
 			tmplData.Errors["stream"] = "Failed to add the stream to the database"

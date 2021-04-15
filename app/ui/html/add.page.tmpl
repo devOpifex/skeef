@@ -43,6 +43,11 @@
           <br/>
           <input id="maxEdges" class="rounded-sm overflow-hidden w-full" type='range' name='maxEdges' min='200' max='10000' value='2000' step='100'>
         </div>
+        <div class="pt-3">
+          <label class="font-bold uppercase text-xs">Description</label>
+          <br/>
+          <input id="desc" class="h-24 px-2 appearance-none text-gray-900 w-full rounded block" type="text" name="desc"/>
+        </div>
         <div>
           <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
           <input class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' value='Add'>

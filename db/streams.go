@@ -3,9 +3,9 @@ package db
 import "github.com/devOpifex/skeef-app/stream"
 
 // InsertStream Insert a new stream
-func (DB *Database) InsertStream(name, follow, track, locations, exclude, maxEdges string) error {
+func (DB *Database) InsertStream(name, follow, track, locations, exclude, maxEdges, description string) error {
 
-	stmt, err := DB.Con.Prepare("INSERT INTO streams (name, follow, track, locations, active, exclude, max_edges) VALUES (?,?,?,?,?,?,?);")
+	stmt, err := DB.Con.Prepare("INSERT INTO streams (name, follow, track, locations, active, exclude, max_edges, description) VALUES (?,?,?,?,?,?,?,?);")
 
 	if err != nil {
 		return err
@@ -13,7 +13,7 @@ func (DB *Database) InsertStream(name, follow, track, locations, exclude, maxEdg
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(name, follow, track, locations, 0, exclude, maxEdges)
+	_, err = stmt.Exec(name, follow, track, locations, 0, exclude, maxEdges, description)
 
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ func (DB *Database) StreamExists(name string) (bool, error) {
 func (DB *Database) GetStreams() ([]stream.Stream, error) {
 	var streams []stream.Stream
 
-	rows, err := DB.Con.Query("SELECT name, follow, track, locations, active, max_edges FROM streams;")
+	rows, err := DB.Con.Query("SELECT name, follow, track, locations, active, max_edges, description FROM streams;")
 
 	if err != nil {
 		return streams, err
@@ -50,7 +50,7 @@ func (DB *Database) GetStreams() ([]stream.Stream, error) {
 	for rows.Next() {
 		var stream stream.Stream
 
-		err := rows.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges)
+		err := rows.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges, &stream.Description)
 
 		if err != nil {
 			continue
@@ -132,7 +132,7 @@ func (DB *Database) PauseAllStreams() error {
 func (DB *Database) GetStream(name string) (stream.Stream, error) {
 	var stream stream.Stream
 
-	stmt, err := DB.Con.Prepare("SELECT name, follow, track, locations, active, max_edges, exclude FROM streams WHERE name = ?")
+	stmt, err := DB.Con.Prepare("SELECT name, follow, track, locations, active, max_edges, exclude, description FROM streams WHERE name = ?")
 
 	if err != nil {
 		return stream, err
@@ -140,20 +140,20 @@ func (DB *Database) GetStream(name string) (stream.Stream, error) {
 
 	row := stmt.QueryRow(name)
 
-	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges, &stream.Exclusion)
+	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges, &stream.Exclusion, &stream.Description)
 
 	return stream, nil
 }
 
-func (DB *Database) UpdateStream(track, follow, locations, newName, currentName, exclusion string, maxEdges int) error {
+func (DB *Database) UpdateStream(track, follow, locations, newName, currentName, exclusion, description string, maxEdges int) error {
 
-	stmt, err := DB.Con.Prepare("UPDATE streams SET track = ?, follow = ?, locations = ?, name = ?, max_edges = ?, exclude = ? WHERE name = ?")
+	stmt, err := DB.Con.Prepare("UPDATE streams SET track = ?, follow = ?, locations = ?, name = ?, max_edges = ?, description = ?, exclude = ? WHERE name = ?")
 
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(track, follow, locations, newName, maxEdges, exclusion, currentName)
+	_, err = stmt.Exec(track, follow, locations, newName, maxEdges, description, exclusion, currentName)
 
 	if err != nil {
 		return err
@@ -165,9 +165,9 @@ func (DB *Database) UpdateStream(track, follow, locations, newName, currentName,
 func (DB *Database) GetActiveStream() stream.Stream {
 	var stream stream.Stream
 
-	row := DB.Con.QueryRow("SELECT name, follow, track, locations, active, max_edges, exclude FROM streams WHERE active = 1;")
+	row := DB.Con.QueryRow("SELECT name, follow, track, locations, active, max_edges, exclude, description FROM streams WHERE active = 1;")
 
-	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges, &stream.Exclusion)
+	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges, &stream.Exclusion, &stream.Description)
 
 	return stream
 }
