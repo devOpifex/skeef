@@ -9,6 +9,9 @@
     {{ with .Flash.success }}
       <p class="uppercase bold">{{ . }}</p>
     {{ end }}
+    {{ with .Errors.failure }}
+      <p class="uppercase bold text-red-400">{{ . }}</p>
+    {{ end }}
     <p class="pb-3 px-4">
       The stream is currently
       {{ if .Stream.Active }}
@@ -39,6 +42,15 @@
           <label class="font-bold uppercase text-xs">Exclude</label>
           <input id="exclusion" class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='exclude' value='{{ .Stream.Exclusion }}'>
           <p id="exclusion-warning" class="text-yellow-400 pt-2"></p>
+        </div>
+        <div class="pt-3">
+          <p class="pb-1 font-bold uppercase text-xs">Edges types</p>
+          <input type="checkbox" id="retweetsNet" name="retweetsNet" value="y" {{ if .Stream.RetweetsNet }} checked {{ end }} />
+          <label class="pr-6" for="retweetsNet">Retweets</label>
+          <input type="checkbox" id="mentionsNet" name="mentionsNet" value="y" {{ if .Stream.MentionsNet }} checked {{ end }} />
+          <label class="pr-6" for="retweetsNet">Mentions</label>
+          <input type="checkbox" id="hashtagsNet" name="hashtagsNet" value="y" {{ if .Stream.HashtagsNet }} checked {{ end }} />
+          <label class="pr-6" for="hashtagsNet">Hashtags</label>
         </div>
         <div class="pt-3">
           <label class="font-bold uppercase text-xs">Maximum edges on screen: <span id='rangeMaxEdges'>{{ .Stream.MaxEdges }}</span></label>

@@ -3,9 +3,9 @@ package db
 import "github.com/devOpifex/skeef-app/stream"
 
 // InsertStream Insert a new stream
-func (DB *Database) InsertStream(name, follow, track, locations, exclude, maxEdges, description string) error {
+func (DB *Database) InsertStream(name, follow, track, locations, exclude, maxEdges, description string, retweetsNet, mentionsNet, hashtagsNet int) error {
 
-	stmt, err := DB.Con.Prepare("INSERT INTO streams (name, follow, track, locations, active, exclude, max_edges, description) VALUES (?,?,?,?,?,?,?,?);")
+	stmt, err := DB.Con.Prepare("INSERT INTO streams (name, follow, track, locations, active, exclude, max_edges, description, retweets_net, mentions_net, hashtags_net) VALUES (?,?,?,?,?,?,?,?,?,?,?);")
 
 	if err != nil {
 		return err
@@ -13,7 +13,7 @@ func (DB *Database) InsertStream(name, follow, track, locations, exclude, maxEdg
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(name, follow, track, locations, 0, exclude, maxEdges, description)
+	_, err = stmt.Exec(name, follow, track, locations, 0, exclude, maxEdges, description, retweetsNet, mentionsNet, hashtagsNet)
 
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ func (DB *Database) StreamExists(name string) (bool, error) {
 func (DB *Database) GetStreams() ([]stream.Stream, error) {
 	var streams []stream.Stream
 
-	rows, err := DB.Con.Query("SELECT name, follow, track, locations, active, max_edges, description FROM streams;")
+	rows, err := DB.Con.Query("SELECT name, follow, track, locations, active, max_edges, description, retweets_net, mentions_net, hashtags_net FROM streams;")
 
 	if err != nil {
 		return streams, err
@@ -50,7 +50,18 @@ func (DB *Database) GetStreams() ([]stream.Stream, error) {
 	for rows.Next() {
 		var stream stream.Stream
 
-		err := rows.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges, &stream.Description)
+		err := rows.Scan(
+			&stream.Name,
+			&stream.Follow,
+			&stream.Track,
+			&stream.Locations,
+			&stream.Active,
+			&stream.MaxEdges,
+			&stream.Description,
+			&stream.RetweetsNet,
+			&stream.MentionsNet,
+			&stream.HashtagsNet,
+		)
 
 		if err != nil {
 			continue
@@ -132,7 +143,7 @@ func (DB *Database) PauseAllStreams() error {
 func (DB *Database) GetStream(name string) (stream.Stream, error) {
 	var stream stream.Stream
 
-	stmt, err := DB.Con.Prepare("SELECT name, follow, track, locations, active, max_edges, exclude, description FROM streams WHERE name = ?")
+	stmt, err := DB.Con.Prepare("SELECT name, follow, track, locations, active, max_edges, exclude, description, retweets_net, mentions_net, hashtags_net FROM streams WHERE name = ?")
 
 	if err != nil {
 		return stream, err
@@ -140,20 +151,32 @@ func (DB *Database) GetStream(name string) (stream.Stream, error) {
 
 	row := stmt.QueryRow(name)
 
-	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges, &stream.Exclusion, &stream.Description)
+	row.Scan(
+		&stream.Name,
+		&stream.Follow,
+		&stream.Track,
+		&stream.Locations,
+		&stream.Active,
+		&stream.MaxEdges,
+		&stream.Exclusion,
+		&stream.Description,
+		&stream.RetweetsNet,
+		&stream.MentionsNet,
+		&stream.HashtagsNet,
+	)
 
 	return stream, nil
 }
 
-func (DB *Database) UpdateStream(track, follow, locations, newName, currentName, exclusion, description string, maxEdges int) error {
+func (DB *Database) UpdateStream(track, follow, locations, newName, currentName, exclusion, description string, maxEdges, retweetsNet, mentionsNet, hashtagsNet int) error {
 
-	stmt, err := DB.Con.Prepare("UPDATE streams SET track = ?, follow = ?, locations = ?, name = ?, max_edges = ?, description = ?, exclude = ? WHERE name = ?")
+	stmt, err := DB.Con.Prepare("UPDATE streams SET track = ?, follow = ?, locations = ?, name = ?, max_edges = ?, description = ?, exclude = ?, retweets_net = ?, mentions_net = ?, hashtags_net = ? WHERE name = ?")
 
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(track, follow, locations, newName, maxEdges, description, exclusion, currentName)
+	_, err = stmt.Exec(track, follow, locations, newName, maxEdges, description, exclusion, retweetsNet, mentionsNet, hashtagsNet, currentName)
 
 	if err != nil {
 		return err
@@ -165,9 +188,21 @@ func (DB *Database) UpdateStream(track, follow, locations, newName, currentName,
 func (DB *Database) GetActiveStream() stream.Stream {
 	var stream stream.Stream
 
-	row := DB.Con.QueryRow("SELECT name, follow, track, locations, active, max_edges, exclude, description FROM streams WHERE active = 1;")
+	row := DB.Con.QueryRow("SELECT name, follow, track, locations, active, max_edges, exclude, description, retweets_net, mentions_net, hashtags_net FROM streams WHERE active = 1;")
 
-	row.Scan(&stream.Name, &stream.Follow, &stream.Track, &stream.Locations, &stream.Active, &stream.MaxEdges, &stream.Exclusion, &stream.Description)
+	row.Scan(
+		&stream.Name,
+		&stream.Follow,
+		&stream.Track,
+		&stream.Locations,
+		&stream.Active,
+		&stream.MaxEdges,
+		&stream.Exclusion,
+		&stream.Description,
+		&stream.RetweetsNet,
+		&stream.MentionsNet,
+		&stream.HashtagsNet,
+	)
 
 	return stream
 }

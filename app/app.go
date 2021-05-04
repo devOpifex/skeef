@@ -7,6 +7,7 @@ import (
 	"github.com/bmizerany/pat"
 	"github.com/devOpifex/skeef-app/db"
 	"github.com/devOpifex/skeef-app/graph"
+	"github.com/devOpifex/skeef-app/stream"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/golangcollege/sessions"
 	"github.com/justinas/alice"
@@ -32,6 +33,7 @@ type Application struct {
 	Trend           map[int64]int
 	Exclusion       map[string]bool
 	MaxEdges        int
+	StreamActive    stream.Stream
 }
 
 type Setup struct {

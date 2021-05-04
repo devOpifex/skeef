@@ -42,21 +42,34 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 
 	maxEdges, _ := strconv.Atoi(r.Form.Get("maxEdges"))
 
-	err = app.Database.UpdateStream(
-		r.Form.Get("track"),
-		r.Form.Get("follow"),
-		r.Form.Get("locations"),
-		r.Form.Get("name"),
-		r.Form.Get("currentName"),
-		r.Form.Get("exclude"),
-		r.Form.Get("desc"),
-		maxEdges,
+	ok := networkTypesOk(
+		checkboxToInt(r.Form.Get("retweetsNet")),
+		checkboxToInt(r.Form.Get("mentionsNet")),
+		checkboxToInt(r.Form.Get("hashtagsNet")),
 	)
 
-	if err != nil {
-		tmplData.Errors["failure"] = "Failed to update stream"
+	if ok {
+		err = app.Database.UpdateStream(
+			r.Form.Get("track"),
+			r.Form.Get("follow"),
+			r.Form.Get("locations"),
+			r.Form.Get("name"),
+			r.Form.Get("currentName"),
+			r.Form.Get("exclude"),
+			r.Form.Get("desc"),
+			maxEdges,
+			checkboxToInt(r.Form.Get("retweetsNet")),
+			checkboxToInt(r.Form.Get("mentionsNet")),
+			checkboxToInt(r.Form.Get("hashtagsNet")),
+		)
+
+		if err != nil {
+			tmplData.Errors["failure"] = "Failed to update stream"
+		} else {
+			tmplData.Flash["success"] = "Successfully updated stream"
+		}
 	} else {
-		tmplData.Flash["success"] = "Successfully updated stream"
+		tmplData.Errors["failure"] = "Must check at least one of retweets, mentions, or hashtags."
 	}
 
 	tmplData.Stream = stream.Stream{
@@ -69,6 +82,10 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 
 	app.render(w, r, []string{"ui/html/stream.page.tmpl"}, tmplData)
 	http.Redirect(w, r, "/admin/edit/"+r.Form.Get("name"), http.StatusSeeOther)
+}
+
+func checkboxToInt(value string) int {
+	return len(value)
 }
 
 func (app *Application) streamAddPage(w http.ResponseWriter, r *http.Request) {
@@ -99,6 +116,15 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	exclude := r.Form.Get("exclude")
 	maxEdges := r.Form.Get("maxEdges")
 	desc := r.Form.Get("desc")
+	retweetsNet := checkboxToInt(r.Form.Get("retweetsNet"))
+	mentionsNet := checkboxToInt(r.Form.Get("mentionsNet"))
+	hashtagsNet := checkboxToInt(r.Form.Get("hashtagsNet"))
+
+	ok := networkTypesOk(retweetsNet, mentionsNet, hashtagsNet)
+
+	if !ok {
+		tmplData.Errors["stream"] = "Must check at least one of retweets, mentions, or hashtags"
+	}
 
 	if name == "" {
 		tmplData.Errors["stream"] = "Must specify a name"
@@ -119,7 +145,7 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(tmplData.Errors) == 0 {
-		err = app.Database.InsertStream(name, follow, track, locations, exclude, maxEdges, desc)
+		err = app.Database.InsertStream(name, follow, track, locations, exclude, maxEdges, desc, retweetsNet, mentionsNet, hashtagsNet)
 
 		if err != nil {
 			tmplData.Errors["stream"] = "Failed to add the stream to the database"
@@ -141,4 +167,9 @@ func exclusionMap(exclusion string) map[string]bool {
 	}
 
 	return mp
+}
+
+func networkTypesOk(retweetsNet, mentionsNet, hashtagsNet int) bool {
+	total := retweetsNet + mentionsNet + hashtagsNet
+	return total != 0
 }

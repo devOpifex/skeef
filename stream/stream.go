@@ -9,4 +9,7 @@ type Stream struct {
 	MaxEdges    int
 	Active      int
 	Description string
+	RetweetsNet int
+	MentionsNet int
+	HashtagsNet int
 }

@@ -142,9 +142,9 @@ func (app *Application) StartStream() {
 		return
 	}
 
-	search := app.Database.GetActiveStream()
-	app.Exclusion = exclusionMap(search.Exclusion)
-	app.MaxEdges = search.MaxEdges
+	app.StreamActive = app.Database.GetActiveStream()
+	app.Exclusion = exclusionMap(app.StreamActive.Exclusion)
+	app.MaxEdges = app.StreamActive.MaxEdges
 
 	var twitterConfig = oauth1.NewConfig(tokens.ApiKey, tokens.ApiSecret)
 	var token = oauth1.NewToken(tokens.AccessToken, tokens.AccessSecret)
@@ -154,7 +154,7 @@ func (app *Application) StartStream() {
 	var client = twitter.NewClient(httpClient)
 
 	var params = &twitter.StreamFilterParams{
-		Track:         []string{search.Track},
+		Track:         []string{app.StreamActive.Track},
 		StallWarnings: twitter.Bool(true),
 	}
 	app.Stream, _ = client.Streams.Filter(params)
@@ -173,16 +173,26 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 		app.Count++
 		app.Trend[parseTime(tweet.CreatedAt)]++
 		app.InfoLog.Printf("Tweet #%v\n", app.Count)
-		nodes, edges := graph.GetUserNet(*tweet, app.Exclusion)
-		hashNodes, hashEdges := graph.GetHashNet(*tweet, app.Exclusion)
-		ok, retweetNodes, retweetEdges := graph.GetRetweetNet(*tweet, app.Exclusion)
-		nodes = append(nodes, hashNodes...)
-		edges = append(edges, hashEdges...)
-
-		if ok {
-			nodes = append(nodes, retweetNodes...)
-			edges = append(edges, retweetEdges)
+		var nodes []graph.Node
+		var edges []graph.Edge
+		if app.StreamActive.MentionsNet > 0 {
+			nodesMentions, edgesMentions := graph.GetUserNet(*tweet, app.Exclusion)
+			nodes = append(nodes, nodesMentions...)
+			edges = append(edges, edgesMentions...)
 		}
+		if app.StreamActive.HashtagsNet > 0 {
+			nodesHash, edgesHash := graph.GetHashNet(*tweet, app.Exclusion)
+			nodes = append(nodes, nodesHash...)
+			edges = append(edges, edgesHash...)
+		}
+		if app.StreamActive.RetweetsNet > 0 {
+			ok, nodesRetweet, edgesRetweet := graph.GetRetweetNet(*tweet, app.Exclusion)
+			if ok {
+				nodes = append(nodes, nodesRetweet...)
+				edges = append(edges, edgesRetweet)
+			}
+		}
+
 		app.Graph.UpsertEdges(edges...)
 		app.Graph.UpsertNodes(nodes...)
 

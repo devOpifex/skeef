@@ -14,7 +14,7 @@
     </p>
     <div>
     {{ with .Errors.stream }}
-      <p class="bold text-red-400">{{ . }}</p>
+      <p class="bold text-red-400 pb-3">{{ . }}</p>
     {{ end }}
       <div class="bg-gray-900 rounded-md px-6 py-4 w-full">
         <div>
@@ -37,6 +37,15 @@
           <label class="font-bold uppercase text-xs">Exclude</label>
           <input id="exclusion" class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='exclude' placeholder='Keywords to exclude from the network (comma separated)'>
           <p id="exclusion-warning" class="text-yellow-400 pt-2"></p>
+        </div>
+        <div class="pt-3">
+          <p class="pb-1 font-bold uppercase text-xs">Edges types</p>
+          <input type="checkbox" id="retweetsNet" name="retweetsNet" value="y" checked />
+          <label class="pr-6" for="retweetsNet">Retweets</label>
+          <input type="checkbox" id="mentionsNet" name="mentionsNet" value="y" checked />
+          <label class="pr-6" for="retweetsNet">Mentions</label>
+          <input type="checkbox" id="hashtagsNet" name="hashtagsNet" value="y" checked />
+          <label class="pr-6" for="hashtagsNet">Hashtags</label>
         </div>
         <div class="pt-3">
           <label class="font-bold uppercase text-xs">Maximum edges on screen: <span id='rangeMaxEdges'>2000</span></label>
