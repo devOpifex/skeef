@@ -173,8 +173,12 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 		app.Count++
 		app.Trend[parseTime(tweet.CreatedAt)]++
 		app.InfoLog.Printf("Tweet #%v\n", app.Count)
+
+		// declare variables
 		var nodes []graph.Node
 		var edges []graph.Edge
+
+		// selectively create graph
 		if app.StreamActive.MentionsNet > 0 {
 			nodesMentions, edgesMentions := graph.GetUserNet(*tweet, app.Exclusion)
 			nodes = append(nodes, nodesMentions...)
