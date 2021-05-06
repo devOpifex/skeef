@@ -194,6 +194,10 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 		tmplData.Flash["password"] = "Password changed!"
 	}
 
+	if action == "message" {
+		app.NotStreaming = r.PostForm.Get("notStreaming")
+	}
+
 	if action == "deleteStream" {
 		err = app.Database.DeleteStream(r.Form.Get("streamName"))
 

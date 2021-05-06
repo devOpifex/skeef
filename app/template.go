@@ -23,6 +23,7 @@ type templateData struct {
 	Email         string
 	Streaming     bool
 	Connected     int
+	NotStreaming  string
 }
 
 //go:embed ui/html
@@ -31,6 +32,7 @@ var embededTemplates embed.FS
 func (app *Application) render(w http.ResponseWriter, r *http.Request, files []string, data templateData) {
 
 	data.Addr = app.Addr
+	data.NotStreaming = template.HTMLEscapeString(app.NotStreaming)
 
 	tmpls := []string{
 		"ui/html/base.layout.tmpl",

@@ -18,7 +18,9 @@
   {{ else }}
     <div class="flex justify-center pt-12">
       <div class="bg-gray-900 px-4 py-6 rounded-md">
-        <h1 class="uppercase text-center font-light text-3xl pb-8">Currently not streaming</h1>
+      {{ with .Flash.message }}
+        <div>{{.}}</div>
+      {{ end }}
         {{ if .Authenticated }}
           <p class="text-center w-full">
             It looks like you are the admin,

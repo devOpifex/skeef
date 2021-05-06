@@ -34,6 +34,7 @@ type Application struct {
 	Exclusion       map[string]bool
 	MaxEdges        int
 	StreamActive    stream.Stream
+	NotStreaming    string
 }
 
 type Setup struct {
@@ -55,10 +56,18 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var tmplData templateData
+	tmplData.Flash = make(map[string]string)
 
 	tmplData.Authenticated = app.isAuthenticated(r)
 
 	tmplData.Streaming = app.Database.StreamOnGoing()
+
+	// default message
+	msg := app.NotStreaming
+	if msg == "" {
+		msg = "<h1 class='uppercase text-center font-light text-3xl pb-8'>Currently not streaming</h1>"
+	}
+	tmplData.Flash["message"] = msg
 
 	app.render(w, r, []string{"ui/html/home.page.tmpl"}, tmplData)
 }

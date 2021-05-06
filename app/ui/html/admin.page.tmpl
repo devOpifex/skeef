@@ -189,6 +189,17 @@
         </p>
         {{ end }}
       </div>
+      <div class="bg-gray-900 rounded-md px-6 my-4 py-4">
+        <h3 class="uppercase text-2xl pb-4">Not Streaming Message</h3>
+        <p>Message to display when not streaming.</p>
+        <div class="py-3">
+          <form action='/admin' method='POST' novalidate>
+            <input id="notStreaming" class="px-2 appearance-none text-gray-900 w-full rounded block h-24" type="text" name="notStreaming" value="{{ .NotStreaming }}"/>
+            <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+            <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='message'>Set</button>
+          </form>
+        </div>
+      </div>
     </div>
     <div>
       <div class="bg-gray-900 rounded-md px-6 py-4">
