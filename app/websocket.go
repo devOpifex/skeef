@@ -19,6 +19,12 @@ type message struct {
 	RemoveNodes []graph.Node  `json:"removeNodes"`
 }
 
+type connectionMessage struct {
+	Graph       graph.Graph   `json:"graph"`
+	Trend       map[int64]int `json:"trend"`
+	Description string        `json:"description"`
+}
+
 type Client struct {
 	ID   string
 	Conn *websocket.Conn
@@ -69,7 +75,12 @@ func (app *Application) StartPool() {
 			app.Connected++
 			for client := range app.Pool.Clients {
 				// send current state of the graph on connect
-				client.Conn.WriteJSON(message{Graph: app.Graph, Trend: app.Trend})
+				client.Conn.WriteJSON(
+					connectionMessage{
+						Graph:       app.Graph,
+						Trend:       app.Trend,
+						Description: app.StreamActive.Description,
+					})
 			}
 		case client := <-app.Pool.Unregister:
 			delete(app.Pool.Clients, client)

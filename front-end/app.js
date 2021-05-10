@@ -292,6 +292,9 @@ window.addEventListener("resize", e => {
 });
 
 function resizeGraph(){
+  if(graphContainer == null)
+    return ;
+
   graphContainer.childNodes[0].style.width = graphContainer.offsetWidth + 'px';
 }
 
