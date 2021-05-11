@@ -4,17 +4,36 @@
 
 {{define "main"}}
 <div class="w-full">
-  {{ if .Authenticated }}
-    <a href="/admin" class="pt-2 text-xs float-right text-light underline px-4 z-50">Admin area</a>
-  {{ end }}
   {{ if .Streaming }}
     <p class="font-light text-xs float-left pt-2 px-4">Number of tweets over time</p>
     <div id="trend"></div>
     <div id="graph" class="w-full focus:outline-none"></div>
     <p class="bottom-4 absolute left-4">
-      <span class="px-4 pt-2 font-light"><span id="nedges" class="font-semibold">0</span> edges</span>
-      <span class="px-4 pt-2 font-light"><span id="nnodes" class="font-semibold">0</span> nodes</span>
+      <span class="font-light"><span id="nedges" class="font-semibold">0</span> edges</span>
+      <br/>
+      <span class="font-light"><span id="nnodes" class="font-semibold">0</span> nodes</span>
     </p>
+    {{ if .HasDescription }}
+    <p class="bottom-4 absolute right-4">
+      <a data-pushbar-target="description">?</a>
+    </p>
+    <div id="desc" class="bg-gray-900 text-white" data-pushbar-id="description" data-pushbar-direction="right">
+      <div class="bg-gray-900 text-white min-h-screen px-4 py-8">
+        <h1 class="text-3xl py-4">Stream</h1>
+        {{ if .Authenticated }}
+          <a href="/admin" class="pt-2 text-xs float-right text-light underline absolute top-4 right-4 z-50">Admin area</a>
+        {{ end }}
+        <p>
+          {{ .StreamActive.Description}}
+        </p>
+        <p>
+          Use the <kbd>W</kbd>, <kbd>A</kbd>, <kbd>S</kbd>, <kbd>D</kbd> key to navigate the graph.
+          and the arrow keys to rotate the camera: <kbd>&#8592;</kbd>, <kbd>&#8593;</kbd>, <kbd>&#8594;</kbd>, <kbd>&#8595;</kbd>.
+        </p>
+        <button class="absolute bottom-4 right-4 bg-background rounded-sm mt-4 px-4 py-2" data-pushbar-close>Close</button>
+      </div>
+    </div>
+    {{ end }}
   {{ else }}
     <div class="flex justify-center pt-12">
       <div class="bg-gray-900 px-4 py-6 rounded-md">
@@ -31,4 +50,18 @@
     </div>
   {{ end }}
 </div>
+
+<script>
+const pushbar = new Pushbar({
+  blur:false,
+  overlay:false,
+});
+</script>
+
+<style>
+#desc{
+  min-width: 25%;
+  max-width: 400px; 
+}
+</style>
 {{end}}

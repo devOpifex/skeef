@@ -11,19 +11,21 @@ import (
 )
 
 type templateData struct {
-	Errors        map[string]string
-	Authenticated bool
-	CSRFToken     string
-	License       db.License
-	HasTokens     bool
-	Flash         map[string]string
-	Streams       []stream.Stream
-	Stream        stream.Stream
-	Addr          string
-	Email         string
-	Streaming     bool
-	Connected     int
-	NotStreaming  string
+	Errors         map[string]string
+	Authenticated  bool
+	CSRFToken      string
+	License        db.License
+	HasTokens      bool
+	Flash          map[string]string
+	Streams        []stream.Stream
+	Stream         stream.Stream
+	Addr           string
+	Email          string
+	Streaming      bool
+	Connected      int
+	NotStreaming   string
+	StreamActive   stream.Stream
+	HasDescription bool
 }
 
 //go:embed ui/html
@@ -33,6 +35,8 @@ func (app *Application) render(w http.ResponseWriter, r *http.Request, files []s
 
 	data.Addr = app.Addr
 	data.NotStreaming = template.HTMLEscapeString(app.NotStreaming)
+	data.HasDescription = app.StreamActive.Description != ""
+	data.StreamActive = app.StreamActive
 
 	tmpls := []string{
 		"ui/html/base.layout.tmpl",

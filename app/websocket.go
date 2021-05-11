@@ -20,9 +20,8 @@ type message struct {
 }
 
 type connectionMessage struct {
-	Graph       graph.Graph   `json:"graph"`
-	Trend       map[int64]int `json:"trend"`
-	Description string        `json:"description"`
+	Graph graph.Graph   `json:"graph"`
+	Trend map[int64]int `json:"trend"`
 }
 
 type Client struct {
@@ -77,9 +76,8 @@ func (app *Application) StartPool() {
 				// send current state of the graph on connect
 				client.Conn.WriteJSON(
 					connectionMessage{
-						Graph:       app.Graph,
-						Trend:       app.Trend,
-						Description: app.StreamActive.Description,
+						Graph: app.Graph,
+						Trend: app.Trend,
 					})
 			}
 		case client := <-app.Pool.Unregister:
