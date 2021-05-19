@@ -12,7 +12,7 @@ func (g *Graph) HasEdge(edge Edge) bool {
 	return false
 }
 
-// UpdateNode Update the node count
+// UpdateEdge Update the edge count
 func (g *Graph) UpsertEdge(edge *Edge) {
 
 	for index := range g.Edges {
@@ -29,6 +29,7 @@ func (g *Graph) UpsertEdge(edge *Edge) {
 
 }
 
+// UpsertEdges Variadic for convenience
 func (g *Graph) UpsertEdges(edges ...Edge) {
 	for key := range edges {
 		g.UpsertEdge(&edges[key])
