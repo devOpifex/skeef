@@ -183,6 +183,7 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 	return func(tweet *twitter.Tweet) {
 		app.Count++
 		app.Trend[parseTime(tweet.CreatedAt)]++
+		app.truncateTrend()
 		app.InfoLog.Printf("Tweet #%v\n", app.Count)
 
 		// declare variables
@@ -244,4 +245,27 @@ func splitTerm(track string) []string {
 	}
 
 	return splat
+}
+
+func (app *Application) truncateTrend() {
+	if len(app.Trend) < 50 {
+		return
+	}
+
+	var min int64
+
+	for key := range app.Trend {
+		if min == 0 {
+			min = key
+			continue
+		}
+
+		if min < key {
+			continue
+		}
+
+		min = key
+	}
+
+	delete(app.Trend, min)
 }
