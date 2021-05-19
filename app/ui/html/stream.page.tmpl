@@ -53,6 +53,15 @@
           <label class="pr-6" for="hashtagsNet">Hashtags</label>
         </div>
         <div class="pt-3">
+          <p class="pb-1 font-bold uppercase text-xs">Filter</p>
+          <input type="radio" id="filter_level_none" name="filterLevel" value="none" {{ if eq .Stream.FilterLevel "none" }} checked {{ end }} />
+          <label for="none">None</label>
+          <input type="radio" id="filter_level_low" name="filterLevel" value="low" {{ if eq .Stream.FilterLevel "low" }} checked {{ end }}/>
+          <label for="none">Low</label>
+          <input type="radio" id="filter_level_medium" name="filterLevel" value="medium" {{ if eq .Stream.FilterLevel "medium" }} checked {{ end }} />
+          <label for="none">Medium</label>
+        </div>
+        <div class="pt-3">
           <label class="font-bold uppercase text-xs">Maximum edges on screen: <span id='rangeMaxEdges'>{{ .Stream.MaxEdges }}</span></label>
           <br/>
           <input id="maxEdges" class="rounded-sm overflow-hidden w-full" type='range' name='maxEdges' min='200' max='10000' value='{{ .Stream.MaxEdges }}' step='100'>

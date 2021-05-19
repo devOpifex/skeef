@@ -12,4 +12,5 @@ type Stream struct {
 	RetweetsNet int
 	MentionsNet int
 	HashtagsNet int
+	FilterLevel string
 }

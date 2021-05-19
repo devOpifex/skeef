@@ -61,6 +61,7 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 			checkboxToInt(r.Form.Get("retweetsNet")),
 			checkboxToInt(r.Form.Get("mentionsNet")),
 			checkboxToInt(r.Form.Get("hashtagsNet")),
+			r.Form.Get("filterLevel"),
 		)
 
 		if err != nil {
@@ -119,6 +120,7 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	retweetsNet := checkboxToInt(r.Form.Get("retweetsNet"))
 	mentionsNet := checkboxToInt(r.Form.Get("mentionsNet"))
 	hashtagsNet := checkboxToInt(r.Form.Get("hashtagsNet"))
+	filterLevel := r.Form.Get("filterLevel")
 
 	ok := networkTypesOk(retweetsNet, mentionsNet, hashtagsNet)
 
@@ -145,9 +147,10 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(tmplData.Errors) == 0 {
-		err = app.Database.InsertStream(name, follow, track, locations, exclude, maxEdges, desc, retweetsNet, mentionsNet, hashtagsNet)
+		err = app.Database.InsertStream(name, follow, track, locations, exclude, maxEdges, desc, retweetsNet, mentionsNet, hashtagsNet, filterLevel)
 
 		if err != nil {
+			app.ErrorLog.Println(err)
 			tmplData.Errors["stream"] = "Failed to add the stream to the database"
 		} else {
 			tmplData.Flash["stream"] = "Stream added to the database"
