@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/devOpifex/skeef-app/graph"
@@ -163,7 +164,8 @@ func (app *Application) StartStream() {
 	var client = twitter.NewClient(httpClient)
 
 	var params = &twitter.StreamFilterParams{
-		Track:         []string{app.StreamActive.Track},
+		Track:         splitTerm(app.StreamActive.Track),
+		Follow:        splitTerm(app.StreamActive.Follow),
 		StallWarnings: twitter.Bool(true),
 	}
 	app.Stream, _ = client.Streams.Filter(params)
@@ -232,4 +234,14 @@ func parseTime(date string) int64 {
 	minute := toRound.Round(15 * time.Second)
 
 	return minute.Unix()
+}
+
+func splitTerm(track string) []string {
+	splat := strings.Split(track, ",")
+
+	for i, s := range splat {
+		splat[i] = strings.TrimSpace(s)
+	}
+
+	return splat
 }
