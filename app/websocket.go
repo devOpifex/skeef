@@ -104,6 +104,7 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
+// wsUpgrade Upgrades the websocket
 func (app *Application) wsUpgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -113,6 +114,7 @@ func (app *Application) wsUpgrade(w http.ResponseWriter, r *http.Request) (*webs
 	return ws, nil
 }
 
+// socket Upgrade the websocket and app it to the pool
 func (app *Application) socket(w http.ResponseWriter, r *http.Request) {
 	ws, err := app.wsUpgrade(w, r)
 
@@ -130,6 +132,7 @@ func (app *Application) socket(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// StopStream stops the stream
 func (app *Application) StopStream() {
 
 	if app.Stream != nil {
@@ -140,6 +143,7 @@ func (app *Application) StopStream() {
 	app.Database.PauseAllStreams()
 }
 
+// StartStream starts the stream
 func (app *Application) StartStream() {
 
 	app.Trend = make(map[int64]int)
@@ -237,6 +241,8 @@ func parseTime(date string) int64 {
 	return minute.Unix()
 }
 
+// splitTerm splits comma separate string into
+// slice of strings
 func splitTerm(track string) []string {
 	splat := strings.Split(track, ",")
 
@@ -247,6 +253,8 @@ func splitTerm(track string) []string {
 	return splat
 }
 
+// truncateTrend Truncates the trend to ensure it
+// does not grow infinitely
 func (app *Application) truncateTrend() {
 	if len(app.Trend) < 50 {
 		return
