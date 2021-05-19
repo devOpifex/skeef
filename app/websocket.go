@@ -18,6 +18,7 @@ type message struct {
 	Trend       map[int64]int `json:"trend"`
 	RemoveEdges []graph.Edge  `json:"removeEdges"`
 	RemoveNodes []graph.Node  `json:"removeNodes"`
+	NewTweets   tweetsUsers   `json:"tweets"`
 }
 
 type connectionMessage struct {
@@ -212,6 +213,7 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 				edges = append(edges, edgesRetweet)
 			}
 		}
+		newTweets := app.trackTweets(tweet, edges)
 
 		app.Graph.UpsertEdges(edges...)
 		app.Graph.UpsertNodes(nodes...)
@@ -228,6 +230,7 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 			Trend:       app.Trend,
 			RemoveNodes: removeNodes,
 			RemoveEdges: removeEdges,
+			NewTweets:   newTweets,
 		}
 		app.Pool.Broadcast <- m
 	}
@@ -276,4 +279,33 @@ func (app *Application) truncateTrend() {
 	}
 
 	delete(app.Trend, min)
+}
+
+type tweetsUsers map[string]map[string]string
+
+func (app *Application) trackTweets(tweet *twitter.Tweet, edges []graph.Edge) tweetsUsers {
+	var newTweets = make(map[string]map[string]string)
+	newTweets[tweet.IDStr] = make(map[string]string)
+
+	for _, v := range edges {
+
+		// need to create map
+		if _, ok := app.TweetsUsers[tweet.IDStr]; !ok {
+			app.TweetsUsers[tweet.IDStr] = make(map[string]string)
+		}
+
+		// newly added tweets and/or
+		if _, ok := app.TweetsUsers[tweet.IDStr][v.Source]; !ok {
+			newTweets[tweet.IDStr][v.Source] = v.Source
+		}
+		if _, ok := app.TweetsUsers[tweet.IDStr][v.Target]; !ok {
+			newTweets[tweet.IDStr][v.Target] = v.Target
+		}
+
+		// global for initial connection
+		app.TweetsUsers[tweet.IDStr][v.Source] = v.Source
+		app.TweetsUsers[tweet.IDStr][v.Target] = v.Target
+	}
+
+	return newTweets
 }

@@ -35,6 +35,7 @@ type Application struct {
 	MaxEdges        int
 	StreamActive    stream.Stream
 	NotStreaming    string
+	TweetsUsers     tweetsUsers
 }
 
 type Setup struct {
@@ -57,6 +58,7 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 
 	var tmplData templateData
 	tmplData.Flash = make(map[string]string)
+	app.TweetsUsers = make(map[string]map[string]string)
 
 	tmplData.Authenticated = app.isAuthenticated(r)
 
