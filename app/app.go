@@ -21,7 +21,7 @@ type Application struct {
 	Session         *sessions.Session
 	License         db.License
 	Addr            string
-	Count           int
+	Count           int64
 	Stream          *twitter.Stream
 	Valid           bool
 	LicenseResponse LicenseResponse

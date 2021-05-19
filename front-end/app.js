@@ -88,6 +88,8 @@ document.addEventListener("DOMContentLoaded",function(){
   trendPlot = initPlot();
 
   window.socket.onmessage = (data) => {
+    if(nedgesEl == null)
+      return;
     let parsed = JSON.parse(data.data);
     console.log(parsed);
 

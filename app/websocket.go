@@ -99,8 +99,8 @@ func (app *Application) StartPool() {
 }
 
 var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
+	ReadBufferSize:  2048,
+	WriteBufferSize: 2048,
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
