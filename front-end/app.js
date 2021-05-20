@@ -2,7 +2,8 @@ var createGraph = require('ngraph.graph');
 var pixel = require('ngraph.pixel');
 
 let trendPlot,
-    graphContainer;
+    graphContainer,
+    clickedNode;
 
 document.addEventListener("DOMContentLoaded",function(){
 
@@ -64,6 +65,11 @@ document.addEventListener("DOMContentLoaded",function(){
       }
     });
 
+    renderer.on('nodeclick', function(node){
+      clickedNode = node.id;
+      socket.send(node.id);
+    })
+
     resizeGraph();
   }
 
@@ -86,12 +92,35 @@ document.addEventListener("DOMContentLoaded",function(){
   let nedgesEl = document.getElementById("nedges");
   let nnodesEl = document.getElementById("nnodes");
   trendPlot = initPlot();
+  let tweetsWrapper = document.getElementById("tweets");
 
   window.socket.onmessage = (data) => {
     if(nedgesEl == null)
       return;
 
     let parsed = JSON.parse(data.data);
+
+    if(parsed.hasOwnProperty("type")){
+      console.log(parsed);
+      tweetsWrapper.innerHTML = "";
+
+      // single tweet
+      if(parsed.embeds.length == undefined){
+        parsed.embeds = [parsed.embeds];
+      }
+
+      for(let i = 0; i < parsed.embeds.length; i++){
+        let keys = parsed.embeds.keys();
+        let el = document.createElement("DIV");
+        tweetsWrapper.appendChild(el);
+        twttr.widgets.createTweet(
+          keys[i],tweetsWrapper, {
+            theme: 'dark'
+          }
+        )
+      }
+      return;
+    }
 
     updatePlot(parsed.trend);
     

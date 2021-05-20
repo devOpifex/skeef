@@ -18,7 +18,11 @@ type message struct {
 	Trend       map[int64]int `json:"trend"`
 	RemoveEdges []graph.Edge  `json:"removeEdges"`
 	RemoveNodes []graph.Node  `json:"removeNodes"`
-	NewTweets   tweetsUsers   `json:"tweets"`
+}
+
+type messageEmbed struct {
+	Type   string      `json:"type"`
+	Embeds tweetEmbeds `json:"embeds"`
 }
 
 type connectionMessage struct {
@@ -59,11 +63,15 @@ func (c *Client) Read(app *Application) {
 	c.Conn.SetReadLimit(maxMessageSize)
 
 	for {
-		_, _, err := c.Conn.ReadMessage()
+		_, p, err := c.Conn.ReadMessage()
 		if err != nil {
 			log.Println(err)
 			return
 		}
+
+		msg := string(p)
+		embeds := app.getMentions(msg)
+		c.Conn.WriteJSON(messageEmbed{Type: "embed", Embeds: embeds})
 
 	}
 }
@@ -213,7 +221,11 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 				edges = append(edges, edgesRetweet)
 			}
 		}
-		newTweets := app.trackTweets(tweet, edges)
+
+		// track tweets
+		app.trackTweets(tweet, edges)
+		//truncate tweets
+		app.truncateTweetsUser()
 
 		app.Graph.UpsertEdges(edges...)
 		app.Graph.UpsertNodes(nodes...)
@@ -230,7 +242,6 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 			Trend:       app.Trend,
 			RemoveNodes: removeNodes,
 			RemoveEdges: removeEdges,
-			NewTweets:   newTweets,
 		}
 		app.Pool.Broadcast <- m
 	}
@@ -281,31 +292,55 @@ func (app *Application) truncateTrend() {
 	delete(app.Trend, min)
 }
 
-type tweetsUsers map[string]map[string]string
+type tweetsUsers struct {
+	id    int64
+	nodes []string
+}
 
-func (app *Application) trackTweets(tweet *twitter.Tweet, edges []graph.Edge) tweetsUsers {
-	var newTweets = make(map[string]map[string]string)
-	newTweets[tweet.IDStr] = make(map[string]string)
+func (app *Application) trackTweets(tweet *twitter.Tweet, edges []graph.Edge) {
+	var nodes []string
 
-	for _, v := range edges {
-
-		// need to create map
-		if _, ok := app.TweetsUsers[tweet.IDStr]; !ok {
-			app.TweetsUsers[tweet.IDStr] = make(map[string]string)
-		}
-
-		// newly added tweets and/or
-		if _, ok := app.TweetsUsers[tweet.IDStr][v.Source]; !ok {
-			newTweets[tweet.IDStr][v.Source] = v.Source
-		}
-		if _, ok := app.TweetsUsers[tweet.IDStr][v.Target]; !ok {
-			newTweets[tweet.IDStr][v.Target] = v.Target
-		}
-
-		// global for initial connection
-		app.TweetsUsers[tweet.IDStr][v.Source] = v.Source
-		app.TweetsUsers[tweet.IDStr][v.Target] = v.Target
+	if len(edges) == 0 {
+		return
 	}
 
-	return newTweets
+	for _, v := range edges {
+		nodes = append(nodes, v.Source)
+		nodes = append(nodes, v.Target)
+	}
+
+	new := tweetsUsers{
+		id:    tweet.ID,
+		nodes: nodes,
+	}
+
+	app.TweetsUsers = append(app.TweetsUsers, new)
+}
+
+func (app *Application) truncateTweetsUser() {
+
+	n := len(app.TweetsUsers)
+
+	if n < 1000 {
+		return
+	}
+
+	app.TweetsUsers[0] = tweetsUsers{}
+	app.TweetsUsers = app.TweetsUsers[1:]
+
+}
+
+type tweetEmbeds map[int64]string
+
+func (app *Application) getMentions(id string) tweetEmbeds {
+	var results = make(tweetEmbeds)
+	for _, tweet := range app.TweetsUsers {
+		for _, node := range tweet.nodes {
+			if node == id {
+				results[tweet.id] = node
+			}
+		}
+	}
+
+	return results
 }
