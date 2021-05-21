@@ -7,14 +7,13 @@
   {{ if .Streaming }}
     <p class="font-light text-xs float-left pt-2 px-4">Number of tweets over time</p>
     <div class="overflow-y-scroll h-3/5 absolute top-48 left-4" id="tweets"></div>
-    <div class="" id="trend"></div>
+    <div id="trend"></div>
     <div id="graph" class="w-full focus:outline-none"></div>
     <p class="bottom-4 absolute left-4">
       <span class="font-light"><span id="nedges" class="font-semibold">0</span> edges</span>
       <br/>
       <span class="font-light"><span id="nnodes" class="font-semibold">0</span> nodes</span>
     </p>
-    {{ if .HasDescription }}
     <p class="bottom-4 absolute right-4 cursor-pointer text-2xl">
       <a data-pushbar-target="description">?</a>
     </p>
@@ -24,9 +23,11 @@
         {{ if .Authenticated }}
           <a href="/admin" class="pt-2 text-xs float-right text-light underline absolute top-4 right-4 z-50">Admin area</a>
         {{ end }}
-        <div>
-          {{ .StreamActive.Description}}
-        </div>
+        {{ if .HasDescription }}
+            <div>
+              {{ .StreamActive.Description}}
+            </div>
+        {{ end }}
         <p>
           Use the <kbd>w</kbd>, <kbd>a</kbd>, <kbd>s</kbd>, <kbd>d</kbd> key to navigate the graph.
           and the arrow keys to rotate the camera: <kbd>&#8592;</kbd>, <kbd>&#8593;</kbd>, <kbd>&#8594;</kbd>, <kbd>&#8595;</kbd>.
@@ -37,7 +38,6 @@
         <button class="absolute bottom-4 right-4 bg-background rounded-sm mt-4 px-4 py-2" data-pushbar-close>Close</button>
       </div>
     </div>
-    {{ end }}
   {{ else }}
     <div class="flex justify-center pt-12">
       <div class="bg-gray-900 px-4 py-6 rounded-md">
