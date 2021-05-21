@@ -4,7 +4,7 @@
 
 {{define "main"}}
 <div class="flex justify-center pt-20">
-  <form class="w-2/5" action='/admin/add' method='POST' novalidate>
+  <form class="w-2/5 mb-12" action='/admin/add' method='POST' novalidate>
     <h1 class="text-5xl pb-4">Add Stream</h1>
     {{ with .Flash.stream }}
       <p class="bold pb-4 text-green-400">{{ . }}</p>
@@ -60,6 +60,23 @@
           <label class="font-bold uppercase text-xs">Maximum edges on screen: <span id='rangeMaxEdges'>2000</span></label>
           <br/>
           <input id="maxEdges" class="rounded-sm overflow-hidden w-full" type='range' name='maxEdges' min='200' max='10000' value='2000' step='100'>
+        </div>
+        <div class="pt-3">
+          <div class="grid grid-cols-3 gap-4">
+            <div class="pt-3">
+              <label class="font-bold uppercase text-xs">Minimum Followers</label>
+              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='numeric' name='minFollowerCount' value="0">
+            </div>
+            <div class="pt-3">
+              <label class="font-bold uppercase text-xs">Minimum Favourites</label>
+              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='numeric' name='minFavoriteCount' value="0">
+            </div>
+            <div class="pt-3">
+              <p class="pb-1 font-bold uppercase text-xs">Verified Users</p>
+              <input type="radio" id="filter_level_none" name="onlyVerified" value="none" />
+              <label class="pr-6" for="none">Only verified</label>
+            </div>
+          </div>
         </div>
         <div class="pt-3">
           <label class="font-bold uppercase text-xs">Description</label>

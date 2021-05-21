@@ -4,7 +4,7 @@
 
 {{define "main"}}
 <div class="flex justify-center pt-20">
-  <form class="w-2/5" action='/admin/edit' method='POST' novalidate>
+  <form class="w-2/5 mb-12" action='/admin/edit' method='POST' novalidate>
     <h1 class="text-5xl pb-4 px-4">Edit Stream</h1>
     {{ with .Flash.success }}
       <p class="uppercase bold">{{ . }}</p>
@@ -65,6 +65,23 @@
           <label class="font-bold uppercase text-xs">Maximum edges on screen: <span id='rangeMaxEdges'>{{ .Stream.MaxEdges }}</span></label>
           <br/>
           <input id="maxEdges" class="rounded-sm overflow-hidden w-full" type='range' name='maxEdges' min='200' max='10000' value='{{ .Stream.MaxEdges }}' step='100'>
+        </div>
+        <div class="pt-3">
+          <div class="grid grid-cols-3 gap-4">
+            <div class="pt-3">
+              <label class="font-bold uppercase text-xs">Minimum Followers</label>
+              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='numeric' name='minFollowerCount' value='{{ .Stream.MinFollowerCount }}'>
+            </div>
+            <div class="pt-3">
+              <label class="font-bold uppercase text-xs">Minimum Favourites</label>
+              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='numeric' name='minFavoriteCount' value='{{ .Stream.MinFavoriteCount }}'>
+            </div>
+            <div class="pt-3">
+              <p class="pb-1 font-bold uppercase text-xs">Verified Users</p>
+              <input type="radio" id="filter_level_none" name="onlyVerified" value="none" {{ if .Stream.OnlyVerified }} checked {{ end }} />
+              <label class="pr-6" for="none">Only verified</label>
+            </div>
+          </div>
         </div>
         <div class="pt-3">
           <label class="font-bold uppercase text-xs">Description</label>

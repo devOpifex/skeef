@@ -48,6 +48,10 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 		checkboxToInt(r.Form.Get("hashtagsNet")),
 	)
 
+	minFollowers, _ := strconv.Atoi(r.Form.Get("minFollowerCount"))
+	minFavorites, _ := strconv.Atoi(r.Form.Get("minFavouriteCount"))
+	onlyVerified, _ := strconv.Atoi(r.Form.Get("onlyVerified"))
+
 	if ok {
 		err = app.Database.UpdateStream(
 			r.Form.Get("track"),
@@ -62,6 +66,9 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 			checkboxToInt(r.Form.Get("mentionsNet")),
 			checkboxToInt(r.Form.Get("hashtagsNet")),
 			r.Form.Get("filterLevel"),
+			minFollowers,
+			minFavorites,
+			onlyVerified,
 		)
 
 		if err != nil {
@@ -110,6 +117,7 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	tmplData.Errors = make(map[string]string)
 	tmplData.Flash = make(map[string]string)
 
+	// form inputs
 	name := r.Form.Get("name")
 	follow := r.Form.Get("follow")
 	track := r.Form.Get("track")
@@ -121,6 +129,9 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	mentionsNet := checkboxToInt(r.Form.Get("mentionsNet"))
 	hashtagsNet := checkboxToInt(r.Form.Get("hashtagsNet"))
 	filterLevel := r.Form.Get("filterLevel")
+	minFollowers, _ := strconv.Atoi(r.Form.Get("minFollowerCount"))
+	minFavorites, _ := strconv.Atoi(r.Form.Get("minFavouriteCount"))
+	onlyVerified, _ := strconv.Atoi(r.Form.Get("onlyVerified"))
 
 	ok := networkTypesOk(retweetsNet, mentionsNet, hashtagsNet)
 
@@ -147,7 +158,11 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(tmplData.Errors) == 0 {
-		err = app.Database.InsertStream(name, follow, track, locations, exclude, maxEdges, desc, retweetsNet, mentionsNet, hashtagsNet, filterLevel)
+		err = app.Database.InsertStream(
+			name, follow, track, locations, exclude,
+			maxEdges, desc, retweetsNet, mentionsNet,
+			hashtagsNet, filterLevel, minFollowers,
+			minFavorites, onlyVerified)
 
 		if err != nil {
 			app.ErrorLog.Println(err)

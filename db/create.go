@@ -64,7 +64,10 @@ func (DB *Database) CreateTableStreams() error {
 			retweets_net INTEGER, 
 			mentions_net INTEGER, 
 			hashtags_net INTEGER,
-			filter_level VARCHAR(10)
+			filter_level VARCHAR(10),
+			min_follower_count INTEGER,
+			min_favorite_count INTEGER,
+			only_verified INTERGER
 		);`)
 
 	if err != nil {
