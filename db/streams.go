@@ -232,6 +232,8 @@ func (DB *Database) GetActiveStream() stream.Stream {
 		min_follower_count, min_favorite_count, only_verified
 		FROM streams WHERE active = 1;`)
 
+	var onlyVerified int
+
 	row.Scan(
 		&stream.Name,
 		&stream.Follow,
@@ -247,8 +249,10 @@ func (DB *Database) GetActiveStream() stream.Stream {
 		&stream.FilterLevel,
 		&stream.MinFollowerCount,
 		&stream.MinFavoriteCount,
-		&stream.OnlyVerified,
+		&onlyVerified,
 	)
+
+	stream.OnlyVerified = intToBool(onlyVerified)
 
 	return stream
 }
@@ -260,4 +264,8 @@ func (DB *Database) StreamOnGoing() bool {
 	rows.Scan(&count)
 
 	return count > 0
+}
+
+func intToBool(i int) bool {
+	return i > 0
 }

@@ -204,17 +204,35 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 
 		// selectively create graph
 		if app.StreamActive.MentionsNet > 0 {
-			nodesMentions, edgesMentions := graph.GetUserNet(*tweet, app.Exclusion)
+			nodesMentions, edgesMentions := graph.GetUserNet(
+				*tweet,
+				app.Exclusion,
+				app.StreamActive.MinFollowerCount,
+				app.StreamActive.MinFavoriteCount,
+				app.StreamActive.OnlyVerified,
+			)
 			nodes = append(nodes, nodesMentions...)
 			edges = append(edges, edgesMentions...)
 		}
 		if app.StreamActive.HashtagsNet > 0 {
-			nodesHash, edgesHash := graph.GetHashNet(*tweet, app.Exclusion)
+			nodesHash, edgesHash := graph.GetHashNet(
+				*tweet,
+				app.Exclusion,
+				app.StreamActive.MinFollowerCount,
+				app.StreamActive.MinFavoriteCount,
+				app.StreamActive.OnlyVerified,
+			)
 			nodes = append(nodes, nodesHash...)
 			edges = append(edges, edgesHash...)
 		}
 		if app.StreamActive.RetweetsNet > 0 {
-			ok, nodesRetweet, edgesRetweet := graph.GetRetweetNet(*tweet, app.Exclusion)
+			ok, nodesRetweet, edgesRetweet := graph.GetRetweetNet(
+				*tweet,
+				app.Exclusion,
+				app.StreamActive.MinFollowerCount,
+				app.StreamActive.MinFavoriteCount,
+				app.StreamActive.OnlyVerified,
+			)
 			if ok {
 				nodes = append(nodes, nodesRetweet...)
 				edges = append(edges, edgesRetweet)
@@ -296,6 +314,7 @@ type tweetsUsers struct {
 	nodes []string
 }
 
+// trackTweets Keep track of tweets and nodes involved
 func (app *Application) trackTweets(tweet *twitter.Tweet, edges []graph.Edge) {
 	var nodes []string
 

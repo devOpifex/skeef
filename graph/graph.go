@@ -28,15 +28,29 @@ type Graph struct {
 
 // GetUserNet builds the network of users, where one user
 // mentions another
-func GetUserNet(tweet twitter.Tweet, exclusion map[string]bool) ([]Node, []Edge) {
+func GetUserNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool) ([]Node, []Edge) {
 
 	var edges []Edge
 	var nodes []Node
 
 	for _, m := range tweet.Entities.UserMentions {
+
+		// filters
 		_, ok := exclusion[tweet.User.ScreenName]
 
 		if ok {
+			continue
+		}
+
+		if tweet.User.FollowersCount < minFollowerCount {
+			continue
+		}
+
+		if tweet.FavoriteCount < minFavoriteCount {
+			continue
+		}
+
+		if onlyVerified && !tweet.User.Verified {
 			continue
 		}
 
@@ -61,7 +75,7 @@ func GetUserNet(tweet twitter.Tweet, exclusion map[string]bool) ([]Node, []Edge)
 }
 
 // GetHashNet builds the network of users to hashtags they use in tweets
-func GetHashNet(tweet twitter.Tweet, exclusion map[string]bool) ([]Node, []Edge) {
+func GetHashNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool) ([]Node, []Edge) {
 
 	var edges []Edge
 	var nodes []Node
@@ -77,6 +91,18 @@ func GetHashNet(tweet twitter.Tweet, exclusion map[string]bool) ([]Node, []Edge)
 		_, ok = exclusion["#"+h.Text]
 
 		if ok {
+			continue
+		}
+
+		if tweet.User.FollowersCount < minFollowerCount {
+			continue
+		}
+
+		if tweet.FavoriteCount < minFavoriteCount {
+			continue
+		}
+
+		if onlyVerified && !tweet.User.Verified {
 			continue
 		}
 
@@ -96,7 +122,7 @@ func GetHashNet(tweet twitter.Tweet, exclusion map[string]bool) ([]Node, []Edge)
 
 // GetUserNet builds the network of users, where one user
 // mentions another
-func GetRetweetNet(tweet twitter.Tweet, exclusion map[string]bool) (bool, []Node, Edge) {
+func GetRetweetNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool) (bool, []Node, Edge) {
 
 	var edge Edge
 	var nodes []Node
@@ -114,6 +140,18 @@ func GetRetweetNet(tweet twitter.Tweet, exclusion map[string]bool) (bool, []Node
 	_, ok = exclusion[tweet.User.ScreenName]
 
 	if ok {
+		return false, nodes, edge
+	}
+
+	if tweet.User.FollowersCount < minFollowerCount {
+		return false, nodes, edge
+	}
+
+	if tweet.FavoriteCount < minFavoriteCount {
+		return false, nodes, edge
+	}
+
+	if onlyVerified && !tweet.User.Verified {
 		return false, nodes, edge
 	}
 
