@@ -24,9 +24,9 @@
         {{ if .Authenticated }}
           <a href="/admin" class="pt-2 text-xs float-right text-light underline absolute top-4 right-4 z-50">Admin area</a>
         {{ end }}
-        <p>
+        <div>
           {{ .StreamActive.Description}}
-        </p>
+        </div>
         <p>
           Use the <kbd>w</kbd>, <kbd>a</kbd>, <kbd>s</kbd>, <kbd>d</kbd> key to navigate the graph.
           and the arrow keys to rotate the camera: <kbd>&#8592;</kbd>, <kbd>&#8593;</kbd>, <kbd>&#8594;</kbd>, <kbd>&#8595;</kbd>.
