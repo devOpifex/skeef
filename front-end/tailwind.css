@@ -34,3 +34,14 @@ kbd {
   padding: 2px 4px;
   white-space: nowrap;
 }
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#tweets::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#tweets {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

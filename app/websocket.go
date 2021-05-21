@@ -21,7 +21,7 @@ type message struct {
 }
 
 type messageEmbed struct {
-	Embeds tweetEmbeds `json:"embeds"`
+	Embeds []string `json:"embeds"`
 }
 
 type connectionMessage struct {
@@ -329,18 +329,26 @@ func (app *Application) truncateTweetsUser() {
 
 }
 
-type tweetEmbeds []string
+type tweetEmbeds map[string]bool
 
-func (app *Application) getMentions(id string) tweetEmbeds {
-	var results tweetEmbeds
+func (app *Application) getMentions(id string) []string {
+	var results = make(tweetEmbeds)
 
 	for _, tweet := range app.TweetsUsers {
 		for _, node := range tweet.nodes {
 			if node == id {
-				results = append(results, tweet.id)
+				results[tweet.id] = true
 			}
 		}
 	}
 
-	return results
+	var ids []string
+	for k := range results {
+		if len(ids) > 4 {
+			break
+		}
+		ids = append(ids, k)
+	}
+
+	return ids
 }
