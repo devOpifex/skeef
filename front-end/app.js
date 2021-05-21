@@ -100,22 +100,28 @@ document.addEventListener("DOMContentLoaded",function(){
 
     let parsed = JSON.parse(data.data);
 
-    if(parsed.hasOwnProperty("type")){
-      console.log(parsed);
+    if(parsed != null && parsed.hasOwnProperty("embeds")){
+      // empty the wrapper
       tweetsWrapper.innerHTML = "";
 
-      // single tweet
-      if(parsed.embeds.length == undefined){
-        parsed.embeds = [parsed.embeds];
+      if(parsed.embeds == null){
+        return ;
       }
 
-      for(let i = 0; i < parsed.embeds.length; i++){
-        let keys = parsed.embeds.keys();
+      let embeds = parsed.embeds.filter(uniques);
+
+      for(let i = 0; i < embeds.length; i++){
+
+        // create div
         let el = document.createElement("DIV");
         tweetsWrapper.appendChild(el);
+
+        // embed tweet 
         twttr.widgets.createTweet(
-          keys[i],tweetsWrapper, {
-            theme: 'dark'
+          embeds[i], el, {
+            theme: 'dark',
+            conversation: 'none',
+            cards: 'hidden'
           }
         )
       }
@@ -331,4 +337,8 @@ function resizeGraph(){
 
 function sizeNode(n){
   return Math.round(Math.log10(n + 1) * 25);
+}
+
+function uniques(value, index, self) {
+  return self.indexOf(value) === index;
 }

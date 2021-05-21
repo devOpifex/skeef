@@ -21,7 +21,6 @@ type message struct {
 }
 
 type messageEmbed struct {
-	Type   string      `json:"type"`
 	Embeds tweetEmbeds `json:"embeds"`
 }
 
@@ -71,7 +70,7 @@ func (c *Client) Read(app *Application) {
 
 		msg := string(p)
 		embeds := app.getMentions(msg)
-		c.Conn.WriteJSON(messageEmbed{Type: "embed", Embeds: embeds})
+		c.Conn.WriteJSON(messageEmbed{embeds})
 
 	}
 }
@@ -293,7 +292,7 @@ func (app *Application) truncateTrend() {
 }
 
 type tweetsUsers struct {
-	id    int64
+	id    string
 	nodes []string
 }
 
@@ -310,7 +309,7 @@ func (app *Application) trackTweets(tweet *twitter.Tweet, edges []graph.Edge) {
 	}
 
 	new := tweetsUsers{
-		id:    tweet.ID,
+		id:    tweet.IDStr,
 		nodes: nodes,
 	}
 
@@ -330,14 +329,15 @@ func (app *Application) truncateTweetsUser() {
 
 }
 
-type tweetEmbeds map[int64]string
+type tweetEmbeds []string
 
 func (app *Application) getMentions(id string) tweetEmbeds {
-	var results = make(tweetEmbeds)
+	var results tweetEmbeds
+
 	for _, tweet := range app.TweetsUsers {
 		for _, node := range tweet.nodes {
 			if node == id {
-				results[tweet.id] = node
+				results = append(results, tweet.id)
 			}
 		}
 	}
