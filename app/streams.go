@@ -50,7 +50,7 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 
 	minFollowers, _ := strconv.Atoi(r.Form.Get("minFollowerCount"))
 	minFavorites, _ := strconv.Atoi(r.Form.Get("minFavouriteCount"))
-	onlyVerified, _ := strconv.Atoi(r.Form.Get("onlyVerified"))
+	onlyVerified := onlyVerifiedToInt(r.Form.Get("onlyVerified"))
 
 	if ok {
 		err = app.Database.UpdateStream(
@@ -131,7 +131,7 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	filterLevel := r.Form.Get("filterLevel")
 	minFollowers, _ := strconv.Atoi(r.Form.Get("minFollowerCount"))
 	minFavorites, _ := strconv.Atoi(r.Form.Get("minFavouriteCount"))
-	onlyVerified, _ := strconv.Atoi(r.Form.Get("onlyVerified"))
+	onlyVerified := onlyVerifiedToInt(r.Form.Get("onlyVerified"))
 
 	ok := networkTypesOk(retweetsNet, mentionsNet, hashtagsNet)
 
@@ -190,4 +190,11 @@ func exclusionMap(exclusion string) map[string]bool {
 func networkTypesOk(retweetsNet, mentionsNet, hashtagsNet int) bool {
 	total := retweetsNet + mentionsNet + hashtagsNet
 	return total != 0
+}
+
+func onlyVerifiedToInt(str string) int {
+	if str == "on" {
+		return 1
+	}
+	return 0
 }
