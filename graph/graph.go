@@ -28,7 +28,7 @@ type Graph struct {
 
 // GetUserNet builds the network of users, where one user
 // mentions another
-func GetUserNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool) ([]Node, []Edge) {
+func GetUserNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool, maxHashtags, maxMentions int) ([]Node, []Edge) {
 
 	var edges []Edge
 	var nodes []Node
@@ -54,6 +54,14 @@ func GetUserNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount
 			continue
 		}
 
+		if len(tweet.Entities.Hashtags) > maxHashtags {
+			continue
+		}
+
+		if len(tweet.Entities.UserMentions) > maxMentions {
+			continue
+		}
+
 		_, ok = exclusion[m.ScreenName]
 
 		if ok {
@@ -75,7 +83,7 @@ func GetUserNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount
 }
 
 // GetHashNet builds the network of users to hashtags they use in tweets
-func GetHashNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool) ([]Node, []Edge) {
+func GetHashNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool, maxHashtags, maxMentions int) ([]Node, []Edge) {
 
 	var edges []Edge
 	var nodes []Node
@@ -106,6 +114,14 @@ func GetHashNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount
 			continue
 		}
 
+		if len(tweet.Entities.Hashtags) > maxHashtags {
+			continue
+		}
+
+		if len(tweet.Entities.UserMentions) > maxMentions {
+			continue
+		}
+
 		edge := Edge{tweet.User.ScreenName, "#" + h.Text, 1, "add"}
 		edges = append(edges, edge)
 	}
@@ -122,7 +138,7 @@ func GetHashNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount
 
 // GetUserNet builds the network of users, where one user
 // mentions another
-func GetRetweetNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool) (bool, []Node, Edge) {
+func GetRetweetNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool, maxHashtags, maxMentions int) (bool, []Node, Edge) {
 
 	var edge Edge
 	var nodes []Node
@@ -152,6 +168,14 @@ func GetRetweetNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCo
 	}
 
 	if onlyVerified && !tweet.User.Verified {
+		return false, nodes, edge
+	}
+
+	if len(tweet.Entities.Hashtags) > maxHashtags {
+		return false, nodes, edge
+	}
+
+	if len(tweet.Entities.UserMentions) > maxMentions {
 		return false, nodes, edge
 	}
 

@@ -210,6 +210,8 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 				app.StreamActive.MinFollowerCount,
 				app.StreamActive.MinFavoriteCount,
 				app.StreamActive.OnlyVerified,
+				app.StreamActive.MaxHashtags,
+				app.StreamActive.MaxMentions,
 			)
 			nodes = append(nodes, nodesMentions...)
 			edges = append(edges, edgesMentions...)
@@ -221,6 +223,8 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 				app.StreamActive.MinFollowerCount,
 				app.StreamActive.MinFavoriteCount,
 				app.StreamActive.OnlyVerified,
+				app.StreamActive.MaxHashtags,
+				app.StreamActive.MaxMentions,
 			)
 			nodes = append(nodes, nodesHash...)
 			edges = append(edges, edgesHash...)
@@ -232,6 +236,8 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 				app.StreamActive.MinFollowerCount,
 				app.StreamActive.MinFavoriteCount,
 				app.StreamActive.OnlyVerified,
+				app.StreamActive.MaxHashtags,
+				app.StreamActive.MaxMentions,
 			)
 			if ok {
 				nodes = append(nodes, nodesRetweet...)
