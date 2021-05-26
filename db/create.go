@@ -67,7 +67,9 @@ func (DB *Database) CreateTableStreams() error {
 			filter_level VARCHAR(10),
 			min_follower_count INTEGER,
 			min_favorite_count INTEGER,
-			only_verified INTERGER
+			only_verified INTERGER,
+			max_hashtags INTEGER,
+			max_mentions INTEGER
 		);`)
 
 	if err != nil {

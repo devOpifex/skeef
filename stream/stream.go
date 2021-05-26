@@ -16,4 +16,6 @@ type Stream struct {
 	MinFollowerCount int
 	MinFavoriteCount int
 	OnlyVerified     bool
+	MaxHashtags      int
+	MaxMentions      int
 }

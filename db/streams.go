@@ -9,15 +9,17 @@ func (DB *Database) InsertStream(
 	name, follow, track, locations, exclude, maxEdges, description string,
 	retweetsNet, mentionsNet, hashtagsNet int,
 	filterLevel string,
-	min_follower_count, min_favorite_count, only_verified int) error {
+	min_follower_count, min_favorite_count, only_verified,
+	max_hashtags, max_mentions int) error {
 
 	stmt, err := DB.Con.Prepare(`INSERT INTO streams 
 		(
 			name, follow, track, locations, active, 
 			exclude, max_edges, description, retweets_net, 
 			mentions_net, hashtags_net, filter_level,
-			min_follower_count, min_favorite_count, only_verified
-		) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`)
+			min_follower_count, min_favorite_count, only_verified,
+			max_hashtags, max_mentions
+		) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`)
 
 	if err != nil {
 		return err
@@ -25,7 +27,7 @@ func (DB *Database) InsertStream(
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(name, follow, track, locations, 0, exclude, maxEdges, description, retweetsNet, mentionsNet, hashtagsNet, filterLevel, min_follower_count, min_favorite_count, only_verified)
+	_, err = stmt.Exec(name, follow, track, locations, 0, exclude, maxEdges, description, retweetsNet, mentionsNet, hashtagsNet, filterLevel, min_follower_count, min_favorite_count, only_verified, max_hashtags, max_mentions)
 
 	if err != nil {
 		return err
@@ -56,7 +58,8 @@ func (DB *Database) GetStreams() ([]stream.Stream, error) {
 	rows, err := DB.Con.Query(`SELECT name, follow, 
 		track, locations, active, max_edges, description, 
 		retweets_net, mentions_net, hashtags_net, filter_level,
-		min_follower_count, min_favorite_count, only_verified
+		min_follower_count, min_favorite_count, only_verified,
+		max_hashtags, max_mentions
 		FROM streams;`)
 
 	if err != nil {
@@ -81,6 +84,8 @@ func (DB *Database) GetStreams() ([]stream.Stream, error) {
 			&stream.MinFollowerCount,
 			&stream.MinFavoriteCount,
 			&stream.OnlyVerified,
+			&stream.MaxHashtags,
+			&stream.MaxMentions,
 		)
 
 		if err != nil {
@@ -166,7 +171,8 @@ func (DB *Database) GetStream(name string) (stream.Stream, error) {
 	stmt, err := DB.Con.Prepare(`SELECT name, follow, 
 		track, locations, active, max_edges, exclude, 
 		description, retweets_net, mentions_net, hashtags_net,
-		filter_level, min_follower_count, min_favorite_count, only_verified
+		filter_level, min_follower_count, min_favorite_count, only_verified,
+		max_hashtags, max_mentions
 		FROM streams WHERE name = ?`)
 
 	if err != nil {
@@ -191,6 +197,8 @@ func (DB *Database) GetStream(name string) (stream.Stream, error) {
 		&stream.MinFollowerCount,
 		&stream.MinFavoriteCount,
 		&stream.OnlyVerified,
+		&stream.MaxHashtags,
+		&stream.MaxMentions,
 	)
 
 	return stream, nil
@@ -200,21 +208,23 @@ func (DB *Database) UpdateStream(
 	track, follow, locations, newName, currentName, exclusion, description string,
 	maxEdges, retweetsNet, mentionsNet, hashtagsNet int,
 	filterLevel string,
-	min_follower_count, min_favorite_count, only_verified int) error {
+	min_follower_count, min_favorite_count, only_verified,
+	max_hashtags, max_mentions int) error {
 
 	stmt, err := DB.Con.Prepare(`UPDATE streams SET 
 		track = ?, follow = ?, locations = ?, name = ?, 
 		max_edges = ?, description = ?, exclude = ?, 
 		retweets_net = ?, mentions_net = ?, hashtags_net = ?,
 		filter_level = ?, min_follower_count = ?, 
-		min_favorite_count = ?, only_verified = ?
+		min_favorite_count = ?, only_verified = ?,
+		max_hashtags = ?, max_mentions = ?
 		WHERE name = ?`)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(track, follow, locations, newName, maxEdges, description, exclusion, retweetsNet, mentionsNet, hashtagsNet, filterLevel, min_follower_count, min_favorite_count, only_verified, currentName)
+	_, err = stmt.Exec(track, follow, locations, newName, maxEdges, description, exclusion, retweetsNet, mentionsNet, hashtagsNet, filterLevel, min_follower_count, min_favorite_count, only_verified, max_hashtags, max_mentions, currentName)
 
 	if err != nil {
 		return err
@@ -229,7 +239,8 @@ func (DB *Database) GetActiveStream() stream.Stream {
 	row := DB.Con.QueryRow(`SELECT name, follow, track, 
 		locations, active, max_edges, exclude, description, 
 		retweets_net, mentions_net, hashtags_net, filter_level,
-		min_follower_count, min_favorite_count, only_verified
+		min_follower_count, min_favorite_count, only_verified,
+		max_hashtags, max_mentions
 		FROM streams WHERE active = 1;`)
 
 	var onlyVerified int
@@ -250,6 +261,8 @@ func (DB *Database) GetActiveStream() stream.Stream {
 		&stream.MinFollowerCount,
 		&stream.MinFavoriteCount,
 		&onlyVerified,
+		&stream.MaxHashtags,
+		&stream.MaxMentions,
 	)
 
 	stream.OnlyVerified = intToBool(onlyVerified)

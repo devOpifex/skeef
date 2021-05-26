@@ -84,6 +84,20 @@
           </div>
         </div>
         <div class="pt-3">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="pt-3">
+              <label class="font-bold uppercase text-xs">Maximum Hashtags: <span id='rangeMaxHashtags'>{{ .Stream.MaxHashtags }}</span></label>
+              <br/>
+              <input id="maxHashtags" class="rounded-sm overflow-hidden w-full" type='range' name='maxHashtags' min='0' max='25' value='{{ .Stream.MaxMentions }}' step='1'>
+            </div>
+            <div class="pt-3">
+              <label class="font-bold uppercase text-xs">Maximum Mentions: <span id='rangeMaxMentions'>{{ .Stream.MaxMentions }}</span></label>
+              <br/>
+              <input id="maxMentions" class="rounded-sm overflow-hidden w-full" type='range' name='maxMentions' min='0' max='25' value='{{ .Stream.MaxMentions }}' step='1'>
+            </div>
+          </div>
+        </div>
+        <div class="pt-3">
           <label class="font-bold uppercase text-xs">Description</label>
           <br/>
           <input id="desc" class="px-2 appearance-none text-gray-900 w-full rounded block h-24" type="text" name="desc" value="{{ .Stream.Description }}"/>
@@ -102,6 +116,18 @@
     rng.addEventListener("change", function(){
       var sp = document.getElementById("rangeMaxEdges");
       sp.innerText = rng.value;
+    });
+
+    var rngH = document.getElementById("maxHashtags");
+    rngH.addEventListener("change", function(){
+      var sp = document.getElementById("rangeMaxHashtags");
+      sp.innerText = rngH.value;
+    });
+
+    var rngM = document.getElementById("maxMentions");
+    rngM.addEventListener("change", function(){
+      var sp = document.getElementById("rangeMaxMentions");
+      sp.innerText = rngM.value;
     });
 
     var excl = document.getElementById("exclusion");

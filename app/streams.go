@@ -51,6 +51,8 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 	minFollowers, _ := strconv.Atoi(r.Form.Get("minFollowerCount"))
 	minFavorites, _ := strconv.Atoi(r.Form.Get("minFavouriteCount"))
 	onlyVerified := onlyVerifiedToInt(r.Form.Get("onlyVerified"))
+	maxHashtags, _ := strconv.Atoi(r.Form.Get("maxHashtags"))
+	maxMentions, _ := strconv.Atoi(r.Form.Get("maxMentions"))
 
 	if ok {
 		err = app.Database.UpdateStream(
@@ -69,6 +71,8 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 			minFollowers,
 			minFavorites,
 			onlyVerified,
+			maxHashtags,
+			maxMentions,
 		)
 
 		if err != nil {
@@ -132,6 +136,8 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	minFollowers, _ := strconv.Atoi(r.Form.Get("minFollowerCount"))
 	minFavorites, _ := strconv.Atoi(r.Form.Get("minFavouriteCount"))
 	onlyVerified := onlyVerifiedToInt(r.Form.Get("onlyVerified"))
+	maxHashtags, _ := strconv.Atoi(r.Form.Get("maxHashtags"))
+	maxMentions, _ := strconv.Atoi(r.Form.Get("maxMentions"))
 
 	ok := networkTypesOk(retweetsNet, mentionsNet, hashtagsNet)
 
@@ -162,7 +168,8 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 			name, follow, track, locations, exclude,
 			maxEdges, desc, retweetsNet, mentionsNet,
 			hashtagsNet, filterLevel, minFollowers,
-			minFavorites, onlyVerified)
+			minFavorites, onlyVerified,
+			maxHashtags, maxMentions)
 
 		if err != nil {
 			app.ErrorLog.Println(err)
