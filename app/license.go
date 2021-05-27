@@ -43,6 +43,7 @@ func (app *Application) LicenseCheck(ping bool) LicenseResponse {
 		return LicenseResponse{false, "Could not serialise payload"}
 	}
 
+	// change on build
 	req, err := http.NewRequest(
 		"POST", "http://localhost:3000/check", bytes.NewBuffer(payloadJSON))
 
