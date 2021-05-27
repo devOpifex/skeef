@@ -204,7 +204,7 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 
 		// selectively create graph
 		if app.StreamActive.MentionsNet > 0 {
-			nodesMentions, edgesMentions := graph.GetUserNet(
+			nodesMentions, edgesMentions := graph.GetMentionNet(
 				*tweet,
 				app.Exclusion,
 				app.StreamActive.MinFollowerCount,
@@ -217,7 +217,7 @@ func (app *Application) demux() func(tweet *twitter.Tweet) {
 			edges = append(edges, edgesMentions...)
 		}
 		if app.StreamActive.HashtagsNet > 0 {
-			nodesHash, edgesHash := graph.GetHashNet(
+			nodesHash, edgesHash := graph.GetHashtagNet(
 				*tweet,
 				app.Exclusion,
 				app.StreamActive.MinFollowerCount,

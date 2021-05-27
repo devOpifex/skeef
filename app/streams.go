@@ -46,6 +46,7 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 		checkboxToInt(r.Form.Get("retweetsNet")),
 		checkboxToInt(r.Form.Get("mentionsNet")),
 		checkboxToInt(r.Form.Get("hashtagsNet")),
+		checkboxToInt(r.Form.Get("replyNet")),
 	)
 
 	minFollowers, _ := strconv.Atoi(r.Form.Get("minFollowerCount"))
@@ -73,6 +74,7 @@ func (app *Application) streamEditForm(w http.ResponseWriter, r *http.Request) {
 			onlyVerified,
 			maxHashtags,
 			maxMentions,
+			checkboxToInt(r.Form.Get("replyNet")),
 		)
 
 		if err != nil {
@@ -132,6 +134,7 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	retweetsNet := checkboxToInt(r.Form.Get("retweetsNet"))
 	mentionsNet := checkboxToInt(r.Form.Get("mentionsNet"))
 	hashtagsNet := checkboxToInt(r.Form.Get("hashtagsNet"))
+	replyNet := checkboxToInt(r.Form.Get("replyNet"))
 	filterLevel := r.Form.Get("filterLevel")
 	minFollowers, _ := strconv.Atoi(r.Form.Get("minFollowerCount"))
 	minFavorites, _ := strconv.Atoi(r.Form.Get("minFavouriteCount"))
@@ -139,7 +142,7 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 	maxHashtags, _ := strconv.Atoi(r.Form.Get("maxHashtags"))
 	maxMentions, _ := strconv.Atoi(r.Form.Get("maxMentions"))
 
-	ok := networkTypesOk(retweetsNet, mentionsNet, hashtagsNet)
+	ok := networkTypesOk(retweetsNet, mentionsNet, hashtagsNet, replyNet)
 
 	if !ok {
 		tmplData.Errors["stream"] = "Must check at least one of retweets, mentions, or hashtags"
@@ -169,7 +172,7 @@ func (app *Application) streamAddForm(w http.ResponseWriter, r *http.Request) {
 			maxEdges, desc, retweetsNet, mentionsNet,
 			hashtagsNet, filterLevel, minFollowers,
 			minFavorites, onlyVerified,
-			maxHashtags, maxMentions)
+			maxHashtags, maxMentions, replyNet)
 
 		if err != nil {
 			app.ErrorLog.Println(err)
@@ -194,8 +197,8 @@ func exclusionMap(exclusion string) map[string]bool {
 	return mp
 }
 
-func networkTypesOk(retweetsNet, mentionsNet, hashtagsNet int) bool {
-	total := retweetsNet + mentionsNet + hashtagsNet
+func networkTypesOk(retweetsNet, mentionsNet, hashtagsNet, replyNet int) bool {
+	total := retweetsNet + mentionsNet + hashtagsNet + replyNet
 	return total != 0
 }
 

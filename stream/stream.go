@@ -12,6 +12,7 @@ type Stream struct {
 	RetweetsNet      int
 	MentionsNet      int
 	HashtagsNet      int
+	ReplyNet         int
 	FilterLevel      string
 	MinFollowerCount int
 	MinFavoriteCount int

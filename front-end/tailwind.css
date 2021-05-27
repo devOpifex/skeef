@@ -45,3 +45,7 @@ kbd {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+.left-18 {
+  left: 4.9em;
+}

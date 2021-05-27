@@ -22,7 +22,7 @@
       <h3 class="uppercase text-2xl pb-4">Manage Streams</h3>
       <p class="pb-4">
         Manage your streams
-        [<span class="text-sm font-light">only one can be actively streaming at any one time.</span>]
+        - <span class="text-sm font-light">only one can be actively streaming at any one time.</span>
         <a class="float-right uppercase font-light text-sm bg-background rounded-sm px-4 py-2" href="/admin/add">Add a stream</a>
       </p>
       {{ with .Errors.existingStreams }}
@@ -67,6 +67,15 @@
               {{ else }}
                 <svg class="w-4 text-white absolute left-12" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                </svg>
+              {{ end }}
+              {{ if $stream.ReplyNet }}
+                <svg class="w-4 text-green-400 absolute left-18" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              {{ else }}
+                <svg class="w-4 text-white absolute left-18" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
               {{ end }}
               </p>

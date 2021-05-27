@@ -10,7 +10,7 @@ func (DB *Database) InsertStream(
 	retweetsNet, mentionsNet, hashtagsNet int,
 	filterLevel string,
 	min_follower_count, min_favorite_count, only_verified,
-	max_hashtags, max_mentions int) error {
+	max_hashtags, max_mentions, replyNet int) error {
 
 	stmt, err := DB.Con.Prepare(`INSERT INTO streams 
 		(
@@ -18,8 +18,8 @@ func (DB *Database) InsertStream(
 			exclude, max_edges, description, retweets_net, 
 			mentions_net, hashtags_net, filter_level,
 			min_follower_count, min_favorite_count, only_verified,
-			max_hashtags, max_mentions
-		) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`)
+			max_hashtags, max_mentions, reply_net
+		) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`)
 
 	if err != nil {
 		return err
@@ -27,7 +27,26 @@ func (DB *Database) InsertStream(
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(name, follow, track, locations, 0, exclude, maxEdges, description, retweetsNet, mentionsNet, hashtagsNet, filterLevel, min_follower_count, min_favorite_count, only_verified, max_hashtags, max_mentions)
+	_, err = stmt.Exec(
+		name,
+		follow,
+		track,
+		locations,
+		0,
+		exclude,
+		maxEdges,
+		description,
+		retweetsNet,
+		mentionsNet,
+		hashtagsNet,
+		filterLevel,
+		min_follower_count,
+		min_favorite_count,
+		only_verified,
+		max_hashtags,
+		max_mentions,
+		replyNet,
+	)
 
 	if err != nil {
 		return err
@@ -59,7 +78,7 @@ func (DB *Database) GetStreams() ([]stream.Stream, error) {
 		track, locations, active, max_edges, description, 
 		retweets_net, mentions_net, hashtags_net, filter_level,
 		min_follower_count, min_favorite_count, only_verified,
-		max_hashtags, max_mentions
+		max_hashtags, max_mentions, reply_net
 		FROM streams;`)
 
 	if err != nil {
@@ -86,6 +105,7 @@ func (DB *Database) GetStreams() ([]stream.Stream, error) {
 			&stream.OnlyVerified,
 			&stream.MaxHashtags,
 			&stream.MaxMentions,
+			&stream.ReplyNet,
 		)
 
 		if err != nil {
@@ -172,7 +192,7 @@ func (DB *Database) GetStream(name string) (stream.Stream, error) {
 		track, locations, active, max_edges, exclude, 
 		description, retweets_net, mentions_net, hashtags_net,
 		filter_level, min_follower_count, min_favorite_count, only_verified,
-		max_hashtags, max_mentions
+		max_hashtags, max_mentions, reply_net
 		FROM streams WHERE name = ?`)
 
 	if err != nil {
@@ -199,6 +219,7 @@ func (DB *Database) GetStream(name string) (stream.Stream, error) {
 		&stream.OnlyVerified,
 		&stream.MaxHashtags,
 		&stream.MaxMentions,
+		&stream.ReplyNet,
 	)
 
 	return stream, nil
@@ -209,7 +230,7 @@ func (DB *Database) UpdateStream(
 	maxEdges, retweetsNet, mentionsNet, hashtagsNet int,
 	filterLevel string,
 	min_follower_count, min_favorite_count, only_verified,
-	max_hashtags, max_mentions int) error {
+	max_hashtags, max_mentions, replyNet int) error {
 
 	stmt, err := DB.Con.Prepare(`UPDATE streams SET 
 		track = ?, follow = ?, locations = ?, name = ?, 
@@ -224,7 +245,26 @@ func (DB *Database) UpdateStream(
 		return err
 	}
 
-	_, err = stmt.Exec(track, follow, locations, newName, maxEdges, description, exclusion, retweetsNet, mentionsNet, hashtagsNet, filterLevel, min_follower_count, min_favorite_count, only_verified, max_hashtags, max_mentions, currentName)
+	_, err = stmt.Exec(
+		track,
+		follow,
+		locations,
+		newName,
+		maxEdges,
+		description,
+		exclusion,
+		retweetsNet,
+		mentionsNet,
+		hashtagsNet,
+		filterLevel,
+		min_follower_count,
+		min_favorite_count,
+		only_verified,
+		max_hashtags,
+		max_mentions,
+		replyNet,
+		currentName,
+	)
 
 	if err != nil {
 		return err
@@ -240,7 +280,7 @@ func (DB *Database) GetActiveStream() stream.Stream {
 		locations, active, max_edges, exclude, description, 
 		retweets_net, mentions_net, hashtags_net, filter_level,
 		min_follower_count, min_favorite_count, only_verified,
-		max_hashtags, max_mentions
+		max_hashtags, max_mentions, reply_net
 		FROM streams WHERE active = 1;`)
 
 	var onlyVerified int
@@ -263,6 +303,7 @@ func (DB *Database) GetActiveStream() stream.Stream {
 		&onlyVerified,
 		&stream.MaxHashtags,
 		&stream.MaxMentions,
+		&stream.ReplyNet,
 	)
 
 	stream.OnlyVerified = intToBool(onlyVerified)

@@ -28,7 +28,7 @@ type Graph struct {
 
 // GetUserNet builds the network of users, where one user
 // mentions another
-func GetUserNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool, maxHashtags, maxMentions int) ([]Node, []Edge) {
+func GetMentionNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool, maxHashtags, maxMentions int) ([]Node, []Edge) {
 
 	var edges []Edge
 	var nodes []Node
@@ -83,7 +83,7 @@ func GetUserNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount
 }
 
 // GetHashNet builds the network of users to hashtags they use in tweets
-func GetHashNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool, maxHashtags, maxMentions int) ([]Node, []Edge) {
+func GetHashtagNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool, maxHashtags, maxMentions int) ([]Node, []Edge) {
 
 	var edges []Edge
 	var nodes []Node
@@ -188,6 +188,9 @@ func GetRetweetNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCo
 	return true, nodes, edge
 }
 
+// Truncate truncates the graph to ensure we limit the number of
+// edges (and subsequently nodes) present on the screen
+// at any one time.
 func (g *Graph) Truncate(max int) ([]Node, []Edge) {
 
 	var nodesToRemove []Node
@@ -240,4 +243,47 @@ func (g *Graph) Truncate(max int) ([]Node, []Edge) {
 	g.Nodes = nodesKeep
 
 	return nodesToRemove, edgesToRemove
+}
+
+// GetReplyNet builds an edge that connects the author of a tweet
+// with the user the author responds to
+func GetReplyNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCount, minFavoriteCount int, onlyVerified bool, maxHashtags, maxMentions int) ([]Node, Edge) {
+
+	var edge Edge
+	var nodes []Node
+
+	// filters
+	_, ok := exclusion[tweet.InReplyToScreenName]
+
+	if ok {
+		return nodes, edge
+	}
+
+	if tweet.User.FollowersCount < minFollowerCount {
+		return nodes, edge
+	}
+
+	if tweet.FavoriteCount < minFavoriteCount {
+		return nodes, edge
+	}
+
+	if onlyVerified && !tweet.User.Verified {
+		return nodes, edge
+	}
+
+	if len(tweet.Entities.Hashtags) > maxHashtags {
+		return nodes, edge
+	}
+
+	if len(tweet.Entities.UserMentions) > maxMentions {
+		return nodes, edge
+	}
+
+	edge = Edge{tweet.User.ScreenName, tweet.InReplyToScreenName, 1, "add"}
+
+	src := Node{edge.Source, "user", 1, "add"}
+	tgt := Node{edge.Target, "user", 1, "add"}
+	nodes = append(nodes, src, tgt)
+
+	return nodes, edge
 }

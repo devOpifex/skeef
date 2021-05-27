@@ -51,6 +51,8 @@
           <label class="pr-6" for="retweetsNet">Mentions</label>
           <input type="checkbox" id="hashtagsNet" name="hashtagsNet" value="y" {{ if .Stream.HashtagsNet }} checked {{ end }} />
           <label class="pr-6" for="hashtagsNet">Hashtags</label>
+          <input type="checkbox" id="replyNet" name="replyNet" value="y" {{ if .Stream.ReplyNet }} checked {{ end }} />
+          <label class="pr-6" for="replyNet">Replies</label>
         </div>
         <div class="pt-3">
           <p class="pb-1 font-bold uppercase text-xs">Filter</p>
