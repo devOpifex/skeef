@@ -107,7 +107,7 @@ func main() {
 
 	// check again every 30 minutes
 	go func() {
-		for range time.Tick(time.Minute * 30) {
+		for range time.Tick(time.Minute * 15) {
 			app.LicenseValidity()
 		}
 	}()
