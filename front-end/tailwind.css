@@ -46,6 +46,21 @@ kbd {
   scrollbar-width: none;  /* Firefox */
 }
 
+#hideTweets {
+  display: none;
+  cursor: pointer;
+}
+
+#tweetsWrapper::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#tweetsWrapper {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 .left-18 {
   left: 4.9em;
 }

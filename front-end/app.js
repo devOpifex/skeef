@@ -116,6 +116,8 @@ document.addEventListener("DOMContentLoaded",function(){
         let el = document.createElement("DIV");
         tweetsWrapper.appendChild(el);
 
+        document.getElementById('hideTweets').style.display = 'block';
+
         // embed tweet 
         twttr.widgets.createTweet(
           embeds[i], el, {
