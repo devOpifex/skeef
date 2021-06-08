@@ -116,8 +116,6 @@ document.addEventListener("DOMContentLoaded",function(){
         let el = document.createElement("DIV");
         tweetsWrapper.appendChild(el);
 
-        document.getElementById('hideTweets').style.display = 'block';
-
         // embed tweet 
         twttr.widgets.createTweet(
           embeds[i], el, {
@@ -126,6 +124,10 @@ document.addEventListener("DOMContentLoaded",function(){
             cards: 'hidden'
           }
         )
+
+        setTimeout(function(){
+          document.getElementById('hideTweets').style.display = 'block';
+        }, 500);
       }
       return;
     }

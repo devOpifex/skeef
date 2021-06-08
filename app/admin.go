@@ -136,6 +136,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 		oldLicense := app.License.License
 		app.License.License = newLicense
 		response := app.LicenseCheck(false)
+		app.Valid = response.Success
 
 		if !response.Success {
 			tmplData.Errors["license"] = response.Reason

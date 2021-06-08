@@ -186,6 +186,11 @@ func (app *Application) StartStream() {
 	demux.Tweet = app.demux()
 
 	for message := range app.Stream.Messages {
+		// check if license was invalidated during the stream
+		if !app.Valid {
+			break
+		}
+
 		demux.Handle(message)
 	}
 }
