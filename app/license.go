@@ -81,7 +81,6 @@ func (app *Application) LicenseCheck(ping bool) LicenseResponse {
 }
 
 func (app *Application) LicenseValidity() {
-	app.InfoLog.Println("Checking license, ping")
 	app.LicenseResponse = app.LicenseCheck(app.Database.StreamOnGoing())
 	app.Valid = app.LicenseResponse.Success
 

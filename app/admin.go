@@ -216,10 +216,10 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 			tmplData.Errors["existingStreams"] = "There is already one stream active"
 
 		} else {
-			app.LicenseValidity()
+			resp := app.LicenseCheck(false)
 
-			if !app.LicenseResponse.Success {
-				tmplData.Errors["existingStreams"] = app.LicenseResponse.Reason
+			if !resp.Success {
+				tmplData.Errors["existingStreams"] = resp.Reason
 			} else {
 
 				err = app.Database.StartStream(r.Form.Get("streamName"))
