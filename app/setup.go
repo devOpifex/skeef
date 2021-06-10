@@ -89,17 +89,23 @@ func (app *Application) validateForm(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not parse form", http.StatusInternalServerError)
 	}
 
+	tmplData := templateData{}
+	tmplData.Errors = make(map[string]string)
+	var response LicenseResponse
+
 	email := r.PostForm.Get("email")
 	license := r.PostForm.Get("license")
 
-	tmplData := templateData{}
-	tmplData.Errors = make(map[string]string)
-	app.License = db.License{
-		Email:   email,
-		License: license,
-	}
+	if email == "" || license == "" {
+		tmplData.Errors["exists"] = "Empty email or license"
+	} else {
+		app.License = db.License{
+			Email:   email,
+			License: license,
+		}
 
-	response := app.LicenseCheck(false)
+		response = app.LicenseCheck(false)
+	}
 
 	if !response.Success {
 		tmplData.Errors["license"] = response.Reason

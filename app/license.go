@@ -12,9 +12,9 @@ type LicenseResponse struct {
 }
 
 type request struct {
-	Email   string
-	License string
-	Ping    bool
+	Email   string `json:"email"`
+	License string `json:"license"`
+	Ping    bool   `json:"ping"`
 }
 
 // LicenseCheck Check the license

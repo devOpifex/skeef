@@ -42,11 +42,11 @@ func GetMentionNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCo
 			continue
 		}
 
-		if tweet.User.FollowersCount < minFollowerCount {
+		if tweet.User.FollowersCount <= minFollowerCount {
 			continue
 		}
 
-		if tweet.FavoriteCount < minFavoriteCount {
+		if tweet.FavoriteCount <= minFavoriteCount {
 			continue
 		}
 
@@ -54,11 +54,11 @@ func GetMentionNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCo
 			continue
 		}
 
-		if len(tweet.Entities.Hashtags) > maxHashtags {
+		if len(tweet.Entities.Hashtags) >= maxHashtags {
 			continue
 		}
 
-		if len(tweet.Entities.UserMentions) > maxMentions {
+		if len(tweet.Entities.UserMentions) >= maxMentions {
 			continue
 		}
 
@@ -102,11 +102,11 @@ func GetHashtagNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCo
 			continue
 		}
 
-		if tweet.User.FollowersCount < minFollowerCount {
+		if tweet.User.FollowersCount <= minFollowerCount {
 			continue
 		}
 
-		if tweet.FavoriteCount < minFavoriteCount {
+		if tweet.FavoriteCount <= minFavoriteCount {
 			continue
 		}
 
@@ -114,11 +114,11 @@ func GetHashtagNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCo
 			continue
 		}
 
-		if len(tweet.Entities.Hashtags) > maxHashtags {
+		if len(tweet.Entities.Hashtags) >= maxHashtags {
 			continue
 		}
 
-		if len(tweet.Entities.UserMentions) > maxMentions {
+		if len(tweet.Entities.UserMentions) >= maxMentions {
 			continue
 		}
 
@@ -159,11 +159,11 @@ func GetRetweetNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCo
 		return false, nodes, edge
 	}
 
-	if tweet.User.FollowersCount < minFollowerCount {
+	if tweet.User.FollowersCount <= minFollowerCount {
 		return false, nodes, edge
 	}
 
-	if tweet.FavoriteCount < minFavoriteCount {
+	if tweet.FavoriteCount <= minFavoriteCount {
 		return false, nodes, edge
 	}
 
@@ -171,11 +171,11 @@ func GetRetweetNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCo
 		return false, nodes, edge
 	}
 
-	if len(tweet.Entities.Hashtags) > maxHashtags {
+	if len(tweet.Entities.Hashtags) >= maxHashtags {
 		return false, nodes, edge
 	}
 
-	if len(tweet.Entities.UserMentions) > maxMentions {
+	if len(tweet.Entities.UserMentions) >= maxMentions {
 		return false, nodes, edge
 	}
 
