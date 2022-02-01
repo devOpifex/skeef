@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"text/template"
 
-	"github.com/devOpifex/skeef-app/stream"
+	"github.com/devOpifex/skeef/stream"
 	"github.com/justinas/nosurf"
 )
 

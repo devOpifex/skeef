@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/devOpifex/skeef-app/graph"
+	"github.com/devOpifex/skeef/graph"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 	"github.com/gorilla/websocket"

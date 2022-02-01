@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/devOpifex/skeef-app/stream"
+	"github.com/devOpifex/skeef/stream"
 )
 
 // InsertStream Insert a new stream

@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/bmizerany/pat"
-	"github.com/devOpifex/skeef-app/db"
-	"github.com/devOpifex/skeef-app/graph"
-	"github.com/devOpifex/skeef-app/stream"
+	"github.com/devOpifex/skeef/db"
+	"github.com/devOpifex/skeef/graph"
+	"github.com/devOpifex/skeef/stream"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/golangcollege/sessions"
 	"github.com/justinas/alice"

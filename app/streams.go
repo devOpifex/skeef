@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/devOpifex/skeef-app/stream"
+	"github.com/devOpifex/skeef/stream"
 )
 
 func (app *Application) streamEditPage(w http.ResponseWriter, r *http.Request) {

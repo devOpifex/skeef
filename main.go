@@ -8,8 +8,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/devOpifex/skeef-app/app"
-	"github.com/devOpifex/skeef-app/db"
+	"github.com/devOpifex/skeef/app"
+	"github.com/devOpifex/skeef/db"
 	"github.com/golangcollege/sessions"
 
 	// sqlite3 driver
