@@ -15,44 +15,36 @@ import (
 
 // Application Application object
 type Application struct {
-	InfoLog         *log.Logger
-	ErrorLog        *log.Logger
-	Database        db.Database
-	Session         *sessions.Session
-	License         db.License
-	Addr            string
-	Count           int64
-	Stream          *twitter.Stream
-	Valid           bool
-	LicenseResponse LicenseResponse
-	Pool            *Pool
-	Quit            chan struct{}
-	Streaming       bool
-	Graph           graph.Graph
-	Connected       int
-	Trend           map[int64]int
-	Exclusion       map[string]bool
-	MaxEdges        int
-	StreamActive    stream.Stream
-	NotStreaming    string
-	TweetsUsers     []tweetsUsers
+	InfoLog      *log.Logger
+	ErrorLog     *log.Logger
+	Database     db.Database
+	Session      *sessions.Session
+	Addr         string
+	Count        int64
+	Stream       *twitter.Stream
+	Valid        bool
+	Pool         *Pool
+	Quit         chan struct{}
+	Streaming    bool
+	Graph        graph.Graph
+	Connected    int
+	Trend        map[int64]int
+	Exclusion    map[string]bool
+	MaxEdges     int
+	StreamActive stream.Stream
+	NotStreaming string
+	TweetsUsers  []tweetsUsers
 }
 
 type Setup struct {
-	Tables  bool
-	Admin   bool
-	License bool
+	Tables bool
+	Admin  bool
 }
 
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 
 	if !app.Database.AdminExists() {
 		http.Redirect(w, r, "/setup", http.StatusSeeOther)
-		return
-	}
-
-	if !app.Database.LicenseExists() {
-		http.Redirect(w, r, "/setup/validate", http.StatusSeeOther)
 		return
 	}
 
@@ -83,8 +75,6 @@ func (app *Application) Handlers() http.Handler {
 	mux.Get("/", http.HandlerFunc(app.home))
 	mux.Get("/setup", dynamicMiddleware.Then(http.HandlerFunc(app.setupPage)))
 	mux.Post("/setup", dynamicMiddleware.Then(http.HandlerFunc(app.setupForm)))
-	mux.Get("/setup/validate", dynamicMiddleware.Then(http.HandlerFunc(app.validatePage)))
-	mux.Post("/setup/validate", dynamicMiddleware.Then(http.HandlerFunc(app.validateForm)))
 	mux.Get("/admin/signin", dynamicMiddleware.Then(http.HandlerFunc(app.signinPage)))
 	mux.Post("/admin/signin", dynamicMiddleware.Then(http.HandlerFunc(app.signinForm)))
 	mux.Get("/admin", dynamicMiddleware.Then(http.HandlerFunc(app.adminPage)))

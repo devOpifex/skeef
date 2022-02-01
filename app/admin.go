@@ -59,20 +59,8 @@ func (app *Application) adminPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if app.License.Email == "" {
-		license, err := app.Database.GetLicense()
-
-		if err != nil {
-			http.Error(w, "Could not fetch license", http.StatusInternalServerError)
-			return
-		}
-
-		app.License = license
-	}
-
 	hasTokens := app.Database.TokensExist()
 	tmplData := templateData{}
-	tmplData.License = app.License
 	tmplData.HasTokens = hasTokens
 	tmplData.Email = app.GetAuthenticated(r)
 	tmplData.Connected = app.Connected
@@ -130,34 +118,6 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if action == "license" {
-		newLicense := r.Form.Get("license")
-
-		oldLicense := app.License.License
-		app.License.License = newLicense
-		response := app.LicenseCheck(false)
-		app.Valid = response.Success
-
-		if !response.Success {
-			tmplData.Errors["license"] = response.Reason
-			app.License.License = oldLicense
-		} else {
-			err = app.Database.UpdateLicense(app.GetAuthenticated(r), newLicense)
-
-			if err != nil {
-				tmplData.Errors["license"] = "Failed to update license"
-			}
-		}
-
-	}
-
-	if action == "validity" {
-		response := app.LicenseCheck(false)
-		app.LicenseResponse = response
-
-		tmplData.Flash["validity"] = response.Reason
-	}
-
 	if action == "newPassword" {
 		password := r.PostForm.Get("password")
 		password2 := r.PostForm.Get("password2")
@@ -185,7 +145,7 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = app.Database.ChangePassword(app.License.Email, string(hashedPassword))
+		err = app.Database.ChangePassword(tmplData.Email, string(hashedPassword))
 
 		if err != nil {
 			http.Error(w, "Could not change password", http.StatusInternalServerError)
@@ -216,30 +176,23 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 			tmplData.Errors["existingStreams"] = "There is already one stream active"
 
 		} else {
-			resp := app.LicenseCheck(false)
+			err = app.Database.StartStream(r.Form.Get("streamName"))
 
-			if !resp.Success {
-				tmplData.Errors["existingStreams"] = resp.Reason
+			if err != nil {
+				tmplData.Errors["existingStreams"] = "Failed to start stream"
 			} else {
-
-				err = app.Database.StartStream(r.Form.Get("streamName"))
-
-				if err != nil {
-					tmplData.Errors["existingStreams"] = "Failed to start stream"
-				} else {
-					app.InfoLog.Println("Starting stream")
-					go func() {
-						for {
-							select {
-							case <-app.Quit:
-								return
-							default:
-								app.StartStream()
-							}
+				app.InfoLog.Println("Starting stream")
+				go func() {
+					for {
+						select {
+						case <-app.Quit:
+							return
+						default:
+							app.StartStream()
 						}
-					}()
-					tmplData.Flash["existingStreams"] = "Stream Started"
-				}
+					}
+				}()
+				tmplData.Flash["existingStreams"] = "Stream Started"
 			}
 		}
 	}
@@ -269,7 +222,6 @@ func (app *Application) adminForm(w http.ResponseWriter, r *http.Request) {
 	}
 	tmplData.Streams = streams
 
-	tmplData.License = app.License
 	tmplData.HasTokens = app.Database.TokensExist()
 	tmplData.Connected = app.Connected
 

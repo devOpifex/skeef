@@ -17,21 +17,6 @@ func (DB *Database) CreateTableUser() error {
 	return nil
 }
 
-func (DB *Database) CreateTableLicense() error {
-
-	_, err := DB.Con.Exec(`CREATE TABLE license 
-		(
-			email VARCHAR(50) NOT NULL PRIMARY KEY, 
-			license VARCHAR(255) NOT NULL
-		);`)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (DB *Database) CreateTableTwitterApp() error {
 
 	_, err := DB.Con.Exec(`CREATE TABLE twitter_app 

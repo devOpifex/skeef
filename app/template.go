@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"text/template"
 
-	"github.com/devOpifex/skeef-app/db"
 	"github.com/devOpifex/skeef-app/stream"
 	"github.com/justinas/nosurf"
 )
@@ -14,7 +13,6 @@ type templateData struct {
 	Errors         map[string]string
 	Authenticated  bool
 	CSRFToken      string
-	License        db.License
 	HasTokens      bool
 	Flash          map[string]string
 	Streams        []stream.Stream

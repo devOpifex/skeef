@@ -233,12 +233,22 @@ func (DB *Database) UpdateStream(
 	max_hashtags, max_mentions, replyNet int) error {
 
 	stmt, err := DB.Con.Prepare(`UPDATE streams SET 
-		track = ?, follow = ?, locations = ?, name = ?, 
-		max_edges = ?, description = ?, exclude = ?, 
-		retweets_net = ?, mentions_net = ?, hashtags_net = ?,
-		filter_level = ?, min_follower_count = ?, 
-		min_favorite_count = ?, only_verified = ?,
-		max_hashtags = ?, max_mentions = ?
+		track = ?, 
+		follow = ?, 
+		locations = ?, 
+		name = ?, 
+		max_edges = ?, 
+		description = ?, 
+		exclude = ?, 
+		retweets_net = ?, 
+		mentions_net = ?, 
+		hashtags_net = ?,
+		filter_level = ?, 
+		min_follower_count = ?, 
+		min_favorite_count = ?, 
+		only_verified = ?,
+		max_hashtags = ?, 
+		max_mentions = ?
 		WHERE name = ?`)
 
 	if err != nil {
@@ -276,12 +286,27 @@ func (DB *Database) UpdateStream(
 func (DB *Database) GetActiveStream() stream.Stream {
 	var stream stream.Stream
 
-	row := DB.Con.QueryRow(`SELECT name, follow, track, 
-		locations, active, max_edges, exclude, description, 
-		retweets_net, mentions_net, hashtags_net, filter_level,
-		min_follower_count, min_favorite_count, only_verified,
-		max_hashtags, max_mentions, reply_net
-		FROM streams WHERE active = 1;`)
+	row := DB.Con.QueryRow(`SELECT 
+		name, 
+		follow, 
+		track, 
+		locations, 
+		active, 
+		max_edges, 
+		exclude, 
+		description, 
+		retweets_net, 
+		mentions_net, 
+		hashtags_net, 
+		filter_level,
+		min_follower_count, 
+		min_favorite_count, 
+		only_verified,
+		max_hashtags, 
+		max_mentions, 
+		reply_net
+		FROM streams 
+		WHERE active = 1;`)
 
 	var onlyVerified int
 

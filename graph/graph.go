@@ -42,11 +42,11 @@ func GetMentionNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCo
 			continue
 		}
 
-		if tweet.User.FollowersCount <= minFollowerCount {
+		if tweet.User.FollowersCount < minFollowerCount {
 			continue
 		}
 
-		if tweet.FavoriteCount <= minFavoriteCount {
+		if tweet.FavoriteCount < minFavoriteCount {
 			continue
 		}
 
@@ -54,11 +54,11 @@ func GetMentionNet(tweet twitter.Tweet, exclusion map[string]bool, minFollowerCo
 			continue
 		}
 
-		if len(tweet.Entities.Hashtags) >= maxHashtags {
+		if len(tweet.Entities.Hashtags) > maxHashtags {
 			continue
 		}
 
-		if len(tweet.Entities.UserMentions) >= maxMentions {
+		if len(tweet.Entities.UserMentions) > maxMentions {
 			continue
 		}
 

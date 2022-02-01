@@ -242,37 +242,6 @@
       </div>
     </div>
     <div>
-      <div class="bg-gray-900 rounded-md px-6 py-4">
-        <h3 class="uppercase text-2xl pb-4">License</h3>
-        <p>Update your license.</p>
-        <form action='/admin' method='POST' novalidate>
-          <div>
-            {{with .Errors.license}}
-              <span class="text-red-400">{{.}}</span>
-              <br/>
-            {{end}}
-            <div class="pt-3">
-              <input class="h-8 px-2 appearance-none text-gray-900 w-full rounded block" type='text' name='license' placeholder='**********************{{ slice .License.License 35 40}}'>
-            </div>
-            <div>
-              <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
-              <button class="block bg-background text-gray-300 rounded-sm mt-4 px-4 py-2" type='submit' name="action" value='license'>Update</button>
-            </div>
-          </div>
-        </form>
-        <form action='/admin' method='POST' novalidate>
-          <div class="pt-4">
-            <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
-            <button type='submit' name="action" value='validity'>
-            <span class = "underline">Check</span> the license' validity
-            {{with .Flash.validity}}
-              <span class="font-bold">: {{.}}</span>
-              <br/>
-            {{end}}
-            </button>
-          </div>
-        </form>
-      </div>
       <div class="bg-gray-900 text-white my-8 px-4 py-4 rounded-lg">
         <h3 class="text-2xl uppercase pb-4">Security</h3>
         <p>Change your password <span class="font-light float-right text-sm">{{ .Email }}</span></p>

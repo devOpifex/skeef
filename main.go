@@ -77,13 +77,6 @@ func main() {
 			return
 		}
 
-		err = app.Database.CreateTableLicense()
-		if err != nil {
-			db.Remove()
-			errorLog.Fatal("Could not create license table")
-			return
-		}
-
 		err = app.Database.CreateTableTwitterApp()
 		if err != nil {
 			db.Remove()
@@ -104,13 +97,6 @@ func main() {
 		ErrorLog: errorLog,
 		Handler:  app.Handlers(),
 	}
-
-	// check again every 15 minutes
-	go func() {
-		for range time.Tick(time.Minute * 15) {
-			app.LicenseValidity()
-		}
-	}()
 
 	infoLog.Printf("Listening on port%s", *addr)
 	err := srv.ListenAndServe()
