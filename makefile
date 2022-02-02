@@ -1,4 +1,7 @@
-default: darwin
+default: npm-install
+	go build
+
+all: darwin
 	GOOS=linux GOARCH=amd64 go build -o bin/skeef *.go
 
 darwin: windows
