@@ -2,13 +2,11 @@
 
 <img src="https://skeef.io/img/skeef.png" height="120px" />
 
-# skeef
+Visualise Twitter networks in near real-time.
 
 [Documentation](skeef.io/)
 
 </div>
-
-Visualise Twitter networks in near real-time.
 
 Get the binary for your OS 
 [here](https://github.com/devOpifex/skeef/tree/master/bin)
