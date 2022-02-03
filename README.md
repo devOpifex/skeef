@@ -18,4 +18,5 @@ then run it.
 ./skeef
 ```
 
-See the [get started guide](https://skeef.io/docs/run).
+See the [get started guide](https://skeef.io/docs/run) for more 
+information.
