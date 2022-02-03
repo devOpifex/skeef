@@ -10,8 +10,6 @@ Visualise Twitter networks in near real-time.
 
 ---
 
-<video controls src='https://skeef.io/videos/skeef.webm' width="100%" height="auto"/>
-
 ## Get it
 
 Get the binary for your OS 
