@@ -10,8 +10,6 @@ Visualise Twitter networks in near real-time.
 
 ---
 
-## Get it
-
 Get the binary for your OS 
 [here](https://github.com/devOpifex/skeef/tree/master/bin)
 then run it.
