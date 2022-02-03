@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://skeef.io/img/skeef.png" height="200px" />
+<img src="https://skeef.io/img/skeef.png" height="120px" />
 
 # skeef
 
